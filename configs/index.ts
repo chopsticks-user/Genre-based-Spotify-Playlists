@@ -1,0 +1,1 @@
+export { clientID, clientSecret, redirectURI } from './spotifyCredentials'
