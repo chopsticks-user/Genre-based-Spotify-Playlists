@@ -1,6 +1,6 @@
 import * as AuthSession from 'expo-auth-session';
-import { authRequestConfigs, authDiscoveryDocument } from './configs';
-import * as configs from '@/configs'
+import { authRequestConfigs, authDiscoveryDocument, modulePath } from './constants';
+import * as Configs from '@/configs'
 import { PromptAsync, Session, UserProfile } from './types';
 
 export const session = <Session>{};
@@ -16,12 +16,12 @@ export async function initializeSession(promptAsync: PromptAsync): Promise<void>
 
             session.accessToken = accessToken;
             session.userProfile = userProfile;
-            console.log(session);
+            // console.log(session);
             return;
         }
 
     } catch (error) {
-        console.error(error);
+        throw Configs.createError(modulePath, arguments.callee.name, error);
     }
 }
 
@@ -36,7 +36,9 @@ export function getAuthCode(authSessionResult: AuthSession.AuthSessionResult): s
         return authSessionResult.params.code;
     }
 
-    throw new Error(`${arguments.callee.name}: Failed to get authorization code. {authSessionResult} might not be valid`);
+    throw Configs.createError(modulePath, arguments.callee.name,
+        "Failed to get authorization code. {authSessionResult} might not be valid`"
+    )
 }
 
 async function getAccessToken(authCode: string): Promise<string> {
@@ -45,7 +47,7 @@ async function getAccessToken(authCode: string): Promise<string> {
         const headers = new Headers();
         headers.append('Content-Type', 'application/x-www-form-urlencoded');
         headers.append('Authorization', 'Basic '
-            + btoa(`${configs.clientID}:${configs.clientSecret}`));
+            + btoa(`${Configs.clientID}:${Configs.clientSecret}`));
 
         const body = new URLSearchParams();
         body.append('grant_type', 'client_credentials');
@@ -53,15 +55,14 @@ async function getAccessToken(authCode: string): Promise<string> {
         const response = await fetch(url, {
             method: 'POST',
             headers: headers,
-            body: `grant_type=authorization_code&code=${authCode}&redirect_uri=${configs.redirectURI}`,
+            body: `grant_type=authorization_code&code=${authCode}&redirect_uri=${Configs.redirectURI}`,
         });
 
         const data = await response.json();
         return data.access_token;
     } catch (error) {
-        throw new Error(`${arguments.callee.name}: Failed to get access token.`);
+        throw Configs.createError(modulePath, arguments.callee.name, error);
     }
-
 }
 
 export async function getUserProfile(accessToken: string): Promise<UserProfile> {
@@ -75,6 +76,6 @@ export async function getUserProfile(accessToken: string): Promise<UserProfile> 
 
         return await response.json();
     } catch (error) {
-        throw error;
+        throw Configs.createError(modulePath, arguments.callee.name, error);
     }
 }

@@ -21,3 +21,5 @@ export const authRequestConfigs: AuthSession.AuthRequestConfig = {
         "playlist-modify-public",
     ]
 };
+
+export const modulePath = '@/spotifyAPI';
