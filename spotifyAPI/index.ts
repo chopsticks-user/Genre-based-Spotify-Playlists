@@ -2,6 +2,9 @@ export {
     UserProfile,
     PromptAsync,
     Session,
+    Artist,
+    Track,
+    TrackItem,
 } from './types'
 
 export {
@@ -13,3 +16,8 @@ export {
 export {
     getUserPlaylists,
 } from './playlists'
+
+export {
+    getUserSavedTracks,
+    extractArtistsFromTracks
+} from './tracks';

@@ -3,6 +3,7 @@ import { View, Text, SafeAreaView, Button, Image, StyleSheet, Platform } from 'r
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
 import * as SpotifyAPI from '@/spotifyAPI'
+import { getUserSavedTracks } from '@/spotifyAPI/tracks';
 
 const styles = StyleSheet.create({
     titleContainer: {
@@ -40,8 +41,11 @@ export default function Home() {
                 <Button title="Connect to Spotify" onPress={async (event) => {
                     try {
                         await SpotifyAPI.initializeSession(promptAsync);
-                        const playlists: string = await SpotifyAPI.getUserPlaylists();
-                        console.log(playlists);
+                        const tracks: Array<SpotifyAPI.Track> =
+                            await getUserSavedTracks();
+                        const artists: Array<SpotifyAPI.Artist> =
+                            await SpotifyAPI.extractArtistsFromTracks(tracks);
+                        console.log(artists);
                     } catch (error) {
                         console.error(error);
                     }

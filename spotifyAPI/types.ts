@@ -7,7 +7,7 @@ export interface UserImage {
     url: string;
     height: number;
     width: number;
-}
+};
 
 export interface UserProfile {
     country: string;
@@ -30,4 +30,24 @@ export interface UserProfile {
 export interface Session {
     accessToken: string;
     userProfile: UserProfile;
-}
+};
+
+export interface Artist {
+    id: string;
+    name: string;
+    popularity: number;
+};
+
+export interface Track {
+    album: any;
+    artists: Array<Artist>;
+    available_markets: Array<string>;
+    id: string;
+    name: string;
+    popularity: number;
+};
+
+export interface TrackItem {
+    addedAt: string;
+    track: Track;
+};
