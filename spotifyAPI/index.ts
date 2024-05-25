@@ -19,5 +19,13 @@ export {
 
 export {
     getUserSavedTracks,
-    extractArtistsFromTracks
 } from './tracks';
+
+export {
+    getArtistFromID,
+    getArtistsFromTracks,
+} from './artists'
+
+export {
+    extractGenresFromArtists,
+} from './genres'

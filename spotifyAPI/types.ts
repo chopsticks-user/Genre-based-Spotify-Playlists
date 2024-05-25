@@ -3,7 +3,7 @@ import * as AuthSession from 'expo-auth-session';
 export type PromptAsync = (options?: AuthSession.AuthRequestPromptOptions | undefined)
     => Promise<AuthSession.AuthSessionResult>;
 
-export interface UserImage {
+export interface Image {
     url: string;
     height: number;
     width: number;
@@ -21,7 +21,7 @@ export interface UserProfile {
     followers: { href: string; total: number; };
     href: string;
     id: string;
-    images: Array<UserImage>;
+    images: Array<Image>;
     product: string;
     type: string;
     uri: string;
@@ -33,9 +33,16 @@ export interface Session {
 };
 
 export interface Artist {
+    external_urls: { spotify: string };
+    followers: { href: string, total: number };
+    genres: Array<string>;
+    href: string;
     id: string;
+    images: Array<Image>;
     name: string;
     popularity: number;
+    type: string;
+    uri: string;
 };
 
 export interface Track {

@@ -20,16 +20,3 @@ export async function getUserSavedTracks(): Promise<Array<Track>> {
         throw Configs.createError(modulePath, arguments.callee.name, error);
     }
 }
-
-export async function extractArtistsFromTracks(tracks: Array<Track>)
-    : Promise<Array<Artist>> {
-    const artists = new Map<string, Artist>();
-    for (const track of tracks) {
-        for (const artist of track.artists) {
-            if (!artists.has(artist.id)) {
-                artists.set(artist.id, artist);
-            }
-        }
-    }
-    return Array.from(artists.values());
-}

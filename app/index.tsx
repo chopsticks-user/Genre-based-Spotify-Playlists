@@ -44,8 +44,10 @@ export default function Home() {
                         const tracks: Array<SpotifyAPI.Track> =
                             await getUserSavedTracks();
                         const artists: Array<SpotifyAPI.Artist> =
-                            await SpotifyAPI.extractArtistsFromTracks(tracks);
-                        console.log(artists);
+                            await SpotifyAPI.getArtistsFromTracks(tracks);
+                        const genres: Array<string> =
+                            await SpotifyAPI.extractGenresFromArtists(artists);
+                        console.log(genres);
                     } catch (error) {
                         console.error(error);
                     }
