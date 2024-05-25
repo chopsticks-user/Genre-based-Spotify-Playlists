@@ -1,17 +1,14 @@
 export {
-    UserAuthSessionInfo,
-    createUserAuthSession,
+    UserProfile,
+    PromptAsync,
+    Session,
+} from './types'
+
+export {
+    createUserAuthPrompt,
     getAuthCode,
-    // getAccessToken,
-} from './userAuth';
-
-export {
-    getUserID,
-} from './users'
-
-export {
-    getAccessToken,
-} from './token'
+    initializeSession,
+} from './sessions';
 
 export {
     getUserPlaylists,

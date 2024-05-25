@@ -1,10 +1,11 @@
-import { AccessToken } from "./userAuth";
+import { session } from "./sessions";
 
-export async function getUserPlaylists(accessToken: AccessToken): Promise<string> {
-    const response = await fetch("https://api.spotify.com/v1/users//playlists", {
+export async function getUserPlaylists(): Promise<string> {
+    const response = await fetch(
+        `https://api.spotify.com/v1/users/${session.userProfile.id}/playlists`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${session.accessToken}`
         }
     });
 
