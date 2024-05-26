@@ -3,7 +3,7 @@ import * as Configs from '@/configs'
 import { modulePath } from "./constants";
 import { Artist, Track } from "./types";
 
-async function extractArtistsFromTracks(tracks: Array<Track>)
+export async function extractArtistsFromTracks(tracks: Array<Track>)
     : Promise<Array<Artist>> {
     const artists = new Map<string, Artist>();
     for (const track of tracks) {

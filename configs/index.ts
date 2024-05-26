@@ -2,7 +2,7 @@ export {
     clientID,
     clientSecret,
     redirectURI
-} from './spotifyCredentials';
+} from './spotify';
 
 export {
     createError,

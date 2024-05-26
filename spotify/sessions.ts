@@ -1,22 +1,21 @@
 import * as AuthSession from 'expo-auth-session';
-import { authRequestConfigs, authDiscoveryDocument, modulePath } from './constants';
+import { authDiscoveryDocument, authRequestConfigs, modulePath } from './constants';
 import * as Configs from '@/configs'
 import { PromptAsync, Session, UserProfile } from './types';
 
 export const session = <Session>{};
 
-export async function initializeSession(promptAsync: PromptAsync): Promise<void> {
+async function initializeSession(promptAsync: PromptAsync): Promise<void> {
     try {
         const result = await promptAsync();
 
         if (result && result.type === 'success') {
             const authCode: string = result.params.code;
             const accessToken: string = await getAccessToken(authCode);
-            const userProfile: UserProfile = await getUserProfile(accessToken);
-
             session.accessToken = accessToken;
+
+            const userProfile: UserProfile = await getUserProfile();
             session.userProfile = userProfile;
-            // console.log(session);
             return;
         }
 
@@ -25,13 +24,7 @@ export async function initializeSession(promptAsync: PromptAsync): Promise<void>
     }
 }
 
-export function createUserAuthPrompt(): PromptAsync {
-    const [req, res, prompt] = AuthSession.useAuthRequest(
-        authRequestConfigs, authDiscoveryDocument);
-    return prompt;
-}
-
-export function getAuthCode(authSessionResult: AuthSession.AuthSessionResult): string {
+function getAuthCode(authSessionResult: AuthSession.AuthSessionResult): string {
     if (authSessionResult && authSessionResult.type === 'success') {
         return authSessionResult.params.code;
     }
@@ -65,12 +58,19 @@ async function getAccessToken(authCode: string): Promise<string> {
     }
 }
 
-export async function getUserProfile(accessToken: string): Promise<UserProfile> {
+export function createUserAuthSession() {
+    const [req, res, prompt] = AuthSession.useAuthRequest(
+        authRequestConfigs, authDiscoveryDocument);
+
+    return async () => await initializeSession(prompt);
+}
+
+export async function getUserProfile(): Promise<UserProfile> {
     try {
         const response = await fetch("https://api.spotify.com/v1/me", {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${session.accessToken}`
             }
         });
 

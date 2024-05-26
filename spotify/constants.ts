@@ -1,12 +1,13 @@
 import * as AuthSession from 'expo-auth-session';
 import * as Configs from '@/configs'
+import { DiscoveryDocument, AuthRequestConfig } from 'expo-auth-session';
 
-export const authDiscoveryDocument: AuthSession.DiscoveryDocument = {
+export const authDiscoveryDocument: DiscoveryDocument = {
     authorizationEndpoint: "https://accounts.spotify.com/authorize",
     tokenEndpoint: "https://accounts.spotify.com/api/token",
 };
 
-export const authRequestConfigs: AuthSession.AuthRequestConfig = {
+export const authRequestConfigs: AuthRequestConfig = {
     clientId: Configs.clientID,
     redirectUri: Configs.redirectURI,
     usePKCE: false,

@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
-import { View, Text, SafeAreaView, Button, Image, StyleSheet, Platform } from 'react-native'
+import { Button, Image, StyleSheet } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
-import * as SpotifyAPI from '@/spotifyAPI'
-import { getUserSavedTracks } from '@/spotifyAPI/tracks';
+import * as spotify from '@/spotify'
+import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 
 const styles = StyleSheet.create({
     titleContainer: {
@@ -25,8 +24,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Home() {
-    const promptAsync: SpotifyAPI.PromptAsync =
-        SpotifyAPI.createUserAuthPrompt();
+    const authSession = useSpotifyAuth();
 
     return (
         <ParallaxScrollView
@@ -39,14 +37,14 @@ export default function Home() {
             }>
             <ThemedView style={styles.stepContainer}>
                 <Button title="Connect to Spotify" onPress={async (event) => {
+                    await authSession();
                     try {
-                        await SpotifyAPI.initializeSession(promptAsync);
-                        const tracks: Array<SpotifyAPI.Track> =
-                            await getUserSavedTracks();
-                        const artists: Array<SpotifyAPI.Artist> =
-                            await SpotifyAPI.getArtistsFromTracks(tracks);
-                        const genres: Array<string> =
-                            await SpotifyAPI.extractGenresFromArtists(artists);
+                        const tracks: spotify.Track[] =
+                            await spotify.getUserSavedTracks();
+                        const artists: spotify.Artist[] =
+                            await spotify.getArtistsFromTracks(tracks);
+                        const genres: string[] =
+                            await spotify.extractGenresFromArtists(artists);
                         console.log(genres);
                     } catch (error) {
                         console.error(error);

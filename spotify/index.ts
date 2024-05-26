@@ -8,9 +8,7 @@ export {
 } from './types'
 
 export {
-    createUserAuthPrompt,
-    getAuthCode,
-    initializeSession,
+    createUserAuthSession,
 } from './sessions';
 
 export {
