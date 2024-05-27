@@ -9,6 +9,7 @@ export {
 
 export {
     createUserAuthSession,
+    getUserProfile,
 } from './sessions';
 
 export {

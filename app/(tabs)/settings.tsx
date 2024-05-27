@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, Button, Pressable } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import React from 'react'
 import { Link, router } from 'expo-router';
+import { UserProfile, getUserProfile } from '@/spotify';
 
 export default function Settings() {
     return (
@@ -15,12 +16,12 @@ export default function Settings() {
             }
         >
             <Link href='/settings/profile' asChild>
-                <Pressable>
+                <Pressable >
                     <Text>My profile</Text>
                 </Pressable>
             </Link>
             <Link href='/settings/recommendations' asChild>
-                <Pressable>
+                <Pressable >
                     <Text>Recommendations</Text>
                 </Pressable>
             </Link>
