@@ -1,8 +1,8 @@
-import { View, Text, Image } from 'react-native'
+import { StyleSheet, View, Text, Image } from 'react-native'
 import React from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 
-const Home = () => {
+export default function Home() {
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -18,4 +18,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+const styles = StyleSheet.create({});

@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import React from 'react'
+import { Link } from 'expo-router';
 
-const Settings = () => {
+export default function Settings() {
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -13,11 +14,10 @@ const Settings = () => {
                 />
             }
         >
-            <Text>Settings</Text>
+            <Link href='/settings/profile'>My Profile</Link>
+            <Link href='/settings/recommendations'>Recommendations</Link>
         </ParallaxScrollView >
     )
 }
 
-export default Settings
-
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
