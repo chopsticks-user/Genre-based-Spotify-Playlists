@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { UserProfile, getUserProfile } from '@/spotify';
-import { useUserProfile } from '@/hooks/useUserProfile';
+import { Link } from 'expo-router';
+import { useWebBrowser, useUserProfile } from '@/hooks';
 
 export default function Profile() {
     const userProfile: UserProfile = useUserProfile();
+    const webBrowserOpenAction = useWebBrowser();
 
     return (
         <ParallaxScrollView
@@ -15,12 +17,19 @@ export default function Profile() {
                 // source={require('@/assets/images/spotify-logo.jpg')}
                 // style={styles.reactLogo}
                 />
-            }
-        >
+            }>
             <Text>Country: {userProfile.country}</Text>
             <Text>Display name: {userProfile.display_name}</Text>
             <Text>Email: {userProfile.email}</Text>
-            <Text>Spotify URL: {userProfile.external_urls.spotify}</Text>
+            <Text>{"Spotify URL: "}
+                {<Link href={userProfile.external_urls.spotify}>
+                    <Pressable onPress={async () => {
+                        await webBrowserOpenAction(userProfile.external_urls.spotify)
+                    }}>
+                        <Text>{userProfile.external_urls.spotify}</Text>
+                    </Pressable>
+                </Link>}
+            </Text>
             <Text>Spotify ID: {userProfile.id}</Text>
         </ParallaxScrollView >
     )

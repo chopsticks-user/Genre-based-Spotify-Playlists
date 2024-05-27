@@ -2,11 +2,8 @@ import { Button, Image, StyleSheet, View, Text } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
 import * as spotify from '@/spotify'
-import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
-import { Link, Redirect, router } from 'expo-router';
-import { dismiss } from 'expo-auth-session';
-import { useEffect } from 'react';
-import { session } from '@/spotify/sessions';
+import { useSpotifyAuth } from '@/hooks';
+import { Link, router } from 'expo-router';
 
 const styles = StyleSheet.create({
     titleContainer: {

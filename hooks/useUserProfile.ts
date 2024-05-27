@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { UserProfile, getUserProfile } from '@/spotify';
+import { Linking } from 'react-native';
 
 export function useUserProfile(): UserProfile {
     const [country, setCountry] = useState('Country');
@@ -28,6 +29,6 @@ export function useUserProfile(): UserProfile {
         display_name: displayName,
         email: email,
         external_urls: { spotify: spotifyURL },
-        id: spotifyID
+        id: spotifyID,
     };
 }
