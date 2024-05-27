@@ -13,7 +13,7 @@ export default function Recommendations() {
                 />
             }
         >
-            <Text>Profile</Text>
+            <Text>Recommendations</Text>
         </ParallaxScrollView >
     )
 }

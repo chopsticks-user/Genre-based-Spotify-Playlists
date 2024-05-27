@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, Button, Pressable } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import React from 'react'
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 export default function Settings() {
     return (
@@ -14,8 +14,23 @@ export default function Settings() {
                 />
             }
         >
-            <Link href='/settings/profile'>My Profile</Link>
-            <Link href='/settings/recommendations'>Recommendations</Link>
+            <Link href='/settings/profile' asChild>
+                <Pressable>
+                    <Text>My profile</Text>
+                </Pressable>
+            </Link>
+            <Link href='/settings/recommendations' asChild>
+                <Pressable>
+                    <Text>Recommendations</Text>
+                </Pressable>
+            </Link>
+            <Link href='/settings/logout'>
+                <Pressable onPress={() => {
+                    router.replace('/');
+                }}>
+                    <Text>Log out</Text>
+                </Pressable>
+            </Link>
         </ParallaxScrollView >
     )
 }
