@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import * as WebBrowser from 'expo-web-browser';
 
-export function useWebBrowser() {
+export type WebBrowserOpenAction = (url: string) => Promise<void>;
+
+export function useWebBrowser(): WebBrowserOpenAction {
     const [result, setResult] =
         useState<WebBrowser.WebBrowserAuthSessionResult | null>(null);
     return async (url: string) => {

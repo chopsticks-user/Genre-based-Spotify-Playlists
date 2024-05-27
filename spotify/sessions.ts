@@ -61,6 +61,7 @@ async function getAccessToken(authCode: string): Promise<string> {
 export function createUserAuthSession() {
     const [req, res, prompt] = AuthSession.useAuthRequest(
         authRequestConfigs, authDiscoveryDocument);
+
     return async () => await initializeSession(prompt);
 }
 

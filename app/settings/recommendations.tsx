@@ -15,7 +15,7 @@ export default function Recommendations() {
         >
             <Text>Recommendations</Text>
         </ParallaxScrollView >
-    )
+    );
 }
 
 const styles = StyleSheet.create({});

@@ -5,7 +5,7 @@ export {
     Artist,
     Track,
     TrackItem,
-} from './types'
+} from './types';
 
 export {
     createUserAuthSession,
@@ -23,8 +23,8 @@ export {
 export {
     getArtistFromID,
     getArtistsFromTracks,
-} from './artists'
+} from './artists';
 
 export {
     extractGenresFromArtists,
-} from './genres'
+} from './genres';

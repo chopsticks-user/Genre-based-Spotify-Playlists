@@ -1,22 +1,19 @@
-import { StyleSheet, Text, View, Image, Pressable, Linking } from 'react-native'
+import { StyleSheet, Text, Image, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { UserProfile, getUserProfile } from '@/spotify';
+import { UserProfile } from '@/spotify';
 import { Link } from 'expo-router';
-import { useWebBrowser, useUserProfile } from '@/hooks';
+import { useWebBrowser, useUserProfile, WebBrowserOpenAction } from '@/hooks';
 
 export default function Profile() {
     const userProfile: UserProfile = useUserProfile();
-    const webBrowserOpenAction = useWebBrowser();
+    const webBrowserOpenAction: WebBrowserOpenAction = useWebBrowser();
 
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
             headerImage={
-                <Image
-                // source={require('@/assets/images/spotify-logo.jpg')}
-                // style={styles.reactLogo}
-                />
+                <Image />
             }>
             <Text>Country: {userProfile.country}</Text>
             <Text>Display name: {userProfile.display_name}</Text>
@@ -32,7 +29,7 @@ export default function Profile() {
             </Text>
             <Text>Spotify ID: {userProfile.id}</Text>
         </ParallaxScrollView >
-    )
+    );
 }
 
 const styles = StyleSheet.create({});

@@ -1,3 +1,3 @@
-export { useWebBrowser } from "./useWebBrowser";
+export { useWebBrowser, WebBrowserOpenAction } from "./useWebBrowser";
 export { useUserProfile } from "./useUserProfile";
-export { useSpotifyAuth } from "./useSpotifyAuth";
+export { useSpotifyAuth, SpotifyAuthSession } from "./useSpotifyAuth";
