@@ -24,7 +24,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="home"
                 options={{
-                    title: 'Home',
+                    title: 'Playtify',
                     tabBarIcon: ({ color }) =>
                         <FontAwesome size={24} name="home" color={color} />,
                 }} />

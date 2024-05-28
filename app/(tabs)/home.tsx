@@ -1,14 +1,12 @@
 import {
     StyleSheet, View, Text, Image, TextInput, Button,
-    SafeAreaView, ScrollView, FlatList, useWindowDimensions
+    SafeAreaView, ScrollView, FlatList, useWindowDimensions,
+    Pressable
 } from 'react-native'
 import React, { useState } from 'react'
 import { Stack } from 'expo-router';
 import { Dimensions } from 'react-native';
-import { LogBox } from 'react-native';
-
-LogBox.ignoreLogs(['Warning: FlatGrid: ']); // Ignore log notification by message
-LogBox.ignoreAllLogs();//Ignore all log notifications
+import { WebBrowserOpenAction, useWebBrowser } from '@/hooks';
 
 export default function Home() {
     const [name, setName] = useState("Name");
@@ -17,8 +15,8 @@ export default function Home() {
     const [playlistID, setPlaylistID] = useState("Playlist ID");
 
     const { height, width } = useWindowDimensions();
-    console.log(width);
-    console.log(height);
+
+    const openBrowser: WebBrowserOpenAction = useWebBrowser();
 
     const [items, setItems] = React.useState([
         { name: 'TURQUOISE', code: '#1abc9c' },
@@ -67,16 +65,40 @@ export default function Home() {
         <ScrollView>
             <SafeAreaView style={styles.gridView}>
                 {items.map((item, index) => {
-                    return <View
-                        style={[
-                            styles.itemContainer,
-                            { backgroundColor: item.code }
-                        ]}
-                        key={index}
-                    >
-                        <Text style={styles.itemName}>{item.name}</Text>
-                        <Text style={styles.itemCode}>{item.code}</Text>
-                    </View>
+                    styles.itemContainer.minWidth = width - 20;
+                    styles.itemContainer.maxWidth = width - 20;
+                    return (
+                        <Pressable
+                            key={index}
+                            onPress={async () => {
+                                await openBrowser(
+                                    'https://open.spotify.com/track/2takcwOaAZWiXQijPHIx7B');
+                            }}
+                        >
+                            <View
+                                style={[
+                                    styles.itemContainer,
+                                    {
+                                        backgroundColor: item.code,
+                                        minWidth: width - 10,
+                                        maxWidth: width - 10,
+                                        minHeight: 200,
+                                        maxHeight: 200,
+                                    }
+                                ]}
+                            >
+                                <Text style={styles.itemName}>{item.name}</Text>
+                                <Text style={styles.itemCode}>
+                                    {item.code + ' \u25cf '}
+                                    {'Album' + ' \u25cf '}
+                                    {'2024'}
+                                </Text>
+                                <Text style={styles.itemCode}>
+                                    {'\u25b6' + '5:04' + ' \u25cf ' + '613,567,866'}
+                                </Text>
+                            </View>
+                        </Pressable>
+                    );
                 })}
             </SafeAreaView>
         </ScrollView>
@@ -106,7 +128,7 @@ const styles = StyleSheet.create({
     },
     itemCode: {
         fontWeight: '600',
-        fontSize: 12,
+        fontSize: 13,
         color: '#fff',
     },
 });
