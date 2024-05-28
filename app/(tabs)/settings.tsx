@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import React from 'react'
 import { Link, router } from 'expo-router';
@@ -6,34 +6,37 @@ import { UserProfile, getUserProfile } from '@/spotify';
 
 export default function Settings() {
     return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-            headerImage={
-                <Image
-                // source={require('@/assets/images/spotify-logo.jpg')}
-                // style={styles.reactLogo}
-                />
-            }
-        >
+        <SafeAreaView style={styles.container}>
             <Link href='/settings/profile' asChild>
                 <Pressable >
-                    <Text>My profile</Text>
+                    <Text style={styles.text}>My profile</Text>
                 </Pressable>
             </Link>
             <Link href='/settings/recommendations' asChild>
                 <Pressable >
-                    <Text>Recommendations</Text>
+                    <Text style={styles.text}>Recommendations</Text>
                 </Pressable>
             </Link>
             <Link href='/settings/logout'>
                 <Pressable onPress={() => {
                     router.replace('/');
                 }}>
-                    <Text>Log out</Text>
+                    <Text style={styles.text}>Log out</Text>
                 </Pressable>
             </Link>
-        </ParallaxScrollView >
+        </SafeAreaView>
     )
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        color: '#ECEDEE',
+        fontSize: 15,
+        fontWeight: '500',
+    },
+});
