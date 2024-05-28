@@ -14,6 +14,8 @@ export {
 
 export {
     getUserPlaylists,
+    createUserPlaylist,
+    addSongsToPlaylist,
 } from './playlists'
 
 export {

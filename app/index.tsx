@@ -38,8 +38,10 @@ export default function Auth() {
             <ThemedView style={styles.stepContainer}>
                 <Link replace href="/home" >
                     <Button title="Connect to Spotify" onPress={async () => {
-                        await authSession();
-                        router.replace('/home');
+                        const success = await authSession();
+                        if (success === true) {
+                            router.replace('/home');
+                        }
                     }
                     } />
                 </Link>

@@ -5,7 +5,7 @@ import { PromptAsync, Session, UserProfile } from './types';
 
 export const session = <Session>{};
 
-async function initializeSession(promptAsync: PromptAsync): Promise<void> {
+async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
     try {
         const result = await promptAsync();
 
@@ -16,9 +16,10 @@ async function initializeSession(promptAsync: PromptAsync): Promise<void> {
 
             const userProfile: UserProfile = await getUserProfile();
             session.userProfile = userProfile;
-            return;
+            return true;
         }
 
+        return false;
     } catch (error) {
         throw Configs.createError(modulePath, arguments.callee.name, error);
     }
