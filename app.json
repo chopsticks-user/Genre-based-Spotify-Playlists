@@ -18,8 +18,14 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
+<<<<<<< HEAD
         "backgroundColor": "#000000"
       }
+=======
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.gbsp"
+>>>>>>> ariana
     },
     "web": {
       "bundler": "metro",
