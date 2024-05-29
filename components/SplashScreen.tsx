@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 
 interface SplashScreenProps {
-    onLoadingComplete: () => void; 
+    onLoadingComplete: () => void;
 }
 
-const SplashScreen : React.FC<SplashScreenProps> = ({ onLoadingComplete }) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({ onLoadingComplete }) => {
     useEffect(() => {
         setTimeout(() => {
             onLoadingComplete();
-        }, 2000); 
+        }, 2000);
     }, []);
 
     return (
@@ -24,11 +24,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#001229', 
+        backgroundColor: '#001229',
     },
     logo: {
-        width: 220, 
-        height: 150, 
+        width: 220,
+        height: 150,
     },
 });
 
