@@ -4,16 +4,9 @@ import {
     Pressable
 } from 'react-native'
 import React, { useState } from 'react'
-import { Stack } from 'expo-router';
-import { Dimensions } from 'react-native';
 import { WebBrowserOpenAction, useWebBrowser } from '@/hooks';
 
 export default function Home() {
-    const [name, setName] = useState("Name");
-    const [description, setDescription] = useState("Description");
-    const [uri, setURI] = useState("URI");
-    const [playlistID, setPlaylistID] = useState("Playlist ID");
-
     const { height, width } = useWindowDimensions();
 
     const openBrowser: WebBrowserOpenAction = useWebBrowser();

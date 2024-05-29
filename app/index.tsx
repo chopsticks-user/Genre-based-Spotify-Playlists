@@ -1,5 +1,4 @@
 import { Button, Image, StyleSheet, View, Text, SafeAreaView } from 'react-native'
-import { ThemedView } from '@/components/ThemedView';
 import * as spotify from '@/spotify'
 import { useSpotifyAuth } from '@/hooks';
 import { Link, router } from 'expo-router';

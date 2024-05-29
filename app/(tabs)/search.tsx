@@ -1,9 +1,14 @@
 import {
     StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView
 } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 
 export default function Search() {
+    // const [name, setName] = useState("Name");
+    // const [description, setDescription] = useState("Description");
+    // const [uri, setURI] = useState("URI");
+    // const [playlistID, setPlaylistID] = useState("Playlist ID");
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.text}>Search</Text>
