@@ -12,11 +12,6 @@ export default function SettingsLayout() {
             // tabBarStyle: {
             //     backgroundColor: '#000',
             // },
-        }}
-
-        // sceneContainerStyle={{
-        //     backgroundColor: '#151718',
-        // }} 
-        />
+        }} />
     );
 }

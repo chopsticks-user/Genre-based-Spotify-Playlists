@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView } from 'react-native'
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import React from 'react'
 import { Link, router } from 'expo-router';
 import { UserProfile, getUserProfile } from '@/spotify';

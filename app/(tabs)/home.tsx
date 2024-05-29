@@ -80,8 +80,14 @@ export default function Home() {
                                     styles.itemContainer,
                                     {
                                         backgroundColor: item.code,
-                                        minWidth: width - 10,
-                                        maxWidth: width - 10,
+                                        minWidth: Math.min(
+                                            width - styles.itemContainer.margin * 2,
+                                            400
+                                        ),
+                                        maxWidth: Math.min(
+                                            width - styles.itemContainer.margin * 2,
+                                            400
+                                        ),
                                         minHeight: 200,
                                         maxHeight: 200,
                                     }
@@ -111,6 +117,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
+        justifyContent: 'center',
     },
     itemContainer: {
         justifyContent: 'flex-end',

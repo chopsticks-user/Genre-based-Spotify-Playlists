@@ -1,5 +1,4 @@
-import { Button, Image, StyleSheet, View, Text } from 'react-native'
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { Button, Image, StyleSheet, View, Text, SafeAreaView } from 'react-native'
 import { ThemedView } from '@/components/ThemedView';
 import * as spotify from '@/spotify'
 import { useSpotifyAuth } from '@/hooks';
@@ -27,25 +26,20 @@ const styles = StyleSheet.create({
 export default function Auth() {
     const authSession = useSpotifyAuth();
     return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-            headerImage={
-                <Image
-                    source={require('@/assets/images/spotify-logo.jpg')}
-                    style={styles.reactLogo}
-                />
-            }>
-            <ThemedView style={styles.stepContainer}>
-                <Link replace href="/home" >
-                    <Button title="Connect to Spotify" onPress={async () => {
-                        const success = await authSession();
-                        if (success === true) {
-                            router.replace('/home');
-                        }
+        <SafeAreaView style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}>
+            <Link replace href="/home" >
+                <Button title="Connect to Spotify" onPress={async () => {
+                    const success = await authSession();
+                    if (success === true) {
+                        router.replace('/home');
                     }
-                    } />
-                </Link>
-            </ThemedView>
-        </ParallaxScrollView >
+                }
+                } />
+            </Link>
+        </SafeAreaView >
     );
 }

@@ -1,21 +1,24 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, SafeAreaView } from 'react-native'
 import React from 'react'
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 
 export default function Recommendations() {
     return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-            headerImage={
-                <Image
-                // source={require('@/assets/images/spotify-logo.jpg')}
-                // style={styles.reactLogo}
-                />
-            }
-        >
-            <Text>Recommendations</Text>
-        </ParallaxScrollView >
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.text}>Recommendations</Text>
+        </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#151718'
+    },
+    text: {
+        color: '#ECEDEE',
+        fontSize: 15,
+        fontWeight: '500',
+    },
+});
