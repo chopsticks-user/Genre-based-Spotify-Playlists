@@ -2,6 +2,7 @@ import { AntDesign } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Stack, Tabs } from 'expo-router'
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function TabsLayout() {
     return (
@@ -34,6 +35,14 @@ export default function TabsLayout() {
                     title: 'Search',
                     tabBarIcon: ({ color }) =>
                         <AntDesign name="search1" size={24} color="white" />
+                }}
+            />
+            <Tabs.Screen
+                name="dev"
+                options={{
+                    title: 'Dev',
+                    tabBarIcon: ({ color }) =>
+                        <MaterialIcons name="developer-mode" size={24} color="white" />
                 }}
             />
             <Tabs.Screen

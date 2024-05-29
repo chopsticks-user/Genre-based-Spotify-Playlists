@@ -5,5 +5,9 @@ export {
 } from './spotify';
 
 export {
+    firebaseConfig,
+} from './firebase';
+
+export {
     createError,
 } from './errors'
