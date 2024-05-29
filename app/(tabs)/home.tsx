@@ -5,11 +5,13 @@ import {
 } from 'react-native'
 import React, { useState } from 'react'
 import { WebBrowserOpenAction, useWebBrowser } from '@/hooks';
+import PlayableSongPin from '@/components/PlayableSongPin';
 
 export default function Home() {
     const { height, width } = useWindowDimensions();
 
     const openBrowser: WebBrowserOpenAction = useWebBrowser();
+    const testURL = 'https://open.spotify.com/track/2takcwOaAZWiXQijPHIx7B';
 
     const [items, setItems] = React.useState([
         { name: 'TURQUOISE', code: '#1abc9c' },
@@ -58,45 +60,14 @@ export default function Home() {
         <ScrollView>
             <SafeAreaView style={styles.gridView}>
                 {items.map((item, index) => {
-                    styles.itemContainer.minWidth = width - 20;
-                    styles.itemContainer.maxWidth = width - 20;
                     return (
-                        <Pressable
+                        <PlayableSongPin
+                            url={testURL}
                             key={index}
-                            onPress={async () => {
-                                await openBrowser(
-                                    'https://open.spotify.com/track/2takcwOaAZWiXQijPHIx7B');
-                            }}
-                        >
-                            <View
-                                style={[
-                                    styles.itemContainer,
-                                    {
-                                        backgroundColor: item.code,
-                                        minWidth: Math.min(
-                                            width - styles.itemContainer.margin * 2,
-                                            400
-                                        ),
-                                        maxWidth: Math.min(
-                                            width - styles.itemContainer.margin * 2,
-                                            400
-                                        ),
-                                        minHeight: 200,
-                                        maxHeight: 200,
-                                    }
-                                ]}
-                            >
-                                <Text style={styles.itemName}>{item.name}</Text>
-                                <Text style={styles.itemCode}>
-                                    {item.code + ' \u25cf '}
-                                    {'Album' + ' \u25cf '}
-                                    {'2024'}
-                                </Text>
-                                <Text style={styles.itemCode}>
-                                    {'\u25b6' + '5:04' + ' \u25cf ' + '613,567,866'}
-                                </Text>
-                            </View>
-                        </Pressable>
+                            index={index}
+                            openBrowserAction={openBrowser}
+                            item={item}
+                        />
                     );
                 })}
             </SafeAreaView>
