@@ -2,8 +2,6 @@ import { WebBrowserOpenAction } from "@/hooks";
 import { PropsWithChildren } from "react";
 import { Pressable, View, StyleSheet, useWindowDimensions, Text } from "react-native";
 
-// 
-
 const styles = StyleSheet.create({
     itemContainer: {
         justifyContent: 'flex-end',
