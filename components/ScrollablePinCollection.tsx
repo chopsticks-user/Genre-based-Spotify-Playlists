@@ -70,7 +70,10 @@ export default function ScrollablePinCollection() {
     ]);
 
     return (
-        <ScrollView>
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+        >
             <SafeAreaView style={styles.gridView}>
                 {items.map((item, index) => {
                     return (
