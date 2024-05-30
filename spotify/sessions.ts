@@ -16,6 +16,7 @@ async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
             const accessToken: string = await getAccessToken(authCode);
             session.accessToken = accessToken;
 
+
             const userProfile: UserProfile = await getUserProfile();
             session.userProfile = userProfile;
             return true;
@@ -23,7 +24,6 @@ async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
 
         return false;
     } catch (error) {
-        console.error(error);
         throw Configs.createError(modulePath, arguments.callee.name, error);
     }
 }
@@ -74,9 +74,18 @@ export async function getUserProfile(): Promise<UserProfile> {
         const response = await fetch("https://api.spotify.com/v1/me", {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${session.accessToken}`,
             }
         });
+
+        if (response.status === 429) {
+            const retryAfter = response.headers.get('Retry-After');
+            const delay = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
+
+            console.warn(`Rate limited. Retrying after ${delay} ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return getUserProfile();
+        }
 
         return await response.json();
     } catch (error) {

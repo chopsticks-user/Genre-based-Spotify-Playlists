@@ -19,7 +19,7 @@
     "@expo/vector-icons": "^14.0.0",
     "@react-navigation/native": "^6.0.2",
     "@types/express": "^4.17.21",
-    "expo": "~51.0.8",
+    "expo": "^51.0.9",
     "expo-auth-session": "~5.5.2",
     "expo-constants": "~16.0.1",
     "expo-crypto": "~13.0.2",
