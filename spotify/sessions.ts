@@ -5,8 +5,6 @@ import { PromptAsync, Session, UserProfile } from './types';
 
 export const session = <Session>{};
 
-"use strict";
-
 async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
     try {
         const result = await promptAsync();
@@ -19,6 +17,7 @@ async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
 
             const userProfile: UserProfile = await getUserProfile();
             session.userProfile = userProfile;
+            session.ready = true;
             return true;
         }
 

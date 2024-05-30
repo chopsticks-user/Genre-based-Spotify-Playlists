@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { settingsMenuIcons } from "./Icons"
 
 export interface SettingsButton {
@@ -5,6 +6,7 @@ export interface SettingsButton {
     readonly icon: any,
     readonly color: string,
     readonly type: 'toggle' | 'link',
+    readonly action?: any,
 };
 export interface SettingsSection {
     readonly header: string,
@@ -77,6 +79,7 @@ export const settingsMenu: SettingsMenu = {
                     icon: settingsMenuIcons.signOut,
                     color: 'orange',
                     type: 'link',
+                    action: () => { router.replace('/') },
                 },
             ]
         },

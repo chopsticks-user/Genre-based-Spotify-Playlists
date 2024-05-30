@@ -5,6 +5,7 @@ import { UserProfile, getUserProfile } from '@/spotify';
 import { ScrollView } from 'react-native';
 import { useUserProfile } from '@/hooks';
 import { settingsMenu } from '@/constants/SettingsMenu';
+import { session } from '@/spotify/sessions';
 
 /* <Link href='/settings/profile' asChild>
                     <Pressable >
@@ -28,7 +29,8 @@ import { settingsMenu } from '@/constants/SettingsMenu';
                             </View> */
 
 export default function Settings() {
-    const userProfile: UserProfile = useUserProfile();
+    // const userProfile: UserProfile = useUserProfile();
+    const userProfile = session.userProfile;
 
     return (
         <ScrollView>
@@ -53,12 +55,14 @@ export default function Settings() {
                             <Text style={styles.sectionHeader}>{header}</Text>
                             <View style={styles.sectionItemWrapper}>
 
-                                {items.map(({ label, icon, color, type }) => {
+                                {items.map(({ label, icon, color, type, action }) => {
                                     return (
                                         <TouchableOpacity
                                             key={label}
                                             onPress={() => {
-                                                console.log(`${label} ${icon} ${type}`);
+                                                if (type === 'link' && action !== undefined) {
+                                                    action();
+                                                }
                                             }}
                                         >
                                             <View style={styles.sectionItem}>
