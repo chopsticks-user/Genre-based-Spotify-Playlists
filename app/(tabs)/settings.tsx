@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView, TouchableOpacity, Switch } from 'react-native'
 import React, { MutableRefObject, useRef, useState } from 'react'
 import { Link, router } from 'expo-router';
 import { UserProfile, getUserProfile } from '@/spotify';
@@ -164,6 +164,8 @@ export default function Settings() {
                             <Text style={styles.sectionHeader}>{header}</Text>
                             <View style={styles.sectionItemWrapper}>
                                 {items.map(({ label, icon, color, type, action }) => {
+                                    const [value, setValue] = useState(false);
+
                                     return (
                                         <TouchableOpacity
                                             key={label}
@@ -178,6 +180,9 @@ export default function Settings() {
                                                     {icon}
                                                 </View>
                                                 <Text style={styles.sectionItemLabel}>{label}</Text>
+                                                <View style={{ flex: 1 }} />
+                                                {type === 'toggle' &&
+                                                    <Switch style={{ alignSelf: 'flex-end' }} value={value} onValueChange={() => setValue(!value)} />}
                                             </View>
                                         </TouchableOpacity>
                                     );
@@ -187,7 +192,7 @@ export default function Settings() {
                     );
                 })}
             </SafeAreaView >
-        </ScrollView>
+        </ScrollView >
     )
 }
 
