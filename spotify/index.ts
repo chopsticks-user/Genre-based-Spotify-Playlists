@@ -9,6 +9,7 @@ export {
 } from './types';
 
 export {
+    session,
     createUserAuthSession,
     getUserProfile,
 } from './sessions';
@@ -24,7 +25,7 @@ export {
 } from './tracks';
 
 export {
-    getArtistFromID,
+    getArtistsFromIDs,
     getArtistsFromTracks,
 } from './artists';
 

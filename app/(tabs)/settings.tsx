@@ -1,4 +1,7 @@
-import { StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView, TouchableOpacity, Switch } from 'react-native'
+import {
+    StyleSheet, Text, View, Image, Button,
+    Pressable, SafeAreaView, TouchableOpacity, Switch
+} from 'react-native'
 import React, { MutableRefObject, useRef, useState } from 'react'
 import { Link, router } from 'expo-router';
 import { UserProfile, getUserProfile } from '@/spotify';
@@ -8,6 +11,7 @@ import { session } from '@/spotify/sessions';
 import { settingsMenuIcons } from '@/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
+import UserProfileSection from '@/components/UserProfileSection';
 
 export interface SettingsButton {
     readonly label: string,
@@ -144,20 +148,7 @@ export default function Settings() {
     return (
         <ScrollView>
             <SafeAreaView style={styles.container}>
-                <View style={styles.profile}>
-                    <TouchableOpacity onPress={() => {
-                        console.log('pressed');
-                    }}>
-                        <View style={styles.profileAvatarWrapper}>
-                            <Image
-                                style={styles.profileAvatar}
-                                source={require('@/assets/images/react-logo-black.jpg')}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                    <Text style={styles.profileName}>{userProfile?.display_name}</Text>
-                    <Text style={styles.profileEmail}>{userProfile?.email}</Text>
-                </View>
+                <UserProfileSection profile={userProfile} />
                 {settingsMenu.sections.map(({ header, items }) => {
                     return (
                         <View key={header} style={styles.section}>
@@ -241,44 +232,44 @@ const styles = StyleSheet.create({
         width: 30,
         borderRadius: 10000,
     },
-    profile: {
-        flex: 1,
-        padding: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    profileAvatar: {
-        width: 72,
-        height: 72,
-        borderRadius: 10000,
-        borderWidth: 2,
-        borderColor: '#ECEDEE',
-        backgroundColor: 'yellow',
-    },
-    profileAvatarWrapper: {
-        position: 'relative',
-    },
-    profileEditButton: {
-        width: 20,
-        height: 20,
-        borderRadius: 10000,
-        backgroundColor: 'pink',
-        top: -15,
-        left: 45,
-    },
-    profileName: {
-        textAlign: 'center',
-        marginTop: 20,
-        fontSize: 19,
-        fontWeight: '600',
-        color: '#ECEDEE',
-    },
-    profileEmail: {
-        textAlign: 'center',
-        marginTop: 5,
-        fontSize: 16,
-        color: '#ECEDEE',
-    },
+    // profile: {
+    //     flex: 1,
+    //     padding: 0,
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    // },
+    // profileAvatar: {
+    //     width: 72,
+    //     height: 72,
+    //     borderRadius: 10000,
+    //     borderWidth: 2,
+    //     borderColor: '#ECEDEE',
+    //     backgroundColor: 'yellow',
+    // },
+    // profileAvatarWrapper: {
+    //     position: 'relative',
+    // },
+    // profileEditButton: {
+    //     width: 20,
+    //     height: 20,
+    //     borderRadius: 10000,
+    //     backgroundColor: 'pink',
+    //     top: -15,
+    //     left: 45,
+    // },
+    // profileName: {
+    //     textAlign: 'center',
+    //     marginTop: 20,
+    //     fontSize: 19,
+    //     fontWeight: '600',
+    //     color: '#ECEDEE',
+    // },
+    // profileEmail: {
+    //     textAlign: 'center',
+    //     marginTop: 5,
+    //     fontSize: 16,
+    //     color: '#ECEDEE',
+    // },
     text: {
         color: '#ECEDEE',
         fontSize: 15,
