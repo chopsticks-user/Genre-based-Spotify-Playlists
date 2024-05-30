@@ -30,7 +30,6 @@ export interface UserProfile {
 export interface Session {
     accessToken: string;
     userProfile: UserProfile;
-    ready: boolean;
 };
 
 export interface Artist {

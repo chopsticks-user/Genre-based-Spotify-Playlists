@@ -2,6 +2,7 @@ import * as AuthSession from 'expo-auth-session';
 import { authDiscoveryDocument, authRequestConfigs, modulePath } from './constants';
 import * as Configs from '@/configs'
 import { PromptAsync, Session, UserProfile } from './types';
+import { useState } from 'react';
 
 export const session = <Session>{};
 
@@ -17,7 +18,6 @@ async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
 
             const userProfile: UserProfile = await getUserProfile();
             session.userProfile = userProfile;
-            session.ready = true;
             return true;
         }
 
@@ -77,11 +77,13 @@ export async function getUserProfile(): Promise<UserProfile> {
             }
         });
 
+        console.log('getUserProfile');
+
         if (response.status === 429) {
             const retryAfter = response.headers.get('Retry-After');
             const delay = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
 
-            console.warn(`Rate limited. Retrying after ${delay} ms...`);
+            console.warn(`Spotify API Rate limited. Retrying after ${delay / 1000} seconds...`);
             await new Promise(resolve => setTimeout(resolve, delay));
             return getUserProfile();
         }

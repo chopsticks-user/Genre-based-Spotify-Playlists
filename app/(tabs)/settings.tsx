@@ -1,11 +1,121 @@
 import { StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView, TouchableOpacity } from 'react-native'
-import React, { MutableRefObject, useRef } from 'react'
+import React, { MutableRefObject, useRef, useState } from 'react'
 import { Link, router } from 'expo-router';
 import { UserProfile, getUserProfile } from '@/spotify';
 import { ScrollView } from 'react-native';
 import { useUserProfile } from '@/hooks';
-import { settingsMenu } from '@/constants/SettingsMenu';
 import { session } from '@/spotify/sessions';
+import { settingsMenuIcons } from '@/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as AuthSession from 'expo-auth-session';
+
+export interface SettingsButton {
+    readonly label: string,
+    readonly icon: any,
+    readonly color: string,
+    readonly type: 'toggle' | 'link',
+    readonly action?: any,
+};
+export interface SettingsSection {
+    readonly header: string,
+    readonly items: SettingsButton[],
+};
+
+export interface SettingsMenu {
+    readonly sections: SettingsSection[],
+};
+
+export const settingsMenu: SettingsMenu = {
+    sections: [
+        {
+            header: 'preferences',
+            items: [
+                {
+                    label: 'Languages',
+                    icon: settingsMenuIcons.languages,
+                    color: '#0096FF',
+                    type: 'link',
+                    action: () => {
+                        router.push('/settings/languages');
+                    }
+                },
+                {
+                    label: 'Themes',
+                    icon: settingsMenuIcons.themes,
+                    color: '#0096FF',
+                    type: 'toggle',
+                },
+                {
+                    label: 'Playlists',
+                    icon: settingsMenuIcons.playlists,
+                    color: '#0096FF',
+                    type: 'link',
+                    action: () => {
+                        router.push('/settings/playlists');
+                    }
+                },
+                {
+                    label: 'Sync',
+                    icon: settingsMenuIcons.sync,
+                    color: '#0096FF',
+                    type: 'toggle',
+                },
+            ]
+        },
+        {
+            header: 'help',
+            items: [
+                {
+                    label: 'Report Bugs',
+                    icon: settingsMenuIcons.reportBugs,
+                    color: '#989898',
+                    type: 'link',
+                    action: () => {
+                        router.push('/settings/report-bugs');
+                    }
+                },
+                {
+                    label: 'Contact Us',
+                    icon: settingsMenuIcons.contactUs,
+                    color: '#989898',
+                    type: 'link',
+                    action: () => {
+                        router.push('/settings/contact-us');
+                    }
+                },
+            ]
+        },
+        {
+            header: 'accounts',
+            items: [
+                {
+                    label: 'Switch Account',
+                    icon: settingsMenuIcons.switchAccount,
+                    color: 'orange',
+                    type: 'link',
+                    action: async () => {
+                        try {
+                            await AsyncStorage.removeItem('authToken');
+                            await AsyncStorage.removeItem('userData');
+                            await AsyncStorage.clear();
+                            // AuthSession.dismiss();
+                            router.replace('/');
+                        } catch (error) {
+                            console.error('Error clearing app data:', error);
+                        }
+                    }
+                },
+                {
+                    label: 'Sign Out',
+                    icon: settingsMenuIcons.signOut,
+                    color: 'orange',
+                    type: 'link',
+                    action: () => { router.replace('/') },
+                },
+            ]
+        },
+    ]
+};
 
 /* <Link href='/settings/profile' asChild>
                     <Pressable >
@@ -29,7 +139,6 @@ import { session } from '@/spotify/sessions';
                             </View> */
 
 export default function Settings() {
-    // const userProfile: UserProfile = useUserProfile();
     const userProfile = session.userProfile;
 
     return (
@@ -46,22 +155,21 @@ export default function Settings() {
                             />
                         </View>
                     </TouchableOpacity>
-                    <Text style={styles.profileName}>{userProfile.display_name}</Text>
-                    <Text style={styles.profileEmail}>{userProfile.email}</Text>
+                    <Text style={styles.profileName}>{userProfile?.display_name}</Text>
+                    <Text style={styles.profileEmail}>{userProfile?.email}</Text>
                 </View>
                 {settingsMenu.sections.map(({ header, items }) => {
                     return (
                         <View key={header} style={styles.section}>
                             <Text style={styles.sectionHeader}>{header}</Text>
                             <View style={styles.sectionItemWrapper}>
-
                                 {items.map(({ label, icon, color, type, action }) => {
                                     return (
                                         <TouchableOpacity
                                             key={label}
-                                            onPress={() => {
+                                            onPress={async () => {
                                                 if (type === 'link' && action !== undefined) {
-                                                    action();
+                                                    await action();
                                                 }
                                             }}
                                         >
@@ -124,7 +232,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 10,
-        // backgroundColor: 'green',
         height: 30,
         width: 30,
         borderRadius: 10000,

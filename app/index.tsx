@@ -24,7 +24,9 @@ export default function Home() {
                 style={[styles.buttonIcon, { backgroundColor: '#ffffff' }]}
             /> */}
             <Pressable onPress={async () => {
+                // router.replace('/home');
                 const success = await authSession();
+                // TODO: use this inproduction
                 if (success === true) {
                     router.replace('/home');
                 }

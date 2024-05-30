@@ -3,10 +3,10 @@ import {
 } from 'react-native'
 import React from 'react'
 
-export default function Playlists() {
+export default function ContactUs() {
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.text}>Playlists</Text>
+            <Text style={styles.text}>Contact Us</Text>
         </SafeAreaView>
     )
 }
