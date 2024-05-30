@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { UserProfile, getUserProfile } from '@/spotify';
 import { Linking } from 'react-native';
+import { Image } from '@/spotify/types';
 
 export function useUserProfile(): UserProfile {
     const [country, setCountry] = useState('Country');
@@ -8,6 +9,7 @@ export function useUserProfile(): UserProfile {
     const [email, setEmail] = useState('id@email.com');
     const [spotifyURL, setSpotifyURL] = useState('url.spotify.com');
     const [spotifyID, setSpotifyID] = useState('spotifyID');
+    const [images, setImages] = useState(<Image[]>{});
 
     const fetchUserProfife = async () => {
         const userProfile: UserProfile = await getUserProfile();
@@ -21,6 +23,7 @@ export function useUserProfile(): UserProfile {
             setEmail(userProfile.email);
             setSpotifyURL(userProfile.external_urls.spotify);
             setSpotifyID(userProfile.id);
+            setImages(userProfile.images);
         })
         .catch(err => console.error(err));
 
@@ -30,5 +33,6 @@ export function useUserProfile(): UserProfile {
         email: email,
         external_urls: { spotify: spotifyURL },
         id: spotifyID,
+        images: images,
     };
 }

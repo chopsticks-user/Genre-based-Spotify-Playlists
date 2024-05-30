@@ -21,7 +21,7 @@ export interface UserProfile {
     followers?: { href: string; total: number; };
     href?: string;
     id: string;
-    images?: Image[];
+    images: Image[];
     product?: string;
     type?: string;
     uri?: string;
