@@ -1,3 +1,0 @@
-export {
-    settingsMenuIcons,
-} from './Icons';

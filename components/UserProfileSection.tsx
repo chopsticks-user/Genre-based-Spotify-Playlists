@@ -2,7 +2,7 @@ import { UserProfile, session } from '@/spotify';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 
 
-interface UserProfileSectionProps {
+export interface UserProfileSectionProps {
     profile: UserProfile
 }
 

@@ -6,12 +6,12 @@ import React, { MutableRefObject, useRef, useState } from 'react'
 import { Link, router } from 'expo-router';
 import { UserProfile, getUserProfile } from '@/spotify';
 import { ScrollView } from 'react-native';
-import { useUserProfile } from '@/hooks';
 import { session } from '@/spotify/sessions';
-import { settingsMenuIcons } from '@/constants';
+import { settingsMenuIcons } from '@/constants/Icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import UserProfileSection from '@/components/UserProfileSection';
+import SettingsSection from '@/components/SettingsSection';
 
 export interface SettingsButton {
     readonly label: string,
@@ -121,27 +121,6 @@ export const settingsMenu: SettingsMenu = {
     ]
 };
 
-/* <Link href='/settings/profile' asChild>
-                    <Pressable >
-                        <Text style={styles.text}>My profile</Text>
-                    </Pressable>
-                </Link>
-                <Link href='/settings/recommendations' asChild>
-                    <Pressable >
-                        <Text style={styles.text}>Recommendations</Text>
-                    </Pressable>
-                </Link>
-                <Link href='/settings/logout'>
-                    <Pressable onPress={() => {
-                        router.replace('/');
-                    }}>
-                        <Text style={styles.text}>Log out</Text>
-                    </Pressable>
-                </Link> */
-/* <View style={styles.profileEditButton}>
-                                <FontAwesome6 name="feather-pointed" size={15} color="black" />
-                            </View> */
-
 export default function Settings() {
     const userProfile = session.userProfile;
 
@@ -149,39 +128,87 @@ export default function Settings() {
         <ScrollView>
             <SafeAreaView style={styles.container}>
                 <UserProfileSection profile={userProfile} />
-                {settingsMenu.sections.map(({ header, items }) => {
-                    return (
-                        <View key={header} style={styles.section}>
-                            <Text style={styles.sectionHeader}>{header}</Text>
-                            <View style={styles.sectionItemWrapper}>
-                                {items.map(({ label, icon, color, type, action }) => {
-                                    const [value, setValue] = useState(false);
+                <SettingsSection header='preferences'>
+                    {settingsMenu.sections[0].items.map(
+                        ({ label, icon, color, type, action }) => {
+                            const [value, setValue] = useState(false);
 
-                                    return (
-                                        <TouchableOpacity
-                                            key={label}
-                                            onPress={async () => {
-                                                if (type === 'link' && action !== undefined) {
-                                                    await action();
-                                                }
-                                            }}
-                                        >
-                                            <View style={styles.sectionItem}>
-                                                <View style={[styles.sectionItemIcon, { backgroundColor: color }]}>
-                                                    {icon}
-                                                </View>
-                                                <Text style={styles.sectionItemLabel}>{label}</Text>
-                                                <View style={{ flex: 1 }} />
-                                                {type === 'toggle' &&
-                                                    <Switch style={{ alignSelf: 'flex-end' }} value={value} onValueChange={() => setValue(!value)} />}
-                                            </View>
-                                        </TouchableOpacity>
-                                    );
-                                })}
-                            </View>
-                        </View>
-                    );
-                })}
+                            return (
+                                <TouchableOpacity
+                                    key={label}
+                                    onPress={async () => {
+                                        if (type === 'link' && action !== undefined) {
+                                            await action();
+                                        }
+                                    }}
+                                >
+                                    <View style={styles.sectionItem}>
+                                        <View style={[styles.sectionItemIcon, { backgroundColor: color }]}>
+                                            {icon}
+                                        </View>
+                                        <Text style={styles.sectionItemLabel}>{label}</Text>
+                                        <View style={{ flex: 1 }} />
+                                        {type === 'toggle' &&
+                                            <Switch style={{ alignSelf: 'flex-end' }} value={value} onValueChange={() => setValue(!value)} />}
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
+                </SettingsSection>
+                <SettingsSection header='help'>
+                    {settingsMenu.sections[0].items.map(
+                        ({ label, icon, color, type, action }) => {
+                            const [value, setValue] = useState(false);
+
+                            return (
+                                <TouchableOpacity
+                                    key={label}
+                                    onPress={async () => {
+                                        if (type === 'link' && action !== undefined) {
+                                            await action();
+                                        }
+                                    }}
+                                >
+                                    <View style={styles.sectionItem}>
+                                        <View style={[styles.sectionItemIcon, { backgroundColor: color }]}>
+                                            {icon}
+                                        </View>
+                                        <Text style={styles.sectionItemLabel}>{label}</Text>
+                                        <View style={{ flex: 1 }} />
+                                        {type === 'toggle' &&
+                                            <Switch style={{ alignSelf: 'flex-end' }} value={value} onValueChange={() => setValue(!value)} />}
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
+                </SettingsSection>
+                <SettingsSection header='accounts'>
+                    {settingsMenu.sections[0].items.map(
+                        ({ label, icon, color, type, action }) => {
+                            const [value, setValue] = useState(false);
+
+                            return (
+                                <TouchableOpacity
+                                    key={label}
+                                    onPress={async () => {
+                                        if (type === 'link' && action !== undefined) {
+                                            await action();
+                                        }
+                                    }}
+                                >
+                                    <View style={styles.sectionItem}>
+                                        <View style={[styles.sectionItemIcon, { backgroundColor: color }]}>
+                                            {icon}
+                                        </View>
+                                        <Text style={styles.sectionItemLabel}>{label}</Text>
+                                        <View style={{ flex: 1 }} />
+                                        {type === 'toggle' &&
+                                            <Switch style={{ alignSelf: 'flex-end' }} value={value} onValueChange={() => setValue(!value)} />}
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
+                </SettingsSection>
             </SafeAreaView >
         </ScrollView >
     )
@@ -193,20 +220,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 25,
         paddingHorizontal: 15,
-    },
-    section: {
-        paddingHorizontal: 10,
-    },
-    sectionHeader: {
-        paddingTop: 25,
-        paddingBottom: 20,
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#9e9e9e',
-        textTransform: 'uppercase',
-        letterSpacing: 1.1,
-    },
-    sectionItemWrapper: {
     },
     sectionItem: {
         flexDirection: 'row',
@@ -232,44 +245,6 @@ const styles = StyleSheet.create({
         width: 30,
         borderRadius: 10000,
     },
-    // profile: {
-    //     flex: 1,
-    //     padding: 0,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-    // profileAvatar: {
-    //     width: 72,
-    //     height: 72,
-    //     borderRadius: 10000,
-    //     borderWidth: 2,
-    //     borderColor: '#ECEDEE',
-    //     backgroundColor: 'yellow',
-    // },
-    // profileAvatarWrapper: {
-    //     position: 'relative',
-    // },
-    // profileEditButton: {
-    //     width: 20,
-    //     height: 20,
-    //     borderRadius: 10000,
-    //     backgroundColor: 'pink',
-    //     top: -15,
-    //     left: 45,
-    // },
-    // profileName: {
-    //     textAlign: 'center',
-    //     marginTop: 20,
-    //     fontSize: 19,
-    //     fontWeight: '600',
-    //     color: '#ECEDEE',
-    // },
-    // profileEmail: {
-    //     textAlign: 'center',
-    //     marginTop: 5,
-    //     fontSize: 16,
-    //     color: '#ECEDEE',
-    // },
     text: {
         color: '#ECEDEE',
         fontSize: 15,
