@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { UserProfile, getUserProfile } from '@/spotify';
 import { Linking } from 'react-native';
-import { Image } from '@/spotify/types';
+import { Image } from '@/spotify';
 
 export function useUserProfile(): UserProfile {
     const [country, setCountry] = useState('Country');

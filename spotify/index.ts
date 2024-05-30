@@ -5,6 +5,7 @@ export {
     Artist,
     Track,
     TrackItem,
+    Image,
 } from './types';
 
 export {
