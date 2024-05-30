@@ -12,7 +12,7 @@ export interface SettingsItemToggleProps {
     }
 };
 
-export default function SettingsitemToggle(props: SettingsItemToggleProps) {
+export default function SettingsItemToggle(props: SettingsItemToggleProps) {
     const [value, setValue] = useState(false);
 
     return (

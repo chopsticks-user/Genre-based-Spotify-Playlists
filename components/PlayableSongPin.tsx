@@ -1,4 +1,4 @@
-import { WebBrowserOpenAction } from "@/hooks";
+import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
 import { PropsWithChildren } from "react";
 import { Pressable, View, StyleSheet, useWindowDimensions, Text } from "react-native";
 

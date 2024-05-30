@@ -4,7 +4,6 @@ import {
 } from 'react-native'
 import React, { MutableRefObject, useRef, useState } from 'react'
 import { Link, router } from 'expo-router';
-import { UserProfile, getUserProfile } from '@/spotify';
 import { ScrollView } from 'react-native';
 import { session } from '@/spotify/sessions';
 import { settingsMenuIcons } from '@/constants/Icons';
@@ -13,7 +12,7 @@ import * as AuthSession from 'expo-auth-session';
 import UserProfileSection from '@/components/UserProfileSection';
 import SettingsSection from '@/components/SettingsSection';
 import SettingsItemLink from '@/components/SettingsItemLink';
-import SettingsitemToggle from '@/components/SettingsItemToggle';
+import SettingsItemToggle from '@/components/SettingsItemToggle';
 
 export default function Settings() {
     const userProfile = session.userProfile;
@@ -30,7 +29,7 @@ export default function Settings() {
                             router.push('/settings/languages');
                         }}
                     />
-                    <SettingsitemToggle
+                    <SettingsItemToggle
                         label='Themes'
                         icon={{ element: settingsMenuIcons.themes, color: '#0096ff' }}
                     />
@@ -41,7 +40,7 @@ export default function Settings() {
                             router.push('/settings/playlists');
                         }}
                     />
-                    <SettingsitemToggle
+                    <SettingsItemToggle
                         label='Sync'
                         icon={{ element: settingsMenuIcons.sync, color: '#0096ff' }}
                     />
@@ -80,7 +79,7 @@ export default function Settings() {
                 </SettingsSection>
             </SafeAreaView >
         </ScrollView >
-    )
+    );
 }
 
 const styles = StyleSheet.create({
