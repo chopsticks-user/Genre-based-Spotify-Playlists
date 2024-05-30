@@ -129,31 +129,6 @@ export default function Settings() {
             <SafeAreaView style={styles.container}>
                 <UserProfileSection profile={userProfile} />
                 <SettingsSection header='preferences'>
-                    {settingsMenu.sections[0].items.map(
-                        ({ label, icon, color, type, action }) => {
-                            const [value, setValue] = useState(false);
-
-                            return (
-                                <TouchableOpacity
-                                    key={label}
-                                    onPress={async () => {
-                                        if (type === 'link' && action !== undefined) {
-                                            await action();
-                                        }
-                                    }}
-                                >
-                                    <View style={styles.sectionItem}>
-                                        <View style={[styles.sectionItemIcon, { backgroundColor: color }]}>
-                                            {icon}
-                                        </View>
-                                        <Text style={styles.sectionItemLabel}>{label}</Text>
-                                        <View style={{ flex: 1 }} />
-                                        {type === 'toggle' &&
-                                            <Switch style={{ alignSelf: 'flex-end' }} value={value} onValueChange={() => setValue(!value)} />}
-                                    </View>
-                                </TouchableOpacity>
-                            );
-                        })}
                 </SettingsSection>
                 <SettingsSection header='help'>
                     {settingsMenu.sections[0].items.map(
