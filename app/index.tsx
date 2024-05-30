@@ -2,23 +2,9 @@ import { useEffect, useState } from 'react'
 import { View, Text, SafeAreaView, Button, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
-import * as firebase from 'firebase'
 import * as AuthSession from 'expo-auth-session';
+import { response } from 'express';
 import * as Configs from '@/configs'
-import SplashScreen from '@/components/SplashScreen';
-
-import { initializeApp } from "firebase/app";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDR-k84V8VE1W6zLtDam4awkoxtsZXYf3c",
-  authDomain: "playtify-8bf88.firebaseapp.com",
-  projectId: "playtify-8bf88",
-  storageBucket: "playtify-8bf88.appspot.com",
-  messagingSenderId: "178512786596",
-  appId: "1:178512786596:web:b2a46a68aeca2f13542231"
-};
-
-const app = initializeApp(firebaseConfig);
 
 const styles = StyleSheet.create({
     titleContainer: {
@@ -68,23 +54,7 @@ const styles = StyleSheet.create({
     },
 });
 
-interface SpotifyCredentials {
-    cilentID: string,
-    clientSecret: string,
-    redirectURI: string
-}
-
-async function getAuthCode() {
-
-}
-
 export default function Home() {
-    const [isLoading, setIsLoading] = useState(true);
-
-    const handleLoadingComplete = () => {
-        setIsLoading(false);
-    };
-
     try {
         const discovery: AuthSession.DiscoveryDocument = {
             authorizationEndpoint: "https://accounts.spotify.com/authorize",
@@ -113,10 +83,6 @@ export default function Home() {
         console.log("Error:" + err);
     }
 
-    if (isLoading) {
-        return <SplashScreen onLoadingComplete={handleLoadingComplete} />;
-    }
-
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -127,11 +93,12 @@ export default function Home() {
                 />
             }>
             <ThemedView style={styles.stepContainer}>
-                    <TouchableOpacity onPress={() => prompt()} style={styles.connectButton}>
-                        <Image source={require('@/assets/images/spotifylogosolo.jpg')} style={styles.buttonIcon} />
-                        <Text style={styles.buttonText}>Sign in with Spotify</Text>
-                    </TouchableOpacity>
-                </ThemedView>
-            </ParallaxScrollView>
+                <Button title="Connect to Spotify" onPress={async (event) => {
+                    console.log("Connect to Spotify");
+                    prompt();
+                }
+                } />
+            </ThemedView>
+        </ParallaxScrollView>
     );
 }
