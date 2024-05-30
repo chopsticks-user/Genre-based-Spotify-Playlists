@@ -4,7 +4,7 @@ import {
     TouchableOpacity, Platform, ScrollView, Pressable
 } from 'react-native'
 import SplashScreen from '@/components/SplashScreen';
-import { useSpotifyAuth } from '@/hooks';
+import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { router } from 'expo-router';
 
 export default function Home() {

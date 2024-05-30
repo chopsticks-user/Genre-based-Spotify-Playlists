@@ -13,7 +13,7 @@ export interface SettingsItemLinkProps {
     onPress?: ((event: GestureResponderEvent) => void),
 };
 
-export default function SettingsitemLink(props: SettingsItemLinkProps) {
+export default function SettingsItemLink(props: SettingsItemLinkProps) {
     return (
         <TouchableOpacity
             key={props.label}

@@ -1,4 +1,4 @@
-import { WebBrowserOpenAction, useWebBrowser } from "@/hooks";
+import { WebBrowserOpenAction, useWebBrowser } from "@/hooks/useWebBrowser";
 import React, { useState } from "react";
 import { PropsWithChildren } from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";

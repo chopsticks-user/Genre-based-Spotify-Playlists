@@ -1,11 +1,11 @@
 import { StyleSheet, Text, Image, Pressable, SafeAreaView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { UserProfile } from '@/spotify';
+import { UserProfile, session } from '@/spotify';
 import { Link } from 'expo-router';
-import { useWebBrowser, useUserProfile, WebBrowserOpenAction } from '@/hooks';
+import { useWebBrowser, WebBrowserOpenAction } from '@/hooks/useWebBrowser';
 
 export default function Profile() {
-    const userProfile: UserProfile = useUserProfile();
+    const userProfile: UserProfile = session.userProfile;
     const webBrowserOpenAction: WebBrowserOpenAction = useWebBrowser();
 
     return (
