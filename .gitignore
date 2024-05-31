@@ -11,11 +11,14 @@ npm-debug.*
 web-build/
 .vscode
 
+# firebase
+.firebase
+
 # macOS
 .DS_Store
 
 configs/spotify.ts
 configs/firebase.ts
 
-# Ignore for now
+# ignore for now
 .github/workflows/
