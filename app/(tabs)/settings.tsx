@@ -13,9 +13,13 @@ import UserProfileSection from '@/components/UserProfileSection';
 import SettingsSection from '@/components/SettingsSection';
 import SettingsItemLink from '@/components/SettingsItemLink';
 import SettingsItemToggle from '@/components/SettingsItemToggle';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 
 export default function Settings() {
     const userProfile = session.userProfile;
+    const browserOpenAction = useWebBrowser();
 
     return (
         <ScrollView>
@@ -65,7 +69,8 @@ export default function Settings() {
                     <SettingsItemLink
                         label='Switch Account'
                         icon={{ element: settingsMenuIcons.switchAccount, color: 'orange' }}
-                        onPress={() => {
+                        onPress={async () => {
+                            browserOpenAction('https://spotify.com/logout');
                             router.replace('/');
                         }}
                     />
