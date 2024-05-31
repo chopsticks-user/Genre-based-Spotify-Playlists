@@ -66,18 +66,17 @@ export default function Settings() {
                     />
                 </SettingsSection>
                 <SettingsSection header='accounts'>
-                    <SettingsItemLink
+                    {/* <SettingsItemLink
                         label='Switch Account'
                         icon={{ element: settingsMenuIcons.switchAccount, color: 'orange' }}
                         onPress={async () => {
-                            browserOpenAction('https://spotify.com/logout');
-                            router.replace('/');
                         }}
-                    />
+                    /> */}
                     <SettingsItemLink
                         label='Sign Out'
                         icon={{ element: settingsMenuIcons.signOut, color: 'orange' }}
-                        onPress={() => {
+                        onPress={async () => {
+                            browserOpenAction('https://accounts.spotify.com/logout');
                             router.replace('/');
                         }}
                     />
