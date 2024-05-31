@@ -1,0 +1,54 @@
+import { session } from "./sessions";
+import * as Configs from '@/configs'
+import { modulePath } from "./constants";
+import { Artist, Track } from "./types";
+
+export async function extractArtistsFromTracks(tracks: Track[])
+    : Promise<string[]> {
+    const artists = new Map<string, string>();
+    for (const track of tracks) {
+        for (const artist of track.artists) {
+            if (!artists.has(artist.id)) {
+                artists.set(artist.id, artist.id);
+            }
+        }
+    }
+    return Array.from(artists.values());
+}
+
+function prepareArtistIDForRequest(artistIDs: string[]): string {
+    // !100 ids each
+    const first100Items = artistIDs.slice(0, 100);
+    return first100Items.reduce((acc, item, index) => {
+        if (index === 0) {
+            return acc += item;
+        }
+        return acc += `%${item}`;
+    });
+}
+
+export async function getArtistsFromIDs(artistIDs: string[]): Promise<Artist[]> {
+    try {
+        const response = await fetch(
+            `https://api.spotify.com/v1/artists/ids=${prepareArtistIDForRequest(artistIDs)}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`
+            },
+        });
+
+        return await response.json();
+    } catch (error) {
+        throw Configs.createError(modulePath, arguments.callee.name, error);
+    }
+}
+
+export async function getArtistsFromTracks(tracks: Track[])
+    : Promise<Artist[]> {
+    try {
+        const artistIDs: string[] = await extractArtistsFromTracks(tracks);
+        return await getArtistsFromIDs(artistIDs);
+    } catch (error) {
+        throw Configs.createError(modulePath, arguments.callee.name, error);
+    }
+}
