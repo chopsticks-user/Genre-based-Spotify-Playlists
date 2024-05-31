@@ -6,7 +6,7 @@ import React from 'react'
 export default function Dev() {
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.text}>Dev</Text>
+            <Text style={styles.text}>Library</Text>
         </SafeAreaView>
     )
 }

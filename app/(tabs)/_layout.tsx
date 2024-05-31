@@ -1,10 +1,13 @@
 import { AntDesign } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Stack, Tabs } from 'expo-router'
+import { Stack, Tabs, router } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
 
 export default function TabsLayout() {
+    const browserOpenAction = useWebBrowser();
+
     return (
         <Tabs
             screenOptions={{
@@ -23,28 +26,35 @@ export default function TabsLayout() {
             }}
         >
             <Tabs.Screen
-                name="home"
-                options={{
-                    title: 'Playtify',
-                    tabBarIcon: ({ color }) =>
-                        <FontAwesome size={24} name="home" color={color} />,
-                }} />
-            <Tabs.Screen
                 name="search"
                 options={{
                     title: 'Search',
                     tabBarIcon: ({ color }) =>
                         <AntDesign name="search1" size={24} color="white" />
                 }}
+                listeners={() => ({
+                    tabPress: async (e) => {
+                        e.preventDefault()
+                        await browserOpenAction("https://open.spotify.com/search")
+                    },
+                })}
             />
             <Tabs.Screen
-                name="dev"
+                name="library"
                 options={{
-                    title: 'Dev',
+                    title: 'Library',
                     tabBarIcon: ({ color }) =>
-                        <MaterialIcons name="developer-mode" size={24} color="white" />
+                        <MaterialIcons name="my-library-music" size={24} color="white" />,
                 }}
+
             />
+            <Tabs.Screen
+                name="home"
+                options={{
+                    title: 'Playtify',
+                    tabBarIcon: ({ color }) =>
+                        <FontAwesome size={24} name="home" color={color} />,
+                }} />
             <Tabs.Screen
                 name="playlists"
                 options={{
