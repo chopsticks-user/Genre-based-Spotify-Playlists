@@ -1,11 +1,12 @@
 import { DocumentData, DocumentReference, DocumentSnapshot } from "firebase/firestore";
 
 export interface TrackDAO {
-    spotifyID: string;
+    id: string;
 };
 
 export interface PlaylistDAO {
-    spotifyID: string;
+    id: string;
+    genre: string;
     tracks: TrackDAO[];
 };
 
