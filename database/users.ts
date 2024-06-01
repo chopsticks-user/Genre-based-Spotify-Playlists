@@ -30,19 +30,20 @@ export async function createUser(id: string): Promise<void> {
 }
 
 export async function addUserPlaylists(
-    id: string, playlists: any[]
+    id: string, playlists: PlaylistDAO[]
 ): Promise<void> {
     try {
         const userDocRef = doc(db, 'users', id);
         await updateDoc(userDocRef, {
             playlists: arrayUnion(...playlists),
         });
+        console.log('@/database/addUserPlaylists: playlists added');
     } catch (error) {
         throw new Error(`@/database/addUserPlaylists: ${error}`);
     }
 }
 
-export async function getUserPlaylists(id: string): Promise<any[]> {
+export async function getUserPlaylists(id: string): Promise<PlaylistDAO[]> {
     try {
         const userDocRef = doc(db, 'users', id);
 
@@ -52,7 +53,7 @@ export async function getUserPlaylists(id: string): Promise<any[]> {
                 '@/database/getUserPlaylists: failed to get user playlists, user might not exist');
         }
 
-        return userData?.playlists;
+        return userData?.playlists as PlaylistDAO[];
     } catch (error) {
         throw new Error(`@/database/getUserPlaylists: ${error}`);
     }
