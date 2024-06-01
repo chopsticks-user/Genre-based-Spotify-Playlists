@@ -36,8 +36,12 @@ export default function Playlists() {
         <SafeAreaView style={styles.container}>
             <Button title='Test' onPress={async () => {
                 try {
-                    const userDoc = await tryCreateUser('124456');
-                    console.log(userDoc);
+                    const playlistDoc = await tryCreateGenrePlaylist(
+                        'genre0', async () => {
+                            return 'playlist0';
+                        }
+                    );
+                    // console.log(userDoc);
                 } catch (error) {
                     console.error(error);
                 }
