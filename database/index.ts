@@ -2,15 +2,10 @@ export {
     PlaylistDAO,
     TrackDAO,
     UserDAO,
-    TrackGroup,
 } from './types'
 
 export {
     createUser,
-    // addUserPlaylists,
-    // getUserPlaylistIDs,
-    // tryCreateGenrePlaylist,
-    // getTracksFromGenrePlaylist,
 } from './users';
 
 export {
@@ -20,7 +15,9 @@ export {
 } from './playlists';
 
 export {
-
+    addTracks,
+    getTracks,
+    removeTracks,
 } from './tracks';
 
 

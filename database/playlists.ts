@@ -1,11 +1,9 @@
 import {
-    collection, deleteDoc, doc, getDoc, getDocs, or, query, setDoc, updateDoc,
-    where
+    DocumentData, DocumentReference, collection, deleteDoc, doc,
+    getDoc, getDocs, setDoc,
 } from 'firebase/firestore';
-import { app, db } from './init'
-import {
-    DocumentRef, PlaylistDAO,
-} from './types';
+import { db } from './init'
+import { PlaylistDAO } from './types';
 import { session } from '@/spotify';
 
 export async function getPlaylists(): Promise<PlaylistDAO[]> {
@@ -23,7 +21,8 @@ export async function getPlaylists(): Promise<PlaylistDAO[]> {
 }
 
 export async function addPlaylist(
-    genre: string, fetchPlaylistID: () => Promise<string>): Promise<DocumentRef> {
+    genre: string, fetchPlaylistID: () => Promise<string>
+): Promise<DocumentReference<DocumentData, DocumentData>> {
     try {
         const playlistDocRef = doc(
             db, `/users/${session.userProfile.id}/playlists/${genre}`
@@ -44,7 +43,7 @@ export async function addPlaylist(
     }
 }
 
-export async function removePlaylist(genre: string) {
+export async function removePlaylist(genre: string): Promise<void> {
     try {
         const playlistDocRef = doc(
             db, `/users/${session.userProfile.id}/playlists/${genre}`

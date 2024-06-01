@@ -3,7 +3,9 @@ import {
 } from 'react-native'
 import React from 'react'
 import {
-    createUser, removePlaylist,
+    createUser, removePlaylist, addTracks,
+    getTracks,
+    removeTracks
 } from '@/database';
 import { addPlaylist, getPlaylists } from '@/database/playlists';
 
@@ -15,8 +17,7 @@ export default function Playlists() {
             <Button title='Test' onPress={async () => {
                 try {
                     await createUser();
-                    // await addPlaylist('genre2', getPlaylistID);
-                    // console.log(playlists);
+                    await removeTracks('genre0', [{ id: 'track1' }]);
                 } catch (error) {
                     console.error(error);
                 }

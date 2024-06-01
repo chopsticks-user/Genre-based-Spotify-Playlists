@@ -1,11 +1,8 @@
 import {
-    collection, deleteDoc, doc, getDoc, getDocs, or, query, setDoc, updateDoc,
-    where
+    arrayRemove, arrayUnion, doc, getDoc, updateDoc,
 } from 'firebase/firestore';
-import { app, db } from './init'
-import {
-    DocumentRef, PlaylistDAO, TrackGroup, UserDAO, Document, TrackDAO
-} from './types';
+import { db } from './init'
+import { TrackDAO } from './types';
 import { addPlaylist } from './playlists';
 import { session } from '@/spotify';
 
@@ -13,40 +10,32 @@ export async function addTracks(
     genre: string,
     fetchPlaylistID: () => Promise<string>,
     tracks: TrackDAO[]
-): Promise<void[]> {
+): Promise<void> {
     try {
         const playlistDocRef = await addPlaylist(genre, fetchPlaylistID);
-        return Promise.all(tracks.map(async trackDAO => {
-            const trackDocRef = doc(playlistDocRef, 'tracks', trackDAO.id);
-            const trackDoc = await getDoc(trackDocRef);
-
-            if (trackDoc.exists()) {
-                return;
-            }
-
-            return await setDoc(trackDocRef, {});
-        }));
+        await updateDoc(playlistDocRef, {
+            tracks: arrayUnion(...tracks),
+        });
     } catch (error) {
-        throw new Error(`@/database/addTracksToGenrePlaylists: ${error}`);
+        throw new Error(`@/database/addTracks: ${error}`);
     }
 }
 
 export async function getTracks(genre: string)
-    : Promise<string[]> {
+    : Promise<TrackDAO[]> {
     try {
-        const tracksSnapshot = await getDocs(
-            collection(
-                db, 'users',
-                session.userProfile.id, 'playlists',
-                genre, 'tracks'
-            )
+        const playlistDocRef = doc(
+            db, `/users/${session.userProfile.id}/playlists/${genre}`
         );
 
-        return Promise.all(tracksSnapshot.docs.map(async doc => {
-            return doc.id;
-        }));
+        const playlistSnapshot = await getDoc(playlistDocRef);
+        if (!playlistSnapshot.exists()) {
+            throw new Error('@/database/getTracks: playlist not found');
+        }
+
+        return playlistSnapshot.data().tracks as TrackDAO[];
     } catch (error) {
-        throw new Error(`@/database/getTracksFromGenrePlaylist: ${error}`);
+        throw new Error(`@/database/getTracks: ${error}`);
     }
 }
 
@@ -54,13 +43,14 @@ export async function removeTracks(
     genre: string, tracks: TrackDAO[]
 ): Promise<void> {
     try {
-        const tracksDocRef = doc(
-            db, 'users', session.userProfile.id,
-            'playlists', genre
+        const playlistDocRef = doc(
+            db, `/users/${session.userProfile.id}/playlists/${genre}`
         );
-        // await deleteDoc(tracksDocRef,);
-    } catch (error) {
-        throw new Error(`@/database/removeTracksFromGenrePlaylists: ${error}`);
-    }
 
+        await updateDoc(playlistDocRef, {
+            tracks: arrayRemove(...tracks),
+        });
+    } catch (error) {
+        throw new Error(`@/database/removeTracks: ${error}`);
+    }
 }

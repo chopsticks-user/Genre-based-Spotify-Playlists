@@ -1,12 +1,7 @@
 import {
-    DocumentData, DocumentReference, addDoc, arrayUnion,
-    collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc,
-    where
+    doc, getDoc, setDoc,
 } from 'firebase/firestore';
-import { app, db } from './init'
-import {
-    DocumentRef, PlaylistDAO, TrackGroup, UserDAO, Document, TrackDAO
-} from './types';
+import { db } from './init'
 import { session } from '@/spotify';
 
 export async function createUser(): Promise<void> {
@@ -20,7 +15,6 @@ export async function createUser(): Promise<void> {
             });
         }
 
-        // return userDocRef;
     } catch (error) {
         throw new Error(`@/database/createUser: ${error}`);
     }
