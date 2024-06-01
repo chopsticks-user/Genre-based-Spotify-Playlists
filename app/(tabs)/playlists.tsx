@@ -2,7 +2,10 @@ import {
     StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView
 } from 'react-native'
 import React from 'react'
-import { addUserPlaylists, getUserPlaylists, PlaylistDAO, TrackDAO } from '@/database';
+import {
+    tryCreateGenrePlaylist, tryCreateUser, getUserPlaylists,
+    PlaylistDAO, TrackDAO
+} from '@/database';
 
 const tracks0: TrackDAO[] = [
     { spotifyID: 'track00' },
@@ -20,13 +23,11 @@ const tracks1: TrackDAO[] = [
 
 const playlist0: PlaylistDAO = {
     spotifyID: 'playlist0',
-    genres: ['genre0', 'genre1'],
     tracks: tracks0
 };
 
 const playlist1: PlaylistDAO = {
     spotifyID: 'playlist1',
-    genres: ['genre2'],
     tracks: tracks1
 };
 
@@ -35,10 +36,8 @@ export default function Playlists() {
         <SafeAreaView style={styles.container}>
             <Button title='Test' onPress={async () => {
                 try {
-                    const id = '122457';
-                    await addUserPlaylists(
-                        id, [playlist0, playlist1,]
-                    );
+                    const userDoc = await tryCreateUser('124456');
+                    console.log(userDoc);
                 } catch (error) {
                     console.error(error);
                 }
