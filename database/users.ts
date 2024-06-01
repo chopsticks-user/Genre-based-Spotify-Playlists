@@ -42,9 +42,17 @@ export async function addUserPlaylists(
     }
 }
 
-export async function getUserPlaylists(id: string) {
+export async function getUserPlaylists(id: string): Promise<any[]> {
     try {
         const userDocRef = doc(db, 'users', id);
+
+        const userData = (await getDoc(userDocRef)).data();
+        if (userData === undefined) {
+            throw new Error(
+                '@/database/getUserPlaylists: failed to get user playlists, user might not exist');
+        }
+
+        return userData?.playlists;
     } catch (error) {
         throw new Error(`@/database/getUserPlaylists: ${error}`);
     }

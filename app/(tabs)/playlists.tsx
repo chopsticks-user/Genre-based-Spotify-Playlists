@@ -2,7 +2,7 @@ import {
     StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView
 } from 'react-native'
 import React from 'react'
-import { addUserPlaylists } from '@/database';
+import { addUserPlaylists, getUserPlaylists } from '@/database';
 
 export default function Playlists() {
     return (
@@ -10,7 +10,8 @@ export default function Playlists() {
             <Button title='Test' onPress={async () => {
                 try {
                     const id = '122457';
-                    await addUserPlaylists(id, ['hehe', { test: 'hehe', num: 2 }]);
+                    const playlists = await getUserPlaylists('122457');
+                    console.log(playlists);
                 } catch (error) {
                     console.error(error);
                 }
