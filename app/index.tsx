@@ -37,46 +37,54 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#151718',
-        flex: 1,
-        justifyContent: 'center',
+    titleContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
-        padding: 20,
+        gap: 8,
+    },
+    stepContainer: {
+        gap: 8,
+        marginBottom: 8,
     },
     reactLogo: {
-        height: 300,
-        width: 370,
+        height: 250,
+        width: 400,
         bottom: 0,
         left: 0,
         position: 'absolute',
     },
-    connectButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 15,
-        backgroundColor: '#ECEDEE',
-        borderRadius: 25,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        width: 300,
-    },
-    buttonIcon: {
-        width: 200,
-        height: 100,
-        marginRight: 10,
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
 });
 
+export default function Home() {
+    const promptAsync: SpotifyAPI.PromptAsync =
+        SpotifyAPI.createUserAuthPrompt();
 
+    return (
+        <ParallaxScrollView
+            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+            headerImage={
+                <Image
+                    source={require('@/assets/images/spotify-logo.jpg')}
+                    style={styles.reactLogo}
+                />
+            }>
+            <ThemedView style={styles.stepContainer}>
+                <Button title="Connect to Spotify" onPress={async (event) => {
+                    try {
+                        await SpotifyAPI.initializeSession(promptAsync);
+                        const tracks: Array<SpotifyAPI.Track> =
+                            await getUserSavedTracks();
+                        const artists: Array<SpotifyAPI.Artist> =
+                            await SpotifyAPI.getArtistsFromTracks(tracks);
+                        const genres: Array<string> =
+                            await SpotifyAPI.extractGenresFromArtists(artists);
+                        console.log(genres);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+                } />
+            </ThemedView>
+        </ParallaxScrollView>
+    );
+}
