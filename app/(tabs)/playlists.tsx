@@ -2,16 +2,18 @@ import {
     StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView
 } from 'react-native'
 import React from 'react'
-import { firebaseConfig } from '@/configs';
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getName } from '@/database';
+import { addUserPlaylists } from '@/database';
 
 export default function Playlists() {
     return (
         <SafeAreaView style={styles.container}>
-            <Button title='Read' onPress={async () => {
-                getName();
+            <Button title='Test' onPress={async () => {
+                try {
+                    const id = '122457';
+                    await addUserPlaylists(id, ['hehe', { test: 'hehe', num: 2 }]);
+                } catch (error) {
+                    console.error(error);
+                }
             }} />
         </SafeAreaView>
     )

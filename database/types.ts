@@ -1,19 +1,14 @@
 
 export interface TrackDAO {
-    id: string;
+    spotifyID: string;
 };
 
 export interface PlaylistDAO {
-    id: string;
+    spotifyID: string;
     genres: string[];
     tracks: TrackDAO[];
 };
 
 export interface UserDAO {
-    id: string;
-    info: {
-        spotifyID: string;
-    };
-    name: string;
     playlists: PlaylistDAO[];
 };
