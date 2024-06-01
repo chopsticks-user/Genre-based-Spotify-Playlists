@@ -32,12 +32,12 @@ export default function TabsLayout() {
                     tabBarIcon: ({ color }) =>
                         <AntDesign name="search1" size={24} color="white" />
                 }}
-                listeners={() => ({
-                    tabPress: async (e) => {
-                        e.preventDefault()
-                        await browserOpenAction("https://open.spotify.com/search")
-                    },
-                })}
+            // listeners={() => ({
+            //     tabPress: async (e) => {
+            //         e.preventDefault()
+            //         await browserOpenAction("https://open.spotify.com/search")
+            //     },
+            // })}
             />
             <Tabs.Screen
                 name="library"

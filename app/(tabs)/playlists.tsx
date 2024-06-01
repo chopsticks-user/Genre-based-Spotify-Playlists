@@ -1,27 +1,21 @@
 import {
-    StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView
+    StyleSheet, SafeAreaView
 } from 'react-native'
 import React from 'react'
-import {
-    createUser, removePlaylist, addTracks,
-    getTracks,
-    removeTracks
-} from '@/database';
-import { addPlaylist, getPlaylists } from '@/database/playlists';
 
 export default function Playlists() {
-    const getPlaylistID = async () => 'playlist2';
+    // const getPlaylistID = async () => 'playlist2';
 
     return (
         <SafeAreaView style={styles.container}>
-            <Button title='Test' onPress={async () => {
+            {/* <Button title='Test' onPress={async () => {
                 try {
                     await createUser();
                     await removeTracks('genre0', [{ id: 'track1' }]);
                 } catch (error) {
                     console.error(error);
                 }
-            }} />
+            }} /> */}
         </SafeAreaView>
     );
 }

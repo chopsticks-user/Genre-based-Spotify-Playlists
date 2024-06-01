@@ -6,6 +6,7 @@ export {
     Track,
     TrackItem,
     Image,
+    Playlist,
 } from './types';
 
 export {
