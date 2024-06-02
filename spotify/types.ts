@@ -5,8 +5,8 @@ export type PromptAsync = (options?: AuthSession.AuthRequestPromptOptions | unde
 
 export interface Image {
     url: string;
-    height: number;
-    width: number;
+    height: number | null;
+    width: number | null;
 };
 
 export interface UserProfile {
@@ -124,7 +124,7 @@ export interface TrackItem {
 
 export interface PlaylistOwner {
     external_urls: { spotify: string };
-    followers: { href: string, total: number };
+    followers?: { href: string, total: number };
     href: string;
     id: string;
     type: string;
@@ -170,9 +170,9 @@ export interface PlaylistTrack {
 
 export interface Playlist {
     collaborative: boolean;
-    description: string;
+    description: string | null;
     external_urls: { spotify: string };
-    followers: { href: string, total: number };
+    followers?: { href: string | null, total: number };
     href: string;
     id: string;
     images: Image[];
@@ -189,6 +189,23 @@ export interface Playlist {
         total: number;
         items: PlaylistTrack[];
     };
+    type: string;
+    uri: string;
+};
+
+export interface SimpliedPlaylist {
+    collaborative: boolean;
+    description: string | null;
+    external_urls?: { spotify: string };
+    followers?: { href: string | null, total: number };
+    href: string;
+    id: string;
+    images: Image[];
+    name: string;
+    owner?: PlaylistOwner;
+    public: boolean;
+    snapshot_id: string;
+    tracks?: { href: string, total: number };
     type: string;
     uri: string;
 };

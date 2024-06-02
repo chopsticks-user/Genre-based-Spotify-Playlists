@@ -1,3 +1,4 @@
+import { usePinDimensions } from "@/hooks/usePinDimensions";
 import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
 import { Track } from "@/spotify";
 import { PropsWithChildren } from "react";
@@ -6,50 +7,28 @@ import {
     ImageBackground
 } from "react-native";
 
-const styles = StyleSheet.create({
-    itemContainer: {
-        justifyContent: 'flex-end',
-        borderRadius: 5,
-        padding: 10,
-        margin: 5,
-    },
-    itemName: {
-        fontSize: 16,
-        color: '#fff',
-        fontWeight: '600',
-    },
-    itemCode: {
-        fontWeight: '600',
-        fontSize: 13,
-        color: '#fff',
-    },
-});
-
 interface Props extends PropsWithChildren {
     index: number;
     openBrowserAction: WebBrowserOpenAction;
     data: Track;
 }
 
-export default function TrackPin(props: Props) {
-    const { height, width } = useWindowDimensions();
-
-    const pinWidth = Math.min(
-        width - styles.itemContainer.margin * 2,
-        400
-    );
-    const pinHeight = 200;
-
-    const duration_ms = props.data.duration_ms;
+function getDurationString(duration_ms?: number): string {
     const duration_mins = duration_ms === undefined
         ? 3
         : Math.floor(duration_ms / 60000);
     const duration_secs = duration_ms === undefined
         ? 3
         : Math.round((duration_ms % (duration_mins * 60000)) / 1000);
-    const duration = duration_ms === undefined
-        ? '3:00'
+    return duration_ms === undefined
+        ? '?:??'
         : `${duration_mins}:${duration_secs}`;
+}
+
+export default function TrackPin(props: Props) {
+    const [width, height] = usePinDimensions(styles.itemContainer.margin);
+    const duration = getDurationString(props.data.duration_ms);
+    const imageURI = props.data.album.images[0].url;
 
     return (
         <Pressable
@@ -65,33 +44,69 @@ export default function TrackPin(props: Props) {
                 style={[
                     styles.itemContainer,
                     {
-                        backgroundColor: 'blue',
-                        minWidth: pinWidth,
-                        maxWidth: pinWidth,
-                        minHeight: pinHeight,
-                        maxHeight: pinHeight,
+                        minWidth: width,
+                        maxWidth: width,
+                        minHeight: height,
+                        maxHeight: height,
                     }
                 ]}
+                imageStyle={{ borderRadius: 10 }}
             >
-                <Text style={styles.itemName}>{props.data.name}</Text>
-                <Text style={styles.itemCode}>
-                    {props.data.artists.map(artist => {
-                        return artist.name;
-                    }).reduce((prev, current, index) => {
-                        if (index === 0) {
-                            return current;
+                <View
+                    style={[
+                        styles.textWrapper,
+                        {
+                            backgroundColor: imageURI === undefined ?
+                                styles.itemContainer.backgroundColor : '#000000a0',
                         }
-                        return prev + ' \u25cf ' + current;
-                    })}
-                </Text>
-                <Text style={styles.itemCode}>
-                    {props.data.album.name + ' \u25cf '
-                        + props.data.album.release_date}
-                </Text>
-                <Text style={styles.itemCode}>
-                    {'\u25b6 ' + duration}
-                </Text>
+                    ]}
+                >
+                    <Text style={styles.itemName}>{props.data.name}</Text>
+                    <Text style={styles.itemCode}>
+                        {props.data.artists.map(artist => {
+                            return artist.name;
+                        }).reduce((prev, current, index) => {
+                            if (index === 0) {
+                                return current;
+                            }
+                            return prev + ' \u25cf ' + current;
+                        })}
+                    </Text>
+                    <Text style={styles.itemCode}>
+                        {props.data.album.name + ' \u25cf '
+                            + props.data.album.release_date}
+                    </Text>
+                    <Text style={styles.itemCode}>
+                        {'\u25b6 ' + duration}
+                    </Text>
+                </View>
             </ImageBackground>
         </Pressable>
     );
 }
+
+const styles = StyleSheet.create({
+    itemContainer: {
+        backgroundColor: '#262626',
+        justifyContent: 'flex-end',
+        padding: 10,
+        margin: 5,
+        borderRadius: 10,
+    },
+    textWrapper: {
+        padding: 10,
+        borderRadius: 10,
+    },
+    itemName: {
+        fontSize: 16,
+        color: '#fff',
+        fontWeight: '600',
+        flexWrap: 'wrap',
+    },
+    itemCode: {
+        fontWeight: '600',
+        fontSize: 13,
+        color: '#fff',
+        flexWrap: 'wrap',
+    },
+});
