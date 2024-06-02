@@ -7,7 +7,7 @@ import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 export default function Library() {
     return (
         <SafeAreaView>
-            <ScrollablePinCollection />
+            <ScrollablePinCollection itemType='track' items={[]} />
         </SafeAreaView>
     );
 }

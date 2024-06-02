@@ -7,6 +7,7 @@ export {
     TrackItem,
     Image,
     Playlist,
+    SimpliedPlaylist,
 } from './types';
 
 export {
