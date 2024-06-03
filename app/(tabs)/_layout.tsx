@@ -4,7 +4,6 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Stack, Tabs, router } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
-import { session } from '@/spotify';
 
 export interface SearchParamList {
     Library: { text: string, value: number };
