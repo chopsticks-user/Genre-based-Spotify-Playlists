@@ -1,57 +1,56 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function SearchBar({ onSearch }) {
-    const [searchText, setSearchText] = useState('');
+const SearchBar = ({ placeholder, onSearch, onClear }) => {
+    const [text, setText] = useState('');
 
     const handleClear = () => {
-        setSearchText('');
-        onSearch('');
+        setText('');
+        onClear();
     };
 
     const handleSearch = () => {
-        onSearch(searchText);
+        onSearch(text);
     };
 
     return (
         <View style={styles.container}>
             <TextInput
-                style={styles.searchInput}
-                placeholder="Search"
-                placeholderTextColor="#999"
-                value={searchText}
-                onChangeText={setSearchText}
+                style={styles.input}
+                placeholder={placeholder}
+                placeholderTextColor="gray"
+                value={text}
+                onChangeText={setText}
             />
-            {searchText.length > 0 && (
-                <TouchableOpacity onPress={handleClear} style={styles.icon}>
-                    <Icon name="close" size={20} color="#999" />
-                </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={handleClear} style={styles.icon}>
+                <Icon name="close-circle" size={24} color="white" />
+            </TouchableOpacity>
             <TouchableOpacity onPress={handleSearch} style={styles.icon}>
-                <Icon name="search" size={20} color="#999" />
+                <Icon name="search" size={24} color="white" />
             </TouchableOpacity>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        height: 50,
-        width: '100%',
         borderColor: 'white',
         borderWidth: 1,
-        padding: 10,
-        marginBottom: 20,
+        borderRadius: 5,
+        padding: 5,
+        marginVertical: 10,
     },
-    searchInput: {
-        color: "#FFFFFF",
+    input: {
         flex: 1,
+        color: 'white',
+        padding: 10,
     },
     icon: {
-        padding: 5,
+        paddingHorizontal: 5,
     },
 });
 
+export default SearchBar;
