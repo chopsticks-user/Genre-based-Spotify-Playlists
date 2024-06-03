@@ -1,27 +1,41 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, FlatList, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import SearchBar from '@/components/SearchBar';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Picker } from '@react-native-picker/picker';
 
 export default function Search() {
     const [data, setData] = useState([]);
     const [query, setQuery] = useState('');
+    const [searchBy, setSearchBy] = useState('track'); // Default search by track
 
     // Placeholder function to simulate backend search
-    const simulateBackendSearch = (searchQuery) => {
-        // Generate mock data based on the search query
-        return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
+    const simulateBackendSearch = (searchQuery, searchBy) => {
+        const years = Array.from({ length: 75 }, (_, i) => (1950 + i).toString()); // Years from 1950 to 2024
+        const tracks = Array.from({ length: 100 }, (_, i) => ({
             id: i.toString(),
-            title: `${searchQuery} Song ${i + 1}`,
-            artist: `${searchQuery} Artist ${i + 1}`,
+            title: `Song ${i + 1}`,
+            artist: `Artist ${i + 1}`,
+            year: years[Math.floor(Math.random() * years.length)],
             added: false,
         }));
+
+        return tracks.filter(track => {
+            if (searchBy === 'track') {
+                return track.title.toLowerCase().includes(searchQuery.toLowerCase());
+            } else if (searchBy === 'artist') {
+                return track.artist.toLowerCase().includes(searchQuery.toLowerCase());
+            } else if (searchBy === 'year') {
+                return track.year === searchQuery;
+            }
+            return false;
+        });
     };
 
     const handleSearch = (searchQuery) => {
         setQuery(searchQuery);
         if (searchQuery) {
-            const results = simulateBackendSearch(searchQuery);
+            const results = simulateBackendSearch(searchQuery, searchBy);
             setData(results);
         } else {
             setData([]);
@@ -40,6 +54,7 @@ export default function Search() {
             <Text style={styles.indexText}>{index + 1}</Text>
             <Text style={styles.titleText}>{item.title}</Text>
             <Text style={styles.artistText}>{item.artist}</Text>
+            <Text style={styles.yearText}>{item.year}</Text>
             <TouchableOpacity onPress={() => handleAdd(item)} style={styles.icon}>
                 <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
             </TouchableOpacity>
@@ -48,6 +63,18 @@ export default function Search() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <View style={styles.searchByContainer}>
+                <Text style={styles.searchByText}>Search by</Text>
+                <Picker
+                    selectedValue={searchBy}
+                    style={styles.picker}
+                    onValueChange={(itemValue) => setSearchBy(itemValue)}
+                >
+                    <Picker.Item label="Track" value="track" />
+                    <Picker.Item label="Artist" value="artist" />
+                    <Picker.Item label="Year" value="year" />
+                </Picker>
+            </View>
             <SearchBar onSearch={handleSearch} />
             {query.length > 0 && (
                 <FlatList
@@ -66,6 +93,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
         padding: 10,
     },
+    searchByContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    searchByText: {
+        color: 'white',
+        marginRight: 10,
+    },
+    picker: {
+        flex: 1,
+        color: 'white',
+        backgroundColor: '#333',
+        borderColor: 'white',
+        borderWidth: 1,
+    },
     resultItem: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -80,9 +123,13 @@ const styles = StyleSheet.create({
     },
     titleText: {
         color: 'white',
-        flex: 1,
+        flex: 2,
     },
     artistText: {
+        color: 'white',
+        flex: 2,
+    },
+    yearText: {
         color: 'white',
         flex: 1,
     },
