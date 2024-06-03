@@ -16,9 +16,10 @@ import SettingsItemToggle from '@/components/SettingsItemToggle';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
+import useUserProfile from '@/hooks/useUserProfile';
 
 export default function Settings() {
-    const userProfile = session.userProfile;
+    const userProfile = useUserProfile();
     const browserOpenAction = useWebBrowser();
 
     return (
@@ -37,17 +38,17 @@ export default function Settings() {
                         label='Themes'
                         icon={{ element: settingsMenuIcons.themes, color: '#0096ff' }}
                     />
-                    <SettingsItemLink
+                    {/* <SettingsItemLink
                         label='Playlists'
                         icon={{ element: settingsMenuIcons.playlists, color: '#0096ff' }}
                         onPress={() => {
                             router.push('/settings/playlists');
                         }}
-                    />
-                    <SettingsItemToggle
+                    /> */}
+                    {/* <SettingsItemToggle
                         label='Sync'
                         icon={{ element: settingsMenuIcons.sync, color: '#0096ff' }}
-                    />
+                    /> */}
                 </SettingsSection>
                 <SettingsSection header='help'>
                     <SettingsItemLink

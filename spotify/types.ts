@@ -54,7 +54,7 @@ export interface Track {
     explicit?: boolean;
     external_urls?: { spotify: string };
     href?: string;
-    id?: string;
+    id: string;
     is_playable?: boolean;
     linked_from?: object;
     restrictions?: { reason: string };
@@ -208,4 +208,9 @@ export interface SimpliedPlaylist {
     tracks?: { href: string, total: number };
     type: string;
     uri: string;
+};
+
+export interface ExtractedGenres {
+    trackID: string;
+    genres: string[];
 };

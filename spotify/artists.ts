@@ -23,21 +23,23 @@ function prepareArtistIDForRequest(artistIDs: string[]): string {
         if (index === 0) {
             return acc += item;
         }
-        return acc += `%${item}`;
+        return acc += `%2C${item}`;
     });
 }
 
 export async function getArtistsFromIDs(artistIDs: string[]): Promise<Artist[]> {
     try {
+        const idsString = prepareArtistIDForRequest(artistIDs);
         const response = await fetch(
-            `https://api.spotify.com/v1/artists/ids=${prepareArtistIDForRequest(artistIDs)}`, {
+            `https://api.spotify.com/v1/artists?ids=${idsString}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${session.accessToken}`
             },
         });
 
-        return await response.json();
+        const result = await response.json();
+        return result.artists;
     } catch (error) {
         throw Configs.createError(modulePath, arguments.callee.name, error);
     }
