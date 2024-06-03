@@ -4,7 +4,7 @@ import {
 import { db } from './init'
 import { TrackDAO } from './types';
 import { addPlaylist } from './playlists';
-import { session } from '@/spotify';
+import { session } from '@/spotify/sessions';
 
 export async function addTracks(
     genre: string,

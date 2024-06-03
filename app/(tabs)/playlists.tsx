@@ -1,9 +1,14 @@
 import {
-    StyleSheet, SafeAreaView
+    StyleSheet, SafeAreaView,
+    Pressable, Text,
+    TouchableOpacity
 } from 'react-native'
 import React from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
-import { Playlist, SimpliedPlaylist } from '@/spotify';
+import { ExtractedGenres, Playlist, SimpliedPlaylist, Track, getUserSavedTracks } from '@/spotify';
+import { router } from 'expo-router';
+import { extractGenresFromTracks } from '@/spotify/genres';
+import extractedGenresJson from '@/json/extracted-genres.json';
 
 const playlists: SimpliedPlaylist[] = [
     {
@@ -88,10 +93,79 @@ const playlists: SimpliedPlaylist[] = [
     }
 ];
 
+const genres = (extractedGenresJson as ExtractedGenres[]);
+
+function fixGenreName(genre: string) {
+    return genre.replace(' ', '_');
+}
+
 export default function Playlists() {
+    console.log("Playlists");
+
+    const syncWithSpotify = async () => {
+        try {
+            // const tracks: Track[] = await getUserSavedTracks(); // last updated time
+            // const extractedGenres: ExtractedGenres[] =
+            //     await extractGenresFromTracks(tracks);
+            console.log(genres);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchPlaylists = async () => {
+        try {
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
+            <TouchableOpacity
+                onPress={syncWithSpotify}
+                style={styles.connectButton}
+            >
+                <Text style={styles.buttonText}>Sync with Spotify</Text>
+            </TouchableOpacity>
             <ScrollablePinCollection itemType='playlist' items={playlists} />
         </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        marginTop: 20,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonWrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    connectButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        backgroundColor: '#ECEDEE',
+        borderRadius: 25,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        width: 200,
+        height: 50,
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});
