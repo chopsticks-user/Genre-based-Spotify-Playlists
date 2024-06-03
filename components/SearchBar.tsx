@@ -18,7 +18,7 @@ export default function SearchBar({ onSearch }) {
         <View style={styles.container}>
             <TextInput
                 style={styles.searchInput}
-                placeholder="Search for tracks"
+                placeholder="Search"
                 placeholderTextColor="#999"
                 value={searchText}
                 onChangeText={setSearchText}
@@ -54,3 +54,4 @@ const styles = StyleSheet.create({
         padding: 5,
     },
 });
+
