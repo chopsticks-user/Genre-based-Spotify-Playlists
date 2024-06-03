@@ -13,8 +13,11 @@ export async function getUserSavedTracks(): Promise<Track[]> {
             },
         });
 
+        console.log('getUserSavedTracks');
+
         const data = await response.json();
         const trackItems: TrackItem[] = data.items;
+        // TODO: remove outdated tracks
         return Promise.all(trackItems.map(async item => item.track));
     } catch (error: any) {
         throw Configs.createError(modulePath, arguments.callee.name, error);

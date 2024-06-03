@@ -7,10 +7,11 @@ export {
     TrackItem,
     Image,
     Playlist,
+    SimpliedPlaylist,
+    ExtractedGenres,
 } from './types';
 
 export {
-    session,
     createUserAuthSession,
     getUserProfile,
 } from './sessions';
@@ -31,5 +32,5 @@ export {
 } from './artists';
 
 export {
-    extractGenresFromArtists,
+    // extractGenresFromArtists,
 } from './genres';
