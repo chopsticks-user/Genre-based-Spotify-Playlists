@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, FlatList, Text, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
+import SearchBar from '@/components/SearchBar';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SearchBar from '@/components/SearchBar';  // Make sure the path is correct
+import { Picker } from '@react-native-picker/picker';
 
 export default function Search() {
     const [data, setData] = useState([]);
@@ -9,39 +10,39 @@ export default function Search() {
     const [searchCriteria, setSearchCriteria] = useState([]);
     const [selectedCriteria, setSelectedCriteria] = useState('');
 
-    const handleAddCriteria = useCallback((criteria) => {
+    const handleAddCriteria = (criteria) => {
         if (criteria === 'artist') {
             if (searchCriteria.includes('artist')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'artist' && item !== 'genre'));
-                setQuery(prevQuery => ({ ...prevQuery, artist: '', genre: '' }));
+                setQuery({ ...query, artist: '', genre: '' });
             } else {
                 setSearchCriteria([...searchCriteria, 'artist']);
             }
         } else if (criteria === 'genre') {
             if (searchCriteria.includes('genre')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'genre'));
-                setQuery(prevQuery => ({ ...prevQuery, genre: '' }));
+                setQuery({ ...query, genre: '' });
             } else if (searchCriteria.includes('artist')) {
                 setSearchCriteria([...searchCriteria, 'genre']);
             }
         } else {
             if (searchCriteria.includes(criteria)) {
                 setSearchCriteria(searchCriteria.filter(item => item !== criteria));
-                setQuery(prevQuery => ({ ...prevQuery, [criteria]: '' }));
+                setQuery({ ...query, [criteria]: '' });
             } else {
                 setSearchCriteria([...searchCriteria, criteria]);
             }
         }
         setSelectedCriteria('');
-    }, [searchCriteria]);
+    };
 
-    const handleSearch = useCallback(() => {
+    const handleSearch = () => {
         // Placeholder function to simulate backend search
         const results = simulateBackendSearch(query);
         setData(results);
-    }, [query]);
+    };
 
-    const simulateBackendSearch = useCallback((searchQuery) => {
+    const simulateBackendSearch = (searchQuery) => {
         // Generate mock data based on the search query and searchBy criteria
         return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
             id: i.toString(),
@@ -51,16 +52,16 @@ export default function Search() {
             genre: `${searchQuery.genre} Genre`,
             added: false,
         }));
-    }, []);
+    };
 
-    const handleAdd = useCallback((item) => {
+    const handleAdd = (item) => {
         const newData = data.map(track =>
             track.id === item.id ? { ...track, added: !track.added } : track
         );
         setData(newData);
-    }, [data]);
+    };
 
-    const renderItem = useCallback(({ item, index }) => (
+    const renderItem = ({ item, index }) => (
         <View style={styles.resultItem}>
             <Text style={styles.indexText}>{index + 1}</Text>
             <Text style={styles.titleText}>{item.name}</Text>
@@ -70,10 +71,10 @@ export default function Search() {
                 <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
             </TouchableOpacity>
         </View>
-    ), [handleAdd]);
+    );
 
-    const renderHeader = useCallback(() => (
-        <View style={styles.criteriaContainer}>
+    return (
+        <SafeAreaView style={styles.container}>
             <View style={styles.searchByContainer}>
                 <Text style={styles.searchByText}>Search by</Text>
                 <View style={styles.pickerContainer}>
@@ -113,175 +114,159 @@ export default function Search() {
             {searchCriteria.includes('track') && (
                 <SearchBar
                     placeholder="Search by track"
-                    value={query.track}
-                    onChangeText={(text) => setQuery({ ...query, track: text })}
-                    onClear={() => setQuery({ ...query, track: '' })}
-                />
-            )}
+                                        onSearch={(text) => setQuery({ ...query, track: text })}
+                                        onClear={() => setQuery({ ...query, track: '' })}
+                                    />
+                                )}
 
-            {searchCriteria.includes('artist') && (
-                <>
-                    <SearchBar
-                        placeholder="Search by artist"
-                        value={query.artist}
-                        onChangeText={(text) => setQuery({ ...query, artist: text })}
-                        onClear={() => setQuery({ ...query, artist: '' })}
-                    />
-                    {searchCriteria.includes('genre') && (
-                        <SearchBar
-                            placeholder="Search by genre"
-                            value={query.genre}
-                            onChangeText={(text) => setQuery({ ...query, genre: text })}
-                            onClear={() => setQuery({ ...query, genre: '' })}
-                        />
-                    )}
-                </>
-            )}
+                                {searchCriteria.includes('artist') && (
+                                    <>
+                                        <SearchBar
+                                            placeholder="Search by artist"
+                                            onSearch={(text) => setQuery({ ...query, artist: text })}
+                                            onClear={() => setQuery({ ...query, artist: '' })}
+                                        />
+                                        {searchCriteria.includes('genre') && (
+                                            <SearchBar
+                                                placeholder="Search by genre"
+                                                onSearch={(text) => setQuery({ ...query, genre: text })}
+                                                onClear={() => setQuery({ ...query, genre: '' })}
+                                            />
+                                        )}
+                                    </>
+                                )}
 
-            {searchCriteria.includes('year') && (
-                <View style={styles.yearFieldContainer}>
-                    <TextInput
-                        style={[styles.input, styles.yearInput]}
-                        placeholder="min year"
-                        placeholderTextColor="gray"
-                        keyboardType="numeric"
-                        onChangeText={(text) => setQuery({ ...query, minYear: text })}
-                        value={query.minYear}
-                    />
-                    <TextInput
-                        style={[styles.input, styles.yearInput]}
-                        placeholder="max year"
-                        placeholderTextColor="gray"
-                        keyboardType="numeric"
-                        onChangeText={(text) => setQuery({ ...query, maxYear: text })}
-                        value={query.maxYear}
-                    />
-                </View>
-            )}
+                                {searchCriteria.includes('year') && (
+                                    <View style={styles.yearFieldContainer}>
+                                        <TextInput
+                                            style={[styles.input, styles.yearInput]}
+                                            placeholder="min year"
+                                            placeholderTextColor="gray"
+                                            keyboardType="numeric"
+                                            onChangeText={(text) => setQuery({ ...query, minYear: text })}
+                                        />
+                                        <TextInput
+                                            style={[styles.input, styles.yearInput]}
+                                            placeholder="max year"
+                                            placeholderTextColor="gray"
+                                            keyboardType="numeric"
+                                            onChangeText={(text) => setQuery({ ...query, maxYear: text })}
+                                        />
+                                    </View>
+                                )}
 
-            <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-                <Text style={styles.searchButtonText}>Search</Text>
-            </TouchableOpacity>
-        </View>
-    ), [handleAddCriteria, query, searchCriteria, handleSearch]);
+                                <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+                                    <Text style={styles.searchButtonText}>Search</Text>
+                                </TouchableOpacity>
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data={data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                ListHeaderComponent={renderHeader}
-                contentContainerStyle={styles.resultsContainer}
-                keyboardShouldPersistTaps="always"
-            />
-        </SafeAreaView>
-    );
-}
+                                {data.length > 0 && (
+                                    <FlatList
+                                        data={data}
+                                        renderItem={renderItem}
+                                        keyExtractor={(item) => item.id}
+                                    />
+                                )}
+                            </SafeAreaView>
+                        );
+                    }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#000000',
-        padding: 10,
-    },
-    criteriaContainer: {
-        paddingBottom: 20,
-        backgroundColor: '#000000',
-    },
-    searchByContainer: {
-        marginBottom: 10,
-    },
-    searchByText: {
-        color: 'white',
-        marginBottom: 5,
-    },
-    pickerContainer: {
-        backgroundColor: '#333',
-        borderRadius: 5,
-        borderColor: 'white',
-        borderWidth: 1,
-    },
-    criteriaItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-    },
-    indentedItem: {
-        paddingLeft: 30,
-    },
-    criteriaText: {
-        color: 'white',
-    },
-    checkbox: {
-        width: 20,
-        height: 20,
-        borderWidth: 1,
-        borderColor: 'white',
-        marginRight: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-    },
-    separator: {
-        height: 1,
-        backgroundColor: 'white',
-    },
-    input: {
-        color: 'white',
-        paddingHorizontal: 10,
-        backgroundColor: '#333',
-        borderRadius: 5,
-        borderColor: 'white',
-        borderWidth: 1,
-        marginBottom: 10,
-    },
-    yearFieldContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    yearInput: {
-        width: '48%',
-    },
-    searchButton: {
-        backgroundColor: 'green',
-        borderRadius: 5,
-        padding: 10,
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    searchButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    resultItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderColor: 'white',
-        borderWidth: 1,
-        padding: 15,
-        marginVertical: 5,
-    },
-    indexText: {
-        color: 'white',
-        width: 30,
-    },
-    titleText: {
-        color: 'white',
-        flex: 2,
-    },
-    artistText: {
-        color: 'white',
-        flex: 2,
-    },
-    yearText: {
-        color: 'white',
-        flex: 1,
-    },
-    resultsContainer: {
-        paddingBottom: 20,
-    },
-    icon: {
-        paddingLeft: 10,
-    },
-});
+                    const styles = StyleSheet.create({
+                        container: {
+                            flex: 1,
+                            backgroundColor: '#000000',
+                            padding: 10,
+                        },
+                        searchByContainer: {
+                            marginVertical: 10,
+                        },
+                        searchByText: {
+                            color: 'white',
+                            marginBottom: 10,
+                        },
+                        pickerContainer: {
+                            backgroundColor: '#333',
+                            borderColor: 'white',
+                            borderWidth: 1,
+                        },
+                        criteriaItem: {
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 10,
+                            paddingHorizontal: 15,
+                        },
+                        indentedItem: {
+                            paddingLeft: 30,
+                        },
+                        checkbox: {
+                            width: 20,
+                            height: 20,
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginRight: 10,
+                        },
+                        criteriaText: {
+                            color: 'white',
+                        },
+                        separator: {
+                            height: 1,
+                            backgroundColor: 'white',
+                            marginHorizontal: 15,
+                        },
+                        icon: {
+                            paddingLeft: 10,
+                        },
+                        input: {
+                            flex: 1,
+                            color: 'white',
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            padding: 10,
+                            marginRight: 10,
+                        },
+                        yearFieldContainer: {
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginVertical: 10,
+                        },
+                        yearInput: {
+                            flex: 0.5,
+                            marginRight: 10,
+                        },
+                        searchButton: {
+                            backgroundColor: 'green',
+                            padding: 10,
+                            alignItems: 'center',
+                            marginVertical: 10,
+                        },
+                        searchButtonText: {
+                            color: 'white',
+                            fontWeight: 'bold',
+                        },
+                        resultItem: {
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            padding: 15,
+                            marginVertical: 5,
+                        },
+                        indexText: {
+                            color: 'white',
+                            width: 30,
+                        },
+                        titleText: {
+                            color: 'white',
+                            flex: 2,
+                        },
+                        artistText: {
+                            color: 'white',
+                            flex: 2,
+                        },
+                        yearText: {
+                            color: 'white',
+                            flex: 1,
+                        },
+                    });
