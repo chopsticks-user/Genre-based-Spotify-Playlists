@@ -1,5 +1,5 @@
-import { SafeAreaView, useWindowDimensions } from 'react-native'
-import React, { useState } from 'react'
+import { SafeAreaView, useWindowDimensions, StyleSheet, Text, View } from 'react-native'
+import React from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import { Track } from '@/spotify';
 
@@ -166,8 +166,28 @@ const tracks: Track[] = [
 
 export default function Home() {
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.subHeaderText}>Your recommended tracks</Text>
+            </View>
             <ScrollablePinCollection itemType='track' items={tracks} />
         </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    subHeaderText: {
+        fontSize: 18,
+        color: 'white',
+    }
+});
