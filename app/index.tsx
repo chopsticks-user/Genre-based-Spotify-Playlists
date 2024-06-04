@@ -1,9 +1,3 @@
-import { useEffect, useState } from 'react'
-import { View, Text, SafeAreaView, Button, Image, StyleSheet, Platform } from 'react-native'
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedView } from '@/components/ThemedView';
-import * as SpotifyAPI from '@/spotifyAPI'
-import { getUserSavedTracks } from '@/spotifyAPI/tracks';
 import { useEffect, useRef, useState } from 'react'
 import {
     View, Text, SafeAreaView, Button, Image, StyleSheet,
@@ -17,6 +11,7 @@ export default function Home() {
     const authSession = useSpotifyAuth();
 
     const [isLoading, setIsLoading] = useState(true);
+    
     if (isLoading === true) {
         return <SplashScreen onLoadingComplete={() => {
             setIsLoading(false);
@@ -35,7 +30,7 @@ export default function Home() {
                         // * For production
                         const success = await authSession();
                         if (success === true) {
-                            router.replace('/home');
+                            router.replace('/welcome');
                         }
 
                         // * For development
@@ -54,98 +49,45 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        flexDirection: 'row',
-    titleContainer: {
-        flexDirection: 'row',
+    container: {
+        backgroundColor: '#151718',
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        gap: 8,
-    },
-    stepContainer: {
-        gap: 8,
-        marginBottom: 8,
-        gap: 8,
-    },
-    stepContainer: {
-        gap: 8,
-        marginBottom: 8,
+        padding: 20,
     },
     reactLogo: {
-        height: 250,
-        width: 400,
-        height: 250,
-        width: 400,
+        height: 300,
+        width: 370,
         bottom: 0,
         left: 0,
         position: 'absolute',
     },
+    connectButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        backgroundColor: '#ECEDEE',
+        borderRadius: 25,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        width: 300,
+    },
+    buttonIcon: {
+        width: 200,
+        height: 100,
+        marginRight: 10,
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
 
-export default function Home() {
-    const promptAsync: SpotifyAPI.PromptAsync =
-        SpotifyAPI.createUserAuthPrompt();
-
-    return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-            headerImage={
-                <Image
-                    source={require('@/assets/images/spotify-logo.jpg')}
-                    style={styles.reactLogo}
-                />
-            }>
-            <ThemedView style={styles.stepContainer}>
-                <Button title="Connect to Spotify" onPress={async (event) => {
-                    try {
-                        await SpotifyAPI.initializeSession(promptAsync);
-                        const tracks: Array<SpotifyAPI.Track> =
-                            await getUserSavedTracks();
-                        const artists: Array<SpotifyAPI.Artist> =
-                            await SpotifyAPI.getArtistsFromTracks(tracks);
-                        const genres: Array<string> =
-                            await SpotifyAPI.extractGenresFromArtists(artists);
-                        console.log(genres);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-                } />
-            </ThemedView>
-        </ParallaxScrollView>
-    );
-}
-});
-
-export default function Home() {
-    const promptAsync: SpotifyAPI.PromptAsync =
-        SpotifyAPI.createUserAuthPrompt();
-
-    return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-            headerImage={
-                <Image
-                    source={require('@/assets/images/spotify-logo.jpg')}
-                    style={styles.reactLogo}
-                />
-            }>
-            <ThemedView style={styles.stepContainer}>
-                <Button title="Connect to Spotify" onPress={async (event) => {
-                    try {
-                        await SpotifyAPI.initializeSession(promptAsync);
-                        const tracks: Array<SpotifyAPI.Track> =
-                            await getUserSavedTracks();
-                        const artists: Array<SpotifyAPI.Artist> =
-                            await SpotifyAPI.getArtistsFromTracks(tracks);
-                        const genres: Array<string> =
-                            await SpotifyAPI.extractGenresFromArtists(artists);
-                        console.log(genres);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-                } />
-            </ThemedView>
-        </ParallaxScrollView>
-    );
-}
