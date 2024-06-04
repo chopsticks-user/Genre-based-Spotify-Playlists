@@ -12,6 +12,7 @@ export default function Home() {
     const authSession = useSpotifyAuth();
 
     const [isLoading, setIsLoading] = useState(true);
+    
     if (isLoading === true) {
         return <SplashScreen onLoadingComplete={() => {
             setIsLoading(false);
@@ -31,7 +32,7 @@ export default function Home() {
                         const success = await authSession();
                         if (success === true) {
                             createUser();
-                            router.replace('/home');
+                            router.replace('/welcome');
                         }
 
                         // * For development
@@ -91,5 +92,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
 
