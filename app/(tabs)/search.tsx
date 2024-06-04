@@ -2,10 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SearchBar from '@/components/SearchBar';  // Make sure the path is correct
-import { SearchQuery } from '@/spotify';
+import { SearchQuery, Track, searchTracks } from '@/spotify';
+import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 
 export default function Search() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<Track[]>([]);
     const [query, setQuery] = useState<SearchQuery>({ track: '', artist: '', genre: '', minYear: '', maxYear: '' });
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
     const [selectedCriteria, setSelectedCriteria] = useState('');
@@ -36,46 +37,50 @@ export default function Search() {
         setSelectedCriteria('');
     }, [searchCriteria]);
 
-    const handleSearch = useCallback(() => {
+    const handleSearch = useCallback(async () => {
         // Placeholder function to simulate backend search
-        const results = simulateBackendSearch(query);
-        setData(results);
+        // const results = simulateBackendSearch(query);
+        const [next, tracks] = await searchTracks(query);
+        // 100
+        // console.log(tracks[0].artists[0].name);
+        // console.log(tracks[0].name);
+        setData(tracks);
     }, [query]);
 
-    const simulateBackendSearch = useCallback((searchQuery: any) => {
-        // Generate mock data based on the search query and searchBy criteria
-        return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
-            id: i.toString(),
-            name: `${searchQuery.track} Song ${i + 1}`,
-            artists: [{ name: `${searchQuery.artist} Artist ${i + 1}` }],
-            album: { release_date: `${1950 + i}` },
-            genre: `${searchQuery.genre} Genre`,
-            added: false,
-        }));
-    }, []);
+    // const simulateBackendSearch = useCallback((searchQuery: any) => {
+    //     // Generate mock data based on the search query and searchBy criteria
+    //     return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
+    //         id: i.toString(),
+    //         name: `${searchQuery.track} Song ${i + 1}`,
+    //         artists: [{ name: `${searchQuery.artist} Artist ${i + 1}` }],
+    //         album: { release_date: `${1950 + i}` },
+    //         genre: `${searchQuery.genre} Genre`,
+    //         added: false,
+    //     }));
+    // }, []);
 
-    const handleAdd = useCallback((item: any) => {
-        const newData = data.map(track =>
-            track.id === item.id ? { ...track, added: !track.added } : track
-        );
-        setData(newData);
-    }, [data]);
+    // const handleAdd = useCallback((item: any) => {
+    //     const newData = data.map(track =>
+    //         track.id === item.id ? { ...track, added: !track.added } : track
+    //     );
+    //     setData(newData);
+    // }, [data]);
 
-    const renderItem = useCallback(({ item, index }: any) => (
-        <View style={styles.resultItem} key={item.id}>
-            <Text style={styles.indexText}>{index + 1}</Text>
-            <Text style={styles.titleText}>{item.name}</Text>
-            <Text
-                style={styles.artistText}
-            >
-                {item.artists.map((artist: any) => artist.name).join(', ')}
-            </Text>
-            <Text style={styles.yearText}>{item.album.release_date.split('-')[0]}</Text>
-            <TouchableOpacity onPress={() => handleAdd(item)} style={styles.icon}>
-                <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
-            </TouchableOpacity>
-        </View>
-    ), [handleAdd]);
+    // const renderItem = useCallback(({ item, index }: any) => (
+    //     <View style={styles.resultItem} key={item.id}>
+    //         <Text style={styles.indexText}>{index + 1}</Text>
+    //         <Text style={styles.titleText}>{item.name}</Text>
+    //         <Text
+    //             style={styles.artistText}
+    //         >
+    //             {item.artists.map((artist: any) => artist.name).join(', ')}
+    //         </Text>
+    //         <Text style={styles.yearText}>{item.album.release_date.split('-')[0]}</Text>
+    //         <TouchableOpacity onPress={() => handleAdd(item)} style={styles.icon}>
+    //             <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
+    //         </TouchableOpacity>
+    //     </View>
+    // ), [handleAdd]);
 
     const renderHeader = useCallback(() => (
         <View style={styles.criteriaContainer}>
@@ -175,11 +180,15 @@ export default function Search() {
             <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                     {renderHeader()}
-                    {data.map((item, index) => (
+                    {/* {data.map((item, index) => (
                         <View key={item.id}>
                             {renderItem({ item, index })}
                         </View>
-                    ))}
+                    ))} */}
+                    <ScrollablePinCollection
+                        itemType='track'
+                        items={data}
+                    />
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

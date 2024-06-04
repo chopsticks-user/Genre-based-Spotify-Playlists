@@ -6,6 +6,7 @@ import {
 import SplashScreen from '@/components/SplashScreen';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { router } from 'expo-router';
+import { createUser } from '@/database';
 
 export default function Home() {
     const authSession = useSpotifyAuth();
@@ -29,6 +30,7 @@ export default function Home() {
                         // * For production
                         const success = await authSession();
                         if (success === true) {
+                            createUser();
                             router.replace('/home');
                         }
 

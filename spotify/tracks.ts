@@ -49,7 +49,7 @@ export async function searchTracks(
     try {
         offset = (offset === undefined ? 0 : offset);
         const response = await fetch(
-            `https://api.spotify.com/v1/search?q=${prepareSearchExtension(searchQuery)}&type=track&limit=1&offset=${offset}`, {
+            `https://api.spotify.com/v1/search?q=${prepareSearchExtension(searchQuery)}&type=track&limit=50&offset=${offset}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${session.accessToken}`
