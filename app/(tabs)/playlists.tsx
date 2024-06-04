@@ -139,6 +139,13 @@ export default function Playlists() {
                 <Text style={styles.buttonText}>Sync with Spotify</Text>
             </TouchableOpacity>
             <ScrollablePinCollection itemType='playlist' items={playlists} />
+            <TouchableOpacity
+                onPress={syncWithSpotify}
+                style={styles.connectButton}
+            >
+                <Text style={styles.buttonText}>Sync with Spotify</Text>
+            </TouchableOpacity>
+            <ScrollablePinCollection itemType='playlist' items={playlists} />
         </SafeAreaView>
     );
 }
@@ -151,6 +158,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonWrapper: {
+        marginTop: 20,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -176,5 +184,5 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 16,
         fontWeight: 'bold',
-    },
+    }
 });

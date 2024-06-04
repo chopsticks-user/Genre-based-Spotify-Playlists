@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { StyleSheet, View, FlatList, Text, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
 import SearchBar from '@/components/SearchBar';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
+=======
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import SearchBar from '@/components/SearchBar';  // Make sure the path is correct
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
 
 interface Query {
     track: string;
@@ -18,30 +25,47 @@ export default function Search() {
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
     const [selectedCriteria, setSelectedCriteria] = useState('');
 
+<<<<<<< HEAD
     const handleAddCriteria = (criteria: any) => {
         if (criteria === 'artist') {
             if (searchCriteria.includes('artist')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'artist' && item !== 'genre'));
                 setQuery({ ...query, artist: '', genre: '' });
+=======
+    const handleAddCriteria = useCallback((criteria) => {
+        if (criteria === 'artist') {
+            if (searchCriteria.includes('artist')) {
+                setSearchCriteria(searchCriteria.filter(item => item !== 'artist' && item !== 'genre'));
+                setQuery(prevQuery => ({ ...prevQuery, artist: '', genre: '' }));
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
             } else {
                 setSearchCriteria([...searchCriteria, 'artist']);
             }
         } else if (criteria === 'genre') {
             if (searchCriteria.includes('genre')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'genre'));
+<<<<<<< HEAD
                 setQuery({ ...query, genre: '' });
+=======
+                setQuery(prevQuery => ({ ...prevQuery, genre: '' }));
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
             } else if (searchCriteria.includes('artist')) {
                 setSearchCriteria([...searchCriteria, 'genre']);
             }
         } else {
             if (searchCriteria.includes(criteria)) {
                 setSearchCriteria(searchCriteria.filter(item => item !== criteria));
+<<<<<<< HEAD
                 setQuery({ ...query, [criteria]: '' });
+=======
+                setQuery(prevQuery => ({ ...prevQuery, [criteria]: '' }));
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
             } else {
                 setSearchCriteria([...searchCriteria, criteria]);
             }
         }
         setSelectedCriteria('');
+<<<<<<< HEAD
     };
 
     const handleSearch = () => {
@@ -51,6 +75,17 @@ export default function Search() {
     };
 
     const simulateBackendSearch = (searchQuery: any) => {
+=======
+    }, [searchCriteria]);
+
+    const handleSearch = useCallback(() => {
+        // Placeholder function to simulate backend search
+        const results = simulateBackendSearch(query);
+        setData(results);
+    }, [query]);
+
+    const simulateBackendSearch = useCallback((searchQuery) => {
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
         // Generate mock data based on the search query and searchBy criteria
         return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
             id: i.toString(),
@@ -60,17 +95,30 @@ export default function Search() {
             genre: `${searchQuery.genre} Genre`,
             added: false,
         }));
+<<<<<<< HEAD
     };
 
     const handleAdd = (item: any) => {
+=======
+    }, []);
+
+    const handleAdd = useCallback((item) => {
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
         const newData = data.map(track =>
             track.id === item.id ? { ...track, added: !track.added } : track
         );
         setData(newData);
+<<<<<<< HEAD
     };
 
     const renderItem = ({ item, index }: { item: any, index: number }) => (
         <View style={styles.resultItem}>
+=======
+    }, [data]);
+
+    const renderItem = useCallback(({ item, index }) => (
+        <View style={styles.resultItem} key={item.id}>
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
             <Text style={styles.indexText}>{index + 1}</Text>
             <Text style={styles.titleText}>{item.name}</Text>
             <Text
@@ -83,6 +131,7 @@ export default function Search() {
                 <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
             </TouchableOpacity>
         </View>
+<<<<<<< HEAD
     );
 
     return (
@@ -180,6 +229,117 @@ export default function Search() {
             )}
         </SafeAreaView>
     );
+=======
+    ), [handleAdd]);
+
+    const renderHeader = useCallback(() => (
+        <View style={styles.criteriaContainer}>
+            <View style={styles.searchByContainer}>
+                <Text style={styles.searchByText}>Search by</Text>
+                <View style={styles.pickerContainer}>
+                    <TouchableOpacity onPress={() => handleAddCriteria('track')} style={styles.criteriaItem}>
+                        <View style={styles.checkbox}>
+                            {searchCriteria.includes('track') && <Icon name="checkmark" size={16} color="black" />}
+                        </View>
+                        <Text style={styles.criteriaText}>Track</Text>
+                    </TouchableOpacity>
+                    <View style={styles.separator} />
+                    <TouchableOpacity onPress={() => handleAddCriteria('artist')} style={styles.criteriaItem}>
+                        <View style={styles.checkbox}>
+                            {searchCriteria.includes('artist') && <Icon name="checkmark" size={16} color="black" />}
+                        </View>
+                        <Text style={styles.criteriaText}>Artist</Text>
+                    </TouchableOpacity>
+                    {searchCriteria.includes('artist') && (
+                        <>
+                            <TouchableOpacity onPress={() => handleAddCriteria('genre')} style={[styles.criteriaItem, styles.indentedItem]}>
+                                <View style={styles.checkbox}>
+                                    {searchCriteria.includes('genre') && <Icon name="checkmark" size={16} color="black" />}
+                                </View>
+                                <Text style={styles.criteriaText}>Genre</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+                    <View style={styles.separator} />
+                    <TouchableOpacity onPress={() => handleAddCriteria('year')} style={styles.criteriaItem}>
+                        <View style={styles.checkbox}>
+                            {searchCriteria.includes('year') && <Icon name="checkmark" size={16} color="black" />}
+                        </View>
+                        <Text style={styles.criteriaText}>Year</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {searchCriteria.includes('track') && (
+                <SearchBar
+                    placeholder="Search by track"
+                    value={query.track}
+                    onChangeText={(text) => setQuery({ ...query, track: text })}
+                    onClear={() => setQuery({ ...query, track: '' })}
+                />
+            )}
+
+            {searchCriteria.includes('artist') && (
+                <>
+                    <SearchBar
+                        placeholder="Search by artist"
+                        value={query.artist}
+                        onChangeText={(text) => setQuery({ ...query, artist: text })}
+                        onClear={() => setQuery({ ...query, artist: '' })}
+                    />
+                    {searchCriteria.includes('genre') && (
+                        <SearchBar
+                            placeholder="Search by genre"
+                            value={query.genre}
+                            onChangeText={(text) => setQuery({ ...query, genre: text })}
+                            onClear={() => setQuery({ ...query, genre: '' })}
+                        />
+                    )}
+                </>
+            )}
+
+            {searchCriteria.includes('year') && (
+                <View style={styles.yearFieldContainer}>
+                    <TextInput
+                        style={[styles.input, styles.yearInput]}
+                        placeholder="min year"
+                        placeholderTextColor="gray"
+                        keyboardType="numeric"
+                        onChangeText={(text) => setQuery({ ...query, minYear: text })}
+                        value={query.minYear}
+                    />
+                    <TextInput
+                        style={[styles.input, styles.yearInput]}
+                        placeholder="max year"
+                        placeholderTextColor="gray"
+                        keyboardType="numeric"
+                        onChangeText={(text) => setQuery({ ...query, maxYear: text })}
+                        value={query.maxYear}
+                    />
+                </View>
+            )}
+
+            <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+                <Text style={styles.searchButtonText}>Search</Text>
+            </TouchableOpacity>
+        </View>
+    ), [handleAddCriteria, query, searchCriteria, handleSearch]);
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    {renderHeader()}
+                    {data.map((item, index) => (
+                        <View key={item.id}>
+                            {renderItem({ item, index })}
+                        </View>
+                    ))}
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
+    );
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
 }
 
 const styles = StyleSheet.create({
@@ -188,6 +348,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
         padding: 10,
     },
+<<<<<<< HEAD
     searchByContainer: {
         marginVertical: 10,
     },
@@ -197,18 +358,39 @@ const styles = StyleSheet.create({
     },
     pickerContainer: {
         backgroundColor: '#333',
+=======
+    criteriaContainer: {
+        paddingBottom: 20,
+        backgroundColor: '#000000',
+    },
+    searchByContainer: {
+        marginBottom: 10,
+    },
+    searchByText: {
+        color: 'white',
+        marginBottom: 5,
+    },
+    pickerContainer: {
+        backgroundColor: '#333',
+        borderRadius: 5,
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
         borderColor: 'white',
         borderWidth: 1,
     },
     criteriaItem: {
         flexDirection: 'row',
         alignItems: 'center',
+<<<<<<< HEAD
         paddingVertical: 10,
         paddingHorizontal: 15,
+=======
+        padding: 10,
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
     },
     indentedItem: {
         paddingLeft: 30,
     },
+<<<<<<< HEAD
     checkbox: {
         width: 20,
         height: 20,
@@ -221,10 +403,25 @@ const styles = StyleSheet.create({
     },
     criteriaText: {
         color: 'white',
+=======
+    criteriaText: {
+        color: 'white',
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderWidth: 1,
+        borderColor: 'white',
+        marginRight: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
     },
     separator: {
         height: 1,
         backgroundColor: 'white',
+<<<<<<< HEAD
         marginHorizontal: 15,
     },
     icon: {
@@ -252,6 +449,31 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         marginVertical: 10,
+=======
+    },
+    input: {
+        color: 'white',
+        paddingHorizontal: 10,
+        backgroundColor: '#333',
+        borderRadius: 5,
+        borderColor: 'white',
+        borderWidth: 1,
+        marginBottom: 10,
+    },
+    yearFieldContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    yearInput: {
+        width: '48%',
+    },
+    searchButton: {
+        backgroundColor: 'green',
+        borderRadius: 5,
+        padding: 10,
+        alignItems: 'center',
+        marginTop: 10,
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
     },
     searchButtonText: {
         color: 'white',
@@ -281,4 +503,18 @@ const styles = StyleSheet.create({
         color: 'white',
         flex: 1,
     },
+<<<<<<< HEAD
 });
+=======
+    resultsContainer: {
+        paddingBottom: 20,
+    },
+    icon: {
+        paddingLeft: 10,
+    },
+    footerSpace: {
+        height: 200,
+    },
+});
+ //updating for commit
+>>>>>>> 3c1b49bec23685c2d0cc3c11de8c69626b1d0778
