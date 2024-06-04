@@ -1,10 +1,14 @@
+import { addTracks } from "@/database";
 import { usePinDimensions } from "@/hooks/usePinDimensions";
 import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
-import { Track } from "@/spotify";
-import { PropsWithChildren } from "react";
+import { ExtractedGenres, Track, createUserPlaylist } from "@/spotify";
+import { extractGenresFromTracks } from "@/spotify/genres";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { PropsWithChildren, useEffect, useState } from "react";
 import {
     Pressable, View, StyleSheet, useWindowDimensions, Text,
-    ImageBackground
+    ImageBackground,
+    TouchableOpacity
 } from "react-native";
 
 interface Props extends PropsWithChildren {
@@ -29,16 +33,31 @@ export default function TrackPin(props: Props) {
     const [width, height] = usePinDimensions(styles.itemContainer.margin);
     const duration = getDurationString(props.data.duration_ms);
     const imageURI = props.data.album.images[0].url;
+    const [add, setAdd] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (add) {
+            const genresPromise = extractGenresFromTracks([props.data]);
+            genresPromise.then(res => {
+                const { trackID, genres }: ExtractedGenres = res[0];
+                console.log(genres);
+                genres.forEach(genre => {
+                    addTracks(genre, async () => {
+                        const playlist = await createUserPlaylist(
+                            genre, true, false, 'Created by Playtify'
+                        );
+                        return playlist.id;
+                    }, [{ id: trackID }]);
+                });
+            }).catch(err => {
+                console.error(err);
+            });
+        }
+    }, [add]);
 
     return (
         <Pressable
             key={props.index}
-            onPress={async () => {
-                const url = props.data.external_urls?.spotify;
-                if (url !== undefined) {
-                    await props.openBrowserAction(url);
-                }
-            }}
         >
             <ImageBackground source={{ uri: props.data.album.images[0].url }}
                 style={[
@@ -52,6 +71,29 @@ export default function TrackPin(props: Props) {
                 ]}
                 imageStyle={{ borderRadius: 10 }}
             >
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setAdd(added => !added);
+                        }}
+                    >
+                        {add
+                            ? <Ionicons name="checkmark-circle" size={36} color="green" />
+                            : <Ionicons name="add-circle" size={36} color="green" />}
+                    </TouchableOpacity>
+                    <View style={{ flex: 1 }}></View>
+                    <TouchableOpacity
+                        onPress={async () => {
+                            const url = props.data.external_urls?.spotify;
+                            if (url !== undefined) {
+                                await props.openBrowserAction(url);
+                            }
+                        }}
+                    >
+                        <FontAwesome name="spotify" size={36} color="green" />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1 }}></View>
                 <View
                     style={[
                         styles.textWrapper,

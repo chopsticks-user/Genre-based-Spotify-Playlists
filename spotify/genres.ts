@@ -25,6 +25,7 @@ export async function extractGenresFromTracks(tracks: Track[])
     : Promise<ExtractedGenres[]> {
     try {
         const artists: Artist[] = await getArtistsFromTracks(tracks);
+        console.log('extractGenresFromTracks');
         return Promise.all(tracks.map(async track => {
             const artistNames: string[] = track.artists.map(artist => artist.name);
             const genres = new Set<string>();

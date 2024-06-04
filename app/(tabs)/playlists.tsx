@@ -13,12 +13,6 @@ import simplifiedPlaylists from '@/json/simplified-playlists.json';
 
 const playlists: SimpliedPlaylist[] = simplifiedPlaylists;
 
-const genres = (extractedGenresJson as ExtractedGenres[]);
-
-function fixGenreName(genre: string) {
-    return genre.replaceAll(' ', '_');
-}
-
 export default function Playlists() {
     console.log("Playlists");
 
@@ -31,12 +25,13 @@ export default function Playlists() {
             const q: SearchQuery = {
                 track: 'hello',
                 artist: '',
-                genre: 'rock',
-                minYear: '2010',
-                maxYear: '2025',
+                genre: '',
+                minYear: '2000',
+                maxYear: '2010',
             };
             const [next, tracks]: [number, Track[]] = await searchTracks(q);
-            console.log(tracks);
+            console.log(tracks[0].name);
+            console.log(tracks[0].artists[0].name);
         } catch (error) {
             console.error(error);
         }
@@ -56,7 +51,7 @@ export default function Playlists() {
                 onPress={syncWithSpotify}
                 style={styles.connectButton}
             >
-                <Text style={styles.buttonText}>Sync with Spotify</Text>
+                <Text style={styles.buttonText}>Search</Text>
             </TouchableOpacity>
             <ScrollablePinCollection itemType='playlist' items={playlists} />
         </SafeAreaView>

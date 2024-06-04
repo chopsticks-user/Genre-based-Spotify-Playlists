@@ -2,7 +2,7 @@ import {
     doc, getDoc, setDoc,
 } from 'firebase/firestore';
 import { db } from './init'
-import { session } from '@/spotify';
+import { session } from '@/spotify/sessions';
 
 export async function createUser(): Promise<void> {
     try {
