@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const SearchBar = React.memo(({ placeholder, value, onChangeText, onClear }: any) => {
+const SearchBar = React.memo(({ placeholder, value, onChangeText, onClear, keyboardType = 'default' }: any) => {
     return (
         <View style={styles.container}>
             <TextInput
@@ -11,10 +11,13 @@ const SearchBar = React.memo(({ placeholder, value, onChangeText, onClear }: any
                 placeholderTextColor="gray"
                 value={value}
                 onChangeText={onChangeText}
+                keyboardType={keyboardType}
             />
-            <TouchableOpacity onPress={onClear} style={styles.icon}>
-                <Icon name="close-circle" size={24} color="white" />
-            </TouchableOpacity>
+            {value ? (
+                <TouchableOpacity onPress={onClear} style={styles.iconContainer}>
+                    <Icon name="close-circle" size={16} color="white" style={styles.icon} />
+                </TouchableOpacity>
+            ) : null}
         </View>
     );
 });
@@ -27,19 +30,20 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         marginVertical: 5,
+        backgroundColor: '#333',
     },
     input: {
         flex: 1,
         color: 'white',
         paddingHorizontal: 10,
         backgroundColor: '#333',
-        borderRadius: 5,
+    },
+    iconContainer: {
+        paddingHorizontal: 5,
     },
     icon: {
-        paddingHorizontal: 10,
+        backgroundColor: 'transparent',
     },
 });
 
 export default SearchBar;
-
-//updating for commit
