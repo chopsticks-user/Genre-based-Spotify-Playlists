@@ -108,15 +108,15 @@ export default function Playlists() {
             // const extractedGenres: ExtractedGenres[] =
             //     await extractGenresFromTracks(tracks);
 
-            // const q: SearchQuery = {
-            //     track: 'hello',
-            //     artist: '',
-            //     genre: 'rock',
-            //     minYear: '2010',
-            //     maxYear: '2025',
-            // };
-            // const [next, tracks]: [number, Track[]] = await searchTracks(q);
-            // console.log(tracks);
+            const q: SearchQuery = {
+                track: 'hello',
+                artist: '',
+                genre: 'rock',
+                minYear: '2010',
+                maxYear: '2025',
+            };
+            const [next, tracks]: [number, Track[]] = await searchTracks(q);
+            console.log(tracks);
         } catch (error) {
             console.error(error);
         }
@@ -132,13 +132,6 @@ export default function Playlists() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                onPress={syncWithSpotify}
-                style={styles.connectButton}
-            >
-                <Text style={styles.buttonText}>Sync with Spotify</Text>
-            </TouchableOpacity>
-            <ScrollablePinCollection itemType='playlist' items={playlists} />
             <TouchableOpacity
                 onPress={syncWithSpotify}
                 style={styles.connectButton}
