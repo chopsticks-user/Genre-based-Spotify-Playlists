@@ -214,3 +214,11 @@ export interface ExtractedGenres {
     trackID: string;
     genres: string[];
 };
+
+export interface SearchQuery {
+    track: string;
+    artist: string;
+    genre: string;
+    minYear: string;
+    maxYear: string;
+};

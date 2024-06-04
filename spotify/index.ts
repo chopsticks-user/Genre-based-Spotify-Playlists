@@ -9,6 +9,7 @@ export {
     Playlist,
     SimpliedPlaylist,
     ExtractedGenres,
+    SearchQuery,
 } from './types';
 
 export {
@@ -24,6 +25,8 @@ export {
 
 export {
     getUserSavedTracks,
+    prepareSearchExtension,
+    searchTracks,
 } from './tracks';
 
 export {
