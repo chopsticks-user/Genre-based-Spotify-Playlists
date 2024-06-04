@@ -222,3 +222,8 @@ export interface SearchQuery {
     minYear: string;
     maxYear: string;
 };
+
+export interface Error {
+    status: number;
+    message: string;
+};

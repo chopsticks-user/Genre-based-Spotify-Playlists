@@ -107,15 +107,16 @@ export default function Playlists() {
             // const tracks: Track[] = await getUserSavedTracks(); // last updated time
             // const extractedGenres: ExtractedGenres[] =
             //     await extractGenresFromTracks(tracks);
-            const q: SearchQuery = {
-                track: 'hello',
-                artist: 'adele',
-                genre: '',
-                minYear: '',
-                maxYear: '',
-            };
-            const results = await searchTracks(q);
-            console.log(results);
+
+            // const q: SearchQuery = {
+            //     track: 'hello',
+            //     artist: '',
+            //     genre: 'rock',
+            //     minYear: '2010',
+            //     maxYear: '2025',
+            // };
+            // const [next, tracks]: [number, Track[]] = await searchTracks(q);
+            // console.log(tracks);
         } catch (error) {
             console.error(error);
         }

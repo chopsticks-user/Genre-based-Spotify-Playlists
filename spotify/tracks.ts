@@ -21,7 +21,6 @@ export async function getUserSavedTracks(): Promise<Track[]> {
         return Promise.all(trackItems.map(async item => item.track));
     } catch (error: any) {
         throw Configs.createError(modulePath, arguments.callee.name, error);
-        // throw new Error("test");
     }
 }
 
@@ -35,38 +34,38 @@ export function prepareSearchExtension(searchQuery: SearchQuery): string {
         yearString = `${searchQuery.minYear}-${searchQuery.maxYear}`;
     }
 
-    return new URLSearchParams({
-        track: searchQuery.track,
-        artist: searchQuery.artist,
-        year: yearString,
-        genre: searchQuery.genre,
-    }).toString().replaceAll('=', ':').replaceAll('&', '%').replace('track:', '');
+    let q = searchQuery.track || '';
+    q += searchQuery.artist ? ` artist:${searchQuery.artist}` : '';
+    q += yearString !== '' ? ` year:${yearString}` : '';
+    q += searchQuery.genre ? ` genre:${searchQuery.genre}` : '';
+
+    return q;
 }
 
 export async function searchTracks(
     searchQuery: SearchQuery,
     offset?: number
 ): Promise<[next: number, Track[]]> {
-    offset = (offset === undefined ? 0 : offset);
     try {
+        offset = (offset === undefined ? 0 : offset);
         const response = await fetch(
-            `https://api.spotify.com/v1/search?q=${prepareSearchExtension(searchQuery)}&type=track&limit=50&offset=${offset}`, {
+            `https://api.spotify.com/v1/search?q=${prepareSearchExtension(searchQuery)}&type=track&limit=1&offset=${offset}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${session.accessToken}`
             },
         });
-
         console.log('searchTracks');
         console.log(response);
 
+        if (!response.ok) {
+            const error = await response.json();
+            throw `${error.error.message} (${error.error.status})`;
+        }
+
         const data = await response.json();
-        const trackItems: TrackItem[] = data.items;
-        return Promise.all([
-            data.next === null ? -1 : offset + 1,
-            Promise.all(trackItems.map(async item => item.track))
-        ]);
-    } catch (error: any) {
-        throw Configs.createError(modulePath, arguments.callee.name, error);
+        return [data.next === null ? -1 : offset + 1, data.tracks.items];
+    } catch (error) {
+        throw new Error(`@/spotify/searchTracks: ${error}`);
     }
 }
