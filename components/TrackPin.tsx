@@ -55,10 +55,11 @@ export default function TrackPin(props: Props) {
                 ]}
                 imageStyle={{ borderRadius: 10 }}
             >
-                {added
-                    ? <Ionicons name="checkmark-circle" size={36} color="green" />
-                    : <Ionicons name="add-circle" size={36} color="green" />}
-                <View style={{ position: 'absolute', right: 250 }}>
+                <View style={{ flexDirection: 'row' }}>
+                    {added
+                        ? <Ionicons name="checkmark-circle" size={36} color="green" />
+                        : <Ionicons name="add-circle" size={36} color="green" />}
+                    <View style={{ flex: 1 }}></View>
                     <FontAwesome name="spotify" size={36} color="green" />
                 </View>
                 <View style={{ flex: 1 }}></View>
