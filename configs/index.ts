@@ -2,7 +2,7 @@ export {
     clientID,
     clientSecret,
     redirectURI
-} from './spotify';
+} from './spotifyCredentials';
 
 export {
     firebaseConfig,
