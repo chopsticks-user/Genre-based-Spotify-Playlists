@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import React from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
-import { ExtractedGenres, Playlist, SimpliedPlaylist, Track, getUserSavedTracks } from '@/spotify';
+import { ExtractedGenres, Playlist, SearchQuery, SimpliedPlaylist, Track, getUserSavedTracks, prepareSearchExtension, searchTracks } from '@/spotify';
 import { router } from 'expo-router';
 import { extractGenresFromTracks } from '@/spotify/genres';
 import extractedGenresJson from '@/json/extracted-genres.json';
@@ -96,7 +96,7 @@ const playlists: SimpliedPlaylist[] = [
 const genres = (extractedGenresJson as ExtractedGenres[]);
 
 function fixGenreName(genre: string) {
-    return genre.replace(' ', '_');
+    return genre.replaceAll(' ', '_');
 }
 
 export default function Playlists() {
@@ -107,7 +107,15 @@ export default function Playlists() {
             // const tracks: Track[] = await getUserSavedTracks(); // last updated time
             // const extractedGenres: ExtractedGenres[] =
             //     await extractGenresFromTracks(tracks);
-            console.log(genres);
+            const q: SearchQuery = {
+                track: 'hello',
+                artist: 'adele',
+                genre: '',
+                minYear: '',
+                maxYear: '',
+            };
+            const results = await searchTracks(q);
+            console.log(results);
         } catch (error) {
             console.error(error);
         }
