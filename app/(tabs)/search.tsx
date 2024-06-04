@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, FlatList, Text, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
-import SearchBar from '@/components/SearchBar';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
+import SearchBar from '@/components/SearchBar';  // Make sure the path is correct
 
 interface Query {
     track: string;
@@ -18,39 +17,47 @@ export default function Search() {
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
     const [selectedCriteria, setSelectedCriteria] = useState('');
 
+<<<<<<< HEAD
     const handleAddCriteria = (criteria: any) => {
+=======
+    const handleAddCriteria = useCallback((criteria) => {
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
         if (criteria === 'artist') {
             if (searchCriteria.includes('artist')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'artist' && item !== 'genre'));
-                setQuery({ ...query, artist: '', genre: '' });
+                setQuery(prevQuery => ({ ...prevQuery, artist: '', genre: '' }));
             } else {
                 setSearchCriteria([...searchCriteria, 'artist']);
             }
         } else if (criteria === 'genre') {
             if (searchCriteria.includes('genre')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'genre'));
-                setQuery({ ...query, genre: '' });
+                setQuery(prevQuery => ({ ...prevQuery, genre: '' }));
             } else if (searchCriteria.includes('artist')) {
                 setSearchCriteria([...searchCriteria, 'genre']);
             }
         } else {
             if (searchCriteria.includes(criteria)) {
                 setSearchCriteria(searchCriteria.filter(item => item !== criteria));
-                setQuery({ ...query, [criteria]: '' });
+                setQuery(prevQuery => ({ ...prevQuery, [criteria]: '' }));
             } else {
                 setSearchCriteria([...searchCriteria, criteria]);
             }
         }
         setSelectedCriteria('');
-    };
+    }, [searchCriteria]);
 
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         // Placeholder function to simulate backend search
         const results = simulateBackendSearch(query);
         setData(results);
-    };
+    }, [query]);
 
+<<<<<<< HEAD
     const simulateBackendSearch = (searchQuery: any) => {
+=======
+    const simulateBackendSearch = useCallback((searchQuery) => {
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
         // Generate mock data based on the search query and searchBy criteria
         return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
             id: i.toString(),
@@ -60,16 +67,24 @@ export default function Search() {
             genre: `${searchQuery.genre} Genre`,
             added: false,
         }));
-    };
+    }, []);
 
+<<<<<<< HEAD
     const handleAdd = (item: any) => {
+=======
+    const handleAdd = useCallback((item) => {
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
         const newData = data.map(track =>
             track.id === item.id ? { ...track, added: !track.added } : track
         );
         setData(newData);
-    };
+    }, [data]);
 
+<<<<<<< HEAD
     const renderItem = ({ item, index }: { item: any, index: number }) => (
+=======
+    const renderItem = useCallback(({ item, index }) => (
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
         <View style={styles.resultItem}>
             <Text style={styles.indexText}>{index + 1}</Text>
             <Text style={styles.titleText}>{item.name}</Text>
@@ -83,10 +98,10 @@ export default function Search() {
                 <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
             </TouchableOpacity>
         </View>
-    );
+    ), [handleAdd]);
 
-    return (
-        <SafeAreaView style={styles.container}>
+    const renderHeader = useCallback(() => (
+        <View style={styles.criteriaContainer}>
             <View style={styles.searchByContainer}>
                 <Text style={styles.searchByText}>Search by</Text>
                 <View style={styles.pickerContainer}>
@@ -126,7 +141,12 @@ export default function Search() {
             {searchCriteria.includes('track') && (
                 <SearchBar
                     placeholder="Search by track"
+<<<<<<< HEAD
                     onSearch={(text: any) => setQuery({ ...query, track: text })}
+=======
+                    value={query.track}
+                    onChangeText={(text) => setQuery({ ...query, track: text })}
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
                     onClear={() => setQuery({ ...query, track: '' })}
                 />
             )}
@@ -135,13 +155,23 @@ export default function Search() {
                 <>
                     <SearchBar
                         placeholder="Search by artist"
+<<<<<<< HEAD
                         onSearch={(text: any) => setQuery({ ...query, artist: text })}
+=======
+                        value={query.artist}
+                        onChangeText={(text) => setQuery({ ...query, artist: text })}
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
                         onClear={() => setQuery({ ...query, artist: '' })}
                     />
                     {searchCriteria.includes('genre') && (
                         <SearchBar
                             placeholder="Search by genre"
+<<<<<<< HEAD
                             onSearch={(text: any) => setQuery({ ...query, genre: text })}
+=======
+                            value={query.genre}
+                            onChangeText={(text) => setQuery({ ...query, genre: text })}
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
                             onClear={() => setQuery({ ...query, genre: '' })}
                         />
                     )}
@@ -156,6 +186,10 @@ export default function Search() {
                         placeholderTextColor="gray"
                         keyboardType="numeric"
                         onChangeText={(text) => setQuery({ ...query, minYear: text })}
+<<<<<<< HEAD
+=======
+                        value={query.minYear}
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
                     />
                     <TextInput
                         style={[styles.input, styles.yearInput]}
@@ -163,6 +197,10 @@ export default function Search() {
                         placeholderTextColor="gray"
                         keyboardType="numeric"
                         onChangeText={(text) => setQuery({ ...query, maxYear: text })}
+<<<<<<< HEAD
+=======
+                        value={query.maxYear}
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
                     />
                 </View>
             )}
@@ -170,6 +208,7 @@ export default function Search() {
             <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search</Text>
             </TouchableOpacity>
+<<<<<<< HEAD
 
             {data.length > 0 && (
                 <FlatList
@@ -178,6 +217,21 @@ export default function Search() {
                     keyExtractor={(item) => item.id}
                 />
             )}
+=======
+        </View>
+    ), [handleAddCriteria, query, searchCriteria, handleSearch]);
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                ListHeaderComponent={renderHeader}
+                contentContainerStyle={styles.resultsContainer}
+                keyboardShouldPersistTaps="always"
+            />
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
         </SafeAreaView>
     );
 }
@@ -188,6 +242,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
         padding: 10,
     },
+<<<<<<< HEAD
     searchByContainer: {
         marginVertical: 10,
     },
@@ -197,18 +252,39 @@ const styles = StyleSheet.create({
     },
     pickerContainer: {
         backgroundColor: '#333',
+=======
+    criteriaContainer: {
+        paddingBottom: 20,
+        backgroundColor: '#000000',
+    },
+    searchByContainer: {
+        marginBottom: 10,
+    },
+    searchByText: {
+        color: 'white',
+        marginBottom: 5,
+    },
+    pickerContainer: {
+        backgroundColor: '#333',
+        borderRadius: 5,
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
         borderColor: 'white',
         borderWidth: 1,
     },
     criteriaItem: {
         flexDirection: 'row',
         alignItems: 'center',
+<<<<<<< HEAD
         paddingVertical: 10,
         paddingHorizontal: 15,
+=======
+        padding: 10,
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
     },
     indentedItem: {
         paddingLeft: 30,
     },
+<<<<<<< HEAD
     checkbox: {
         width: 20,
         height: 20,
@@ -221,10 +297,25 @@ const styles = StyleSheet.create({
     },
     criteriaText: {
         color: 'white',
+=======
+    criteriaText: {
+        color: 'white',
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderWidth: 1,
+        borderColor: 'white',
+        marginRight: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
     },
     separator: {
         height: 1,
         backgroundColor: 'white',
+<<<<<<< HEAD
         marginHorizontal: 15,
     },
     icon: {
@@ -252,6 +343,31 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         marginVertical: 10,
+=======
+    },
+    input: {
+        color: 'white',
+        paddingHorizontal: 10,
+        backgroundColor: '#333',
+        borderRadius: 5,
+        borderColor: 'white',
+        borderWidth: 1,
+        marginBottom: 10,
+    },
+    yearFieldContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    yearInput: {
+        width: '48%',
+    },
+    searchButton: {
+        backgroundColor: 'green',
+        borderRadius: 5,
+        padding: 10,
+        alignItems: 'center',
+        marginTop: 10,
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
     },
     searchButtonText: {
         color: 'white',
@@ -281,4 +397,13 @@ const styles = StyleSheet.create({
         color: 'white',
         flex: 1,
     },
+<<<<<<< HEAD
+=======
+    resultsContainer: {
+        paddingBottom: 20,
+    },
+    icon: {
+        paddingLeft: 10,
+    },
+>>>>>>> fa30fe4 (Fixed bug in search tab UI)
 });
