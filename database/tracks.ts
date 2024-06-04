@@ -1,5 +1,6 @@
 import {
-    arrayRemove, arrayUnion, doc, getDoc, updateDoc,
+    arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, query, updateDoc,
+    where,
 } from 'firebase/firestore';
 import { db } from './init'
 import { TrackDAO } from './types';
@@ -12,12 +13,33 @@ export async function addTracks(
     tracks: TrackDAO[]
 ): Promise<void> {
     try {
+        const trackIDs: string[] = tracks.map(track => {
+            return track.id;
+        });
+        const userDocRef = doc(db, 'users', session.userProfile.id);
+        await updateDoc(userDocRef, {
+            tracks: arrayUnion(...trackIDs),
+        });
+
         const playlistDocRef = await addPlaylist(genre, fetchPlaylistID);
         await updateDoc(playlistDocRef, {
             tracks: arrayUnion(...tracks),
         });
     } catch (error) {
         throw new Error(`@/database/addTracks: ${error}`);
+    }
+}
+
+export async function trackExists(trackID: string): Promise<boolean> {
+    try {
+        // TODO: consider using queries
+        const userSnapshot = await getDoc(
+            doc(db, 'users', session.userProfile.id)
+        );
+        const tracks: string[] = userSnapshot.data()?.tracks;
+        return tracks.includes(trackID);
+    } catch (error) {
+        throw new Error(`@/databse/trackExists: ${error}`);
     }
 }
 
@@ -43,10 +65,17 @@ export async function removeTracks(
     genre: string, tracks: TrackDAO[]
 ): Promise<void> {
     try {
+        const trackIDs: string[] = tracks.map(track => {
+            return track.id;
+        });
+        const userDocRef = doc(db, 'users', session.userProfile.id);
+        await updateDoc(userDocRef, {
+            tracks: arrayRemove(...trackIDs),
+        });
+
         const playlistDocRef = doc(
             db, `/users/${session.userProfile.id}/playlists/${genre}`
         );
-
         await updateDoc(playlistDocRef, {
             tracks: arrayRemove(...tracks),
         });

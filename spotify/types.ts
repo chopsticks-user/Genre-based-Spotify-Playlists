@@ -65,6 +65,7 @@ export interface Track {
     type: string;
     uri: string;
     is_local: boolean;
+    added?: boolean;
 };
 
 export interface Copyright {

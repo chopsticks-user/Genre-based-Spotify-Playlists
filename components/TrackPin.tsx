@@ -1,4 +1,5 @@
-import { addTracks } from "@/database";
+import { addTracks, removeTracks } from "@/database";
+import { trackExists } from "@/database/tracks";
 import { usePinDimensions } from "@/hooks/usePinDimensions";
 import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
 import { ExtractedGenres, Track, createUserPlaylist } from "@/spotify";
@@ -34,19 +35,22 @@ export default function TrackPin(props: Props) {
     const duration = getDurationString(props.data.duration_ms);
     const imageURI = props.data.album.images[0].url;
 
-    const [add, setAdd] = useState<boolean>(false);
+    const [add, setAdd] = useState<boolean>(
+        props.data.added === undefined ? false : props.data.added
+    );
     const [addLocked, setAddLocked] = useState<boolean>(false);
+
     const addButtonHandler = useCallback(() => {
         if (addLocked) {
             return;
         }
         setAddLocked(true);
 
+        let failed = false;
         if (!add) {
             const genresPromise = extractGenresFromTracks([props.data]);
             genresPromise.then(res => {
                 const { trackID, genres }: ExtractedGenres = res[0];
-                console.log(genres);
                 genres.forEach(genre => {
                     addTracks(genre, async () => {
                         const playlist = await createUserPlaylist(
@@ -56,21 +60,31 @@ export default function TrackPin(props: Props) {
                     }, [{ id: trackID }]);
                 });
             }).catch(err => {
+                failed = true;
                 console.error(err);
             });
         } else {
-            console.log('Removing ...');
+            const genresPromise = extractGenresFromTracks([props.data]);
+            genresPromise.then(res => {
+                const { trackID, genres }: ExtractedGenres = res[0];
+                console.log(genres);
+                genres.forEach(genre => {
+                    removeTracks(genre, [{ id: trackID }]);
+                });
+            }).catch(err => {
+                failed = true;
+                console.error(err);
+            });
         }
-        setAdd(add => !add);
+
+        if (!failed) {
+            setAdd(add => !add);
+        }
 
         setTimeout(() => {
             setAddLocked(false);
         }, 1500);
     }, [addLocked]);
-
-    // useEffect(() => {
-
-    // }, [add]);
 
     return (
         <Pressable
@@ -92,9 +106,8 @@ export default function TrackPin(props: Props) {
                     <TouchableOpacity
                         onPress={addButtonHandler}
                     >
-                        {add
-                            ? <Ionicons name="checkmark-circle" size={36} color="green" />
-                            : <Ionicons name="add-circle" size={36} color="green" />}
+                        {add && <Ionicons name="checkmark-circle" size={36} color="green" />}
+                        {!add && <Ionicons name="add-circle" size={36} color="green" />}
                     </TouchableOpacity>
                     <View style={{ flex: 1 }}></View>
                     <TouchableOpacity

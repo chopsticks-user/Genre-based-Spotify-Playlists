@@ -5,10 +5,7 @@ import {
 } from 'react-native'
 import React from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
-import { ExtractedGenres, Playlist, SearchQuery, SimpliedPlaylist, Track, getUserSavedTracks, prepareSearchExtension, searchTracks } from '@/spotify';
-import { router } from 'expo-router';
-import { extractGenresFromTracks } from '@/spotify/genres';
-import extractedGenresJson from '@/json/extracted-genres.json';
+import { SimpliedPlaylist } from '@/spotify';
 import simplifiedPlaylists from '@/json/simplified-playlists.json';
 
 const playlists: SimpliedPlaylist[] = simplifiedPlaylists;
@@ -21,17 +18,6 @@ export default function Playlists() {
             // const tracks: Track[] = await getUserSavedTracks(); // last updated time
             // const extractedGenres: ExtractedGenres[] =
             //     await extractGenresFromTracks(tracks);
-
-            const q: SearchQuery = {
-                track: 'hello',
-                artist: '',
-                genre: '',
-                minYear: '2000',
-                maxYear: '2010',
-            };
-            const [next, tracks]: [number, Track[]] = await searchTracks(q);
-            console.log(tracks[0].name);
-            console.log(tracks[0].artists[0].name);
         } catch (error) {
             console.error(error);
         }

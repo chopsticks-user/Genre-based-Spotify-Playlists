@@ -14,4 +14,5 @@ export interface PlaylistDAO {
 
 export interface UserDAO {
     playlists: PlaylistDAO[];
+    tracks: TrackDAO[];
 };
