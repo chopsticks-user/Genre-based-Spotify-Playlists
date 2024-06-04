@@ -56,7 +56,6 @@ export async function searchTracks(
             },
         });
         console.log('searchTracks');
-        console.log(response);
 
         if (!response.ok) {
             const error = await response.json();

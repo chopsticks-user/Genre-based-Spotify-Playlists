@@ -4,7 +4,7 @@ import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
 import { ExtractedGenres, Track, createUserPlaylist } from "@/spotify";
 import { extractGenresFromTracks } from "@/spotify/genres";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import {
     Pressable, View, StyleSheet, useWindowDimensions, Text,
     ImageBackground,
@@ -33,10 +33,16 @@ export default function TrackPin(props: Props) {
     const [width, height] = usePinDimensions(styles.itemContainer.margin);
     const duration = getDurationString(props.data.duration_ms);
     const imageURI = props.data.album.images[0].url;
-    const [add, setAdd] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (add) {
+    const [add, setAdd] = useState<boolean>(false);
+    const [addLocked, setAddLocked] = useState<boolean>(false);
+    const addButtonHandler = useCallback(() => {
+        if (addLocked) {
+            return;
+        }
+        setAddLocked(true);
+
+        if (!add) {
             const genresPromise = extractGenresFromTracks([props.data]);
             genresPromise.then(res => {
                 const { trackID, genres }: ExtractedGenres = res[0];
@@ -52,8 +58,19 @@ export default function TrackPin(props: Props) {
             }).catch(err => {
                 console.error(err);
             });
+        } else {
+            console.log('Removing ...');
         }
-    }, [add]);
+        setAdd(add => !add);
+
+        setTimeout(() => {
+            setAddLocked(false);
+        }, 1500);
+    }, [addLocked]);
+
+    // useEffect(() => {
+
+    // }, [add]);
 
     return (
         <Pressable
@@ -73,9 +90,7 @@ export default function TrackPin(props: Props) {
             >
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
-                        onPress={() => {
-                            setAdd(added => !added);
-                        }}
+                        onPress={addButtonHandler}
                     >
                         {add
                             ? <Ionicons name="checkmark-circle" size={36} color="green" />
