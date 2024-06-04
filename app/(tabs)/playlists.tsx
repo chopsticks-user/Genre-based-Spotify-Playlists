@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import React from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
-import { ExtractedGenres, Playlist, SimpliedPlaylist, Track, getUserSavedTracks } from '@/spotify';
+import { ExtractedGenres, Playlist, SearchQuery, SimpliedPlaylist, Track, getUserSavedTracks, prepareSearchExtension, searchTracks } from '@/spotify';
 import { router } from 'expo-router';
 import { extractGenresFromTracks } from '@/spotify/genres';
 import extractedGenresJson from '@/json/extracted-genres.json';
@@ -96,7 +96,7 @@ const playlists: SimpliedPlaylist[] = [
 const genres = (extractedGenresJson as ExtractedGenres[]);
 
 function fixGenreName(genre: string) {
-    return genre.replace(' ', '_');
+    return genre.replaceAll(' ', '_');
 }
 
 export default function Playlists() {
@@ -107,7 +107,16 @@ export default function Playlists() {
             // const tracks: Track[] = await getUserSavedTracks(); // last updated time
             // const extractedGenres: ExtractedGenres[] =
             //     await extractGenresFromTracks(tracks);
-            console.log(genres);
+
+            const q: SearchQuery = {
+                track: 'hello',
+                artist: '',
+                genre: 'rock',
+                minYear: '2010',
+                maxYear: '2025',
+            };
+            const [next, tracks]: [number, Track[]] = await searchTracks(q);
+            console.log(tracks);
         } catch (error) {
             console.error(error);
         }
@@ -142,6 +151,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonWrapper: {
+        marginTop: 20,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -167,5 +177,5 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 16,
         fontWeight: 'bold',
-    },
+    }
 });

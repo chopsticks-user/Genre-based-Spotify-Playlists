@@ -1,37 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const SearchBar = ({ placeholder, onSearch, onClear }) => {
-    const [text, setText] = useState('');
-
-    const handleClear = () => {
-        setText('');
-        onClear();
-    };
-
-    const handleSearch = () => {
-        onSearch(text);
-    };
-
+const SearchBar = React.memo(({ placeholder, value, onChangeText, onClear }: any) => {
     return (
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
                 placeholder={placeholder}
                 placeholderTextColor="gray"
-                value={text}
-                onChangeText={setText}
+                value={value}
+                onChangeText={onChangeText}
             />
-            <TouchableOpacity onPress={handleClear} style={styles.icon}>
+            <TouchableOpacity onPress={onClear} style={styles.icon}>
                 <Icon name="close-circle" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSearch} style={styles.icon}>
-                <Icon name="search" size={24} color="white" />
             </TouchableOpacity>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -40,17 +26,20 @@ const styles = StyleSheet.create({
         borderColor: 'white',
         borderWidth: 1,
         borderRadius: 5,
-        padding: 5,
-        marginVertical: 10,
+        marginVertical: 5,
     },
     input: {
         flex: 1,
         color: 'white',
-        padding: 10,
+        paddingHorizontal: 10,
+        backgroundColor: '#333',
+        borderRadius: 5,
     },
     icon: {
-        paddingHorizontal: 5,
+        paddingHorizontal: 10,
     },
 });
 
 export default SearchBar;
+
+//updating for commit

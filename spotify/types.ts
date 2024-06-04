@@ -214,3 +214,46 @@ export interface ExtractedGenres {
     trackID: string;
     genres: string[];
 };
+
+export interface SearchQuery {
+    track: string;
+    artist: string;
+    genre: string;
+    minYear: string;
+    maxYear: string;
+};
+
+export interface SimpliedPlaylist {
+    collaborative: boolean;
+    description: string | null;
+    external_urls?: { spotify: string };
+    followers?: { href: string | null, total: number };
+    href: string;
+    id: string;
+    images: Image[];
+    name: string;
+    owner?: PlaylistOwner;
+    public: boolean;
+    snapshot_id: string;
+    tracks?: { href: string, total: number };
+    type: string;
+    uri: string;
+};
+
+export interface ExtractedGenres {
+    trackID: string;
+    genres: string[];
+};
+
+export interface SearchQuery {
+    track: string;
+    artist: string;
+    genre: string;
+    minYear: string;
+    maxYear: string;
+};
+
+export interface Error {
+    status: number;
+    message: string;
+};

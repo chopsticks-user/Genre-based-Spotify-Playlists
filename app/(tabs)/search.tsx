@@ -1,56 +1,48 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, Text, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
-import SearchBar from '@/components/SearchBar';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
-
-interface Query {
-    track: string;
-    artist: string;
-    genre: string;
-    minYear: string;
-    maxYear: string;
-};
+import SearchBar from '@/components/SearchBar';  // Make sure the path is correct
+import { SearchQuery } from '@/spotify';
 
 export default function Search() {
     const [data, setData] = useState<any[]>([]);
-    const [query, setQuery] = useState<Query>({ track: '', artist: '', genre: '', minYear: '', maxYear: '' });
+    const [query, setQuery] = useState<SearchQuery>({ track: '', artist: '', genre: '', minYear: '', maxYear: '' });
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
     const [selectedCriteria, setSelectedCriteria] = useState('');
 
-    const handleAddCriteria = (criteria: any) => {
+    const handleAddCriteria = useCallback((criteria: any) => {
         if (criteria === 'artist') {
             if (searchCriteria.includes('artist')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'artist' && item !== 'genre'));
-                setQuery({ ...query, artist: '', genre: '' });
+                setQuery(prevQuery => ({ ...prevQuery, artist: '', genre: '' }));
             } else {
                 setSearchCriteria([...searchCriteria, 'artist']);
             }
         } else if (criteria === 'genre') {
             if (searchCriteria.includes('genre')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'genre'));
-                setQuery({ ...query, genre: '' });
+                setQuery(prevQuery => ({ ...prevQuery, genre: '' }));
             } else if (searchCriteria.includes('artist')) {
                 setSearchCriteria([...searchCriteria, 'genre']);
             }
         } else {
             if (searchCriteria.includes(criteria)) {
                 setSearchCriteria(searchCriteria.filter(item => item !== criteria));
-                setQuery({ ...query, [criteria]: '' });
+                setQuery(prevQuery => ({ ...prevQuery, [criteria]: '' }));
             } else {
                 setSearchCriteria([...searchCriteria, criteria]);
             }
         }
         setSelectedCriteria('');
-    };
+    }, [searchCriteria]);
 
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         // Placeholder function to simulate backend search
         const results = simulateBackendSearch(query);
         setData(results);
-    };
+    }, [query]);
 
-    const simulateBackendSearch = (searchQuery: any) => {
+    const simulateBackendSearch = useCallback((searchQuery: any) => {
         // Generate mock data based on the search query and searchBy criteria
         return Array.from({ length: Math.floor(Math.random() * 20) + 1 }, (_, i) => ({
             id: i.toString(),
@@ -60,17 +52,17 @@ export default function Search() {
             genre: `${searchQuery.genre} Genre`,
             added: false,
         }));
-    };
+    }, []);
 
-    const handleAdd = (item: any) => {
+    const handleAdd = useCallback((item: any) => {
         const newData = data.map(track =>
             track.id === item.id ? { ...track, added: !track.added } : track
         );
         setData(newData);
-    };
+    }, [data]);
 
-    const renderItem = ({ item, index }: { item: any, index: number }) => (
-        <View style={styles.resultItem}>
+    const renderItem = useCallback(({ item, index }: any) => (
+        <View style={styles.resultItem} key={item.id}>
             <Text style={styles.indexText}>{index + 1}</Text>
             <Text style={styles.titleText}>{item.name}</Text>
             <Text
@@ -83,10 +75,10 @@ export default function Search() {
                 <Icon name={item.added ? "checkmark-circle" : "add-circle"} size={24} color="green" />
             </TouchableOpacity>
         </View>
-    );
+    ), [handleAdd]);
 
-    return (
-        <SafeAreaView style={styles.container}>
+    const renderHeader = useCallback(() => (
+        <View style={styles.criteriaContainer}>
             <View style={styles.searchByContainer}>
                 <Text style={styles.searchByText}>Search by</Text>
                 <View style={styles.pickerContainer}>
@@ -126,7 +118,8 @@ export default function Search() {
             {searchCriteria.includes('track') && (
                 <SearchBar
                     placeholder="Search by track"
-                    onSearch={(text: any) => setQuery({ ...query, track: text })}
+                    value={query.track}
+                    onChangeText={(text: any) => setQuery({ ...query, track: text })}
                     onClear={() => setQuery({ ...query, track: '' })}
                 />
             )}
@@ -135,13 +128,15 @@ export default function Search() {
                 <>
                     <SearchBar
                         placeholder="Search by artist"
-                        onSearch={(text: any) => setQuery({ ...query, artist: text })}
+                        value={query.artist}
+                        onChangeText={(text: any) => setQuery({ ...query, artist: text })}
                         onClear={() => setQuery({ ...query, artist: '' })}
                     />
                     {searchCriteria.includes('genre') && (
                         <SearchBar
                             placeholder="Search by genre"
-                            onSearch={(text: any) => setQuery({ ...query, genre: text })}
+                            value={query.genre}
+                            onChangeText={(text: any) => setQuery({ ...query, genre: text })}
                             onClear={() => setQuery({ ...query, genre: '' })}
                         />
                     )}
@@ -156,6 +151,7 @@ export default function Search() {
                         placeholderTextColor="gray"
                         keyboardType="numeric"
                         onChangeText={(text) => setQuery({ ...query, minYear: text })}
+                        value={query.minYear}
                     />
                     <TextInput
                         style={[styles.input, styles.yearInput]}
@@ -163,6 +159,7 @@ export default function Search() {
                         placeholderTextColor="gray"
                         keyboardType="numeric"
                         onChangeText={(text) => setQuery({ ...query, maxYear: text })}
+                        value={query.maxYear}
                     />
                 </View>
             )}
@@ -170,14 +167,21 @@ export default function Search() {
             <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search</Text>
             </TouchableOpacity>
+        </View>
+    ), [handleAddCriteria, query, searchCriteria, handleSearch]);
 
-            {data.length > 0 && (
-                <FlatList
-                    data={data}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                />
-            )}
+    return (
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    {renderHeader()}
+                    {data.map((item, index) => (
+                        <View key={item.id}>
+                            {renderItem({ item, index })}
+                        </View>
+                    ))}
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
@@ -188,70 +192,70 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
         padding: 10,
     },
+    criteriaContainer: {
+        paddingBottom: 20,
+        backgroundColor: '#000000',
+    },
     searchByContainer: {
-        marginVertical: 10,
+        marginBottom: 10,
     },
     searchByText: {
         color: 'white',
-        marginBottom: 10,
+        marginBottom: 5,
     },
     pickerContainer: {
         backgroundColor: '#333',
+        borderRadius: 5,
         borderColor: 'white',
         borderWidth: 1,
     },
     criteriaItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
+        padding: 10,
     },
     indentedItem: {
         paddingLeft: 30,
     },
+    criteriaText: {
+        color: 'white',
+    },
     checkbox: {
         width: 20,
         height: 20,
-        borderColor: 'white',
         borderWidth: 1,
-        backgroundColor: 'white',
+        borderColor: 'white',
+        marginRight: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
-    },
-    criteriaText: {
-        color: 'white',
+        backgroundColor: 'white',
     },
     separator: {
         height: 1,
         backgroundColor: 'white',
-        marginHorizontal: 15,
-    },
-    icon: {
-        paddingLeft: 10,
     },
     input: {
-        flex: 1,
         color: 'white',
+        paddingHorizontal: 10,
+        backgroundColor: '#333',
+        borderRadius: 5,
         borderColor: 'white',
         borderWidth: 1,
-        padding: 10,
-        marginRight: 10,
+        marginBottom: 10,
     },
     yearFieldContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
+        justifyContent: 'space-between',
     },
     yearInput: {
-        flex: 0.5,
-        marginRight: 10,
+        width: '48%',
     },
     searchButton: {
         backgroundColor: 'green',
+        borderRadius: 5,
         padding: 10,
         alignItems: 'center',
-        marginVertical: 10,
+        marginTop: 10,
     },
     searchButtonText: {
         color: 'white',
@@ -281,4 +285,14 @@ const styles = StyleSheet.create({
         color: 'white',
         flex: 1,
     },
+    resultsContainer: {
+        paddingBottom: 20,
+    },
+    icon: {
+        paddingLeft: 10,
+    },
+    footerSpace: {
+        height: 200,
+    },
 });
+//updating for commit

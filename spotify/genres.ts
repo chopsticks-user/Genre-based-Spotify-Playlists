@@ -21,10 +21,6 @@ import { getArtistsFromTracks } from './artists'
 //     }
 // }
 
-// https://api.spotify.com/v1/artists?ids=02uPe16VFxPaiueQsPEDkE%2C12Chz98pHFMPJEknJQMWvI%2C3WGpXCj9YhhfX11TToZcXP
-// https://api.spotify.com/v1/artists?ids=02uPe16VFxPaiueQsPEDkE%12Chz98pHFMPJEknJQMWvI%3WGpXCj9YhhfX11TToZcXP
-// https://api.spotify.com/v1/artists?ids=02uPe16VFxPaiueQsPEDkE%2C12Chz98pHFMPJEknJQMWvI%2C3WGpXCj9YhhfX11TToZcXP
-
 export async function extractGenresFromTracks(tracks: Track[])
     : Promise<ExtractedGenres[]> {
     try {
