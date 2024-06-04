@@ -14,8 +14,8 @@ export default function Search() {
     const handleAddCriteria = useCallback((criteria: any) => {
         if (criteria === 'artist') {
             if (searchCriteria.includes('artist')) {
-                setSearchCriteria(searchCriteria.filter(item => item !== 'artist' && item !== 'genre'));
-                setQuery(prevQuery => ({ ...prevQuery, artist: '', genre: '' }));
+                setSearchCriteria(searchCriteria.filter(item => item !== 'artist'));
+                setQuery(prevQuery => ({ ...prevQuery, artist: ''}));
             } else {
                 setSearchCriteria([...searchCriteria, 'artist']);
             }
@@ -23,9 +23,9 @@ export default function Search() {
             if (searchCriteria.includes('genre')) {
                 setSearchCriteria(searchCriteria.filter(item => item !== 'genre'));
                 setQuery(prevQuery => ({ ...prevQuery, genre: '' }));
-            } else if (searchCriteria.includes('artist')) {
-                setSearchCriteria([...searchCriteria, 'genre']);
-            }
+            } else {
+                       setSearchCriteria([...searchCriteria, 'genre']);
+        }
         } else {
             if (searchCriteria.includes(criteria)) {
                 setSearchCriteria(searchCriteria.filter(item => item !== criteria));
@@ -100,16 +100,13 @@ export default function Search() {
                         </View>
                         <Text style={styles.criteriaText}>Artist</Text>
                     </TouchableOpacity>
-                    {searchCriteria.includes('artist') && (
-                        <>
-                            <TouchableOpacity onPress={() => handleAddCriteria('genre')} style={[styles.criteriaItem, styles.indentedItem]}>
-                                <View style={styles.checkbox}>
-                                    {searchCriteria.includes('genre') && <Icon name="checkmark" size={16} color="black" />}
-                                </View>
-                                <Text style={styles.criteriaText}>Genre</Text>
-                            </TouchableOpacity>
-                        </>
-                    )}
+                    <View style={styles.separator} />
+                     <TouchableOpacity onPress={() => handleAddCriteria('genre')} style={[styles.criteriaItem]}>
+                          <View style={styles.checkbox}>
+                              {searchCriteria.includes('genre') && <Icon name="checkmark" size={16} color="black" />}
+                          </View>
+                         <Text style={styles.criteriaText}>Genre</Text>
+                     </TouchableOpacity>
                     <View style={styles.separator} />
                     <TouchableOpacity onPress={() => handleAddCriteria('year')} style={styles.criteriaItem}>
                         <View style={styles.checkbox}>
@@ -130,22 +127,21 @@ export default function Search() {
             )}
 
             {searchCriteria.includes('artist') && (
-                <>
                     <SearchBar
                         placeholder="Search by artist"
                         value={query.artist}
-                        onChangeText={(text: any) => setQuery({ ...query, artist: text })}
+                        onChangeText={(text) => setQuery({ ...query, artist: text })}
                         onClear={() => setQuery({ ...query, artist: '' })}
                     />
-                    {searchCriteria.includes('genre') && (
-                        <SearchBar
-                            placeholder="Search by genre"
-                            value={query.genre}
-                            onChangeText={(text: any) => setQuery({ ...query, genre: text })}
-                            onClear={() => setQuery({ ...query, genre: '' })}
-                        />
-                    )}
-                </>
+            )}
+
+            {searchCriteria.includes('genre') && (
+                    <SearchBar
+                         placeholder="Search by genre"
+                         value={query.genre}
+                         onChangeText={(text) => setQuery({ ...query, genre: text })}
+                         onClear={() => setQuery({ ...query, genre: '' })}
+                    />
             )}
 
             {searchCriteria.includes('year') && (
