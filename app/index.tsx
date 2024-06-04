@@ -29,13 +29,24 @@ export default function Home() {
                 source={require('@/assets/images/playtifylogosolo.jpg')}
                 style={[styles.buttonIcon, { backgroundColor: '#ffffff' }]}
             /> */}
-            <Pressable onPress={async () => {
-                const success = await authSession();
-                if (success === true) {
-                    router.replace('/home');
-                }
-            }}
-                style={styles.connectButton}>
+            <Pressable
+                onPress={async () => {
+                    try {
+                        // * For production
+                        const success = await authSession();
+                        if (success === true) {
+                            router.replace('/home');
+                        }
+
+                        // * For development
+                        // router.replace('/home');
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                }}
+                style={styles.connectButton}
+            >
                 <Text style={styles.buttonText}>Sign in with Spotify</Text>
             </Pressable>
         </SafeAreaView>

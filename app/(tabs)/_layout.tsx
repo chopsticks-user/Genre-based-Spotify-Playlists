@@ -5,6 +5,10 @@ import { Stack, Tabs, router } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
 
+export interface SearchParamList {
+    Library: { text: string, value: number };
+};
+
 export default function TabsLayout() {
     const browserOpenAction = useWebBrowser();
 
@@ -39,15 +43,14 @@ export default function TabsLayout() {
             //     },
             // })}
             />
-            <Tabs.Screen
+            {/* <Tabs.Screen
                 name="library"
                 options={{
                     title: 'Library',
                     tabBarIcon: ({ color }) =>
                         <MaterialIcons name="my-library-music" size={24} color="white" />,
                 }}
-
-            />
+            /> */}
             <Tabs.Screen
                 name="home"
                 options={{

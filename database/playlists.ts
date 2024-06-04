@@ -4,7 +4,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './init'
 import { PlaylistDAO } from './types';
-import { session } from '@/spotify';
+import { session } from '@/spotify/sessions';
 
 export async function getPlaylists(): Promise<PlaylistDAO[]> {
     try {
