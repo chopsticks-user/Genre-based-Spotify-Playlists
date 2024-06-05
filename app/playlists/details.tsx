@@ -6,7 +6,6 @@ import { SimpliedPlaylist, Track } from '@/spotify';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
 
 export default function PlaylistDetails() {
-    const data = useLocalSearchParams();
     const browserAction = useWebBrowser();
 
     return (

@@ -34,12 +34,7 @@ export default function PlaylistPin(props: Props) {
     return (
         <Pressable
             key={props.index}
-            onPress={() => {
-                router.push({
-                    pathname: '/playlists/details',
-                    params: { playlist: props.data, tracks: sampleTracks } as any
-                });
-            }}
+            onPress={() => router.push('/playlists/details')}
         >
             <ImageBackground
                 source={{ uri: imageURI }}
