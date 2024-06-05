@@ -1,11 +1,8 @@
-import { WebBrowserOpenAction, useWebBrowser } from "@/hooks/useWebBrowser";
-import React, { useState } from "react";
-import { PropsWithChildren } from "react";
+import React from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { SimpliedPlaylist, Track } from "@/spotify";
 import TrackPin from "./TrackPin";
-import { Playlist, SimpliedPlaylist, Track } from "@/spotify";
 import PlaylistPin from "./PlaylistPin";
-
 
 const styles = StyleSheet.create({
     gridView: {
@@ -20,31 +17,30 @@ const styles = StyleSheet.create({
 interface Props {
     itemType: 'track' | 'playlist';
     items: Track[] | SimpliedPlaylist[];
+    onPressItem?: (item: SimpliedPlaylist | Track) => void;
 }
 
-export default function ScrollablePinCollection(props: Props) {
-    const openBrowser: WebBrowserOpenAction = useWebBrowser();
-
+export default function ScrollablePinCollection({ itemType, items, onPressItem }: Props) {
     return (
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-        >
+        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
             <SafeAreaView style={styles.gridView}>
-                {props.items.map((item, index) => {
-                    return props.itemType === 'track' ?
-                        (<TrackPin
+                {items.map((item, index) => (
+                    itemType === 'track' ? (
+                        <TrackPin
                             key={index}
                             index={index}
-                            openBrowserAction={openBrowser}
                             data={item as Track}
-                        />) :
-                        (<PlaylistPin
+                            openBrowserAction={() => {}}
+                        />
+                    ) : (
+                        <PlaylistPin
                             key={index}
                             index={index}
-                            data={item as Playlist}
-                        />);
-                })}
+                            data={item as SimpliedPlaylist}
+                            onPress={() => onPressItem && onPressItem(item as SimpliedPlaylist)}
+                        />
+                    )
+                ))}
             </SafeAreaView>
         </ScrollView>
     );

@@ -1,0 +1,54 @@
+import React from 'react';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import TrackPin from '@/components/TrackPin';
+import { SimpliedPlaylist, Track } from '@/spotify';
+
+export default function PlaylistDetails() {
+    const { playlist, tracks } = useLocalSearchParams<{ playlist: SimpliedPlaylist, tracks: Track[] }>();
+
+    return (
+        <View style={styles.container}>
+            <Image source={{ uri: playlist.images[0].url }} style={styles.playlistImage} />
+            <Text style={styles.title}>{playlist.name}</Text>
+            <Text style={styles.description}>{playlist.description}</Text>
+            <Text style={styles.genre}>{playlist.genre}</Text>
+            <ScrollView contentContainerStyle={styles.tracksContainer}>
+                {tracks.map((track, index) => (
+                    <TrackPin key={index} index={index} data={track} openBrowserAction={() => {}} />
+                ))}
+            </ScrollView>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#fff',
+    },
+    playlistImage: {
+        width: '100%',
+        height: 200,
+        borderRadius: 10,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginTop: 10,
+    },
+    description: {
+        fontSize: 16,
+        marginTop: 10,
+    },
+    genre: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginTop: 10,
+        color: 'gray',
+    },
+    tracksContainer: {
+        marginTop: 20,
+    },
+});

@@ -1,95 +1,150 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-    View, Text, SafeAreaView, Button, Image, StyleSheet,
-    TouchableOpacity, Platform, ScrollView, Pressable
-} from 'react-native'
-import SplashScreen from '@/components/SplashScreen';
-import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
-import { router } from 'expo-router';
-import { createUser } from '@/database';
+import React, { useState, useCallback } from 'react';
+import { View, SafeAreaView, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import ScrollablePinCollection from '@/components/ScrollablePinCollection';
+import SearchBar from '@/components/SearchBar';
+import { SimpliedPlaylist, Track } from '@/spotify';
+import simplifiedPlaylists from '@/json/simplified-playlists.json';
+
+const initialPlaylists: SimpliedPlaylist[] = simplifiedPlaylists;
 
 export default function Home() {
-    const authSession = useSpotifyAuth();
+    const [filteredPlaylists, setFilteredPlaylists] = useState(initialPlaylists);
+    const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
+    const [nameQuery, setNameQuery] = useState('');
+    const [genreQuery, setGenreQuery] = useState('');
+    const router = useRouter();
 
-    const [isLoading, setIsLoading] = useState(true);
-    
-    if (isLoading === true) {
-        return <SplashScreen onLoadingComplete={() => {
-            setIsLoading(false);
-        }} />;
-    }
+    const handleAddCriteria = useCallback((criteria: string) => {
+        if (criteria === 'name') {
+            setSearchCriteria(searchCriteria.includes('name') ? searchCriteria.filter(item => item !== 'name') : [...searchCriteria, 'name']);
+            setNameQuery('');
+        } else if (criteria === 'genre') {
+            setSearchCriteria(searchCriteria.includes('genre') ? searchCriteria.filter(item => item !== 'genre') : [...searchCriteria, 'genre']);
+            setGenreQuery('');
+        }
+    }, [searchCriteria]);
+
+    const handleSearch = () => {
+        let filtered = initialPlaylists;
+        if (searchCriteria.includes('name') && nameQuery) {
+            filtered = filtered.filter(playlist =>
+                playlist.name.toLowerCase().includes(nameQuery.toLowerCase())
+            );
+        }
+        if (searchCriteria.includes('genre') && genreQuery) {
+            filtered = filtered.filter(playlist =>
+                playlist.genre && playlist.genre.toLowerCase() === genreQuery.toLowerCase()
+            );
+        }
+        setFilteredPlaylists(filtered);
+    };
+
+    const handleRefresh = () => {
+        setFilteredPlaylists(initialPlaylists);
+        setNameQuery('');
+        setGenreQuery('');
+        setSearchCriteria([]);
+    };
+
+    const handlePlaylistPress = (playlist: SimpliedPlaylist) => {
+        const tracks: Track[] = [];  // Fetch tracks for the selected playlist
+        router.push({ pathname: 'PlaylistDetails', params: { playlist, tracks } });
+    };
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* <Image
-                source={require('@/assets/images/playtifylogosolo.jpg')}
-                style={[styles.buttonIcon, { backgroundColor: '#ffffff' }]}
-            /> */}
-            <Pressable
-                onPress={async () => {
-                    try {
-                        // * For production
-                        const success = await authSession();
-                        if (success === true) {
-                            createUser();
-                            router.replace('/welcome');
-                        }
-
-                        // * For development
-                        // router.replace('/home');
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                }}
-                style={styles.connectButton}
-            >
-                <Text style={styles.buttonText}>Sign in with Spotify</Text>
-            </Pressable>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.dropdownContainer}>
+                    <TouchableOpacity onPress={() => handleAddCriteria('name')}>
+                        <Text style={[styles.dropdownText, searchCriteria.includes('name') && styles.selected]}>Search by Playlist Name</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleAddCriteria('genre')}>
+                        <Text style={[styles.dropdownText, searchCriteria.includes('genre') && styles.selected]}>Search by Genre</Text>
+                    </TouchableOpacity>
+                </View>
+                {searchCriteria.includes('name') && (
+                    <SearchBar
+                        placeholder="Enter playlist name"
+                        value={nameQuery}
+                        onChangeText={setNameQuery}
+                        onClear={() => setNameQuery('')}
+                    />
+                )}
+                {searchCriteria.includes('genre') && (
+                    <SearchBar
+                        placeholder="Enter genre"
+                        value={genreQuery}
+                        onChangeText={setGenreQuery}
+                        onClear={() => setGenreQuery('')}
+                    />
+                )}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+                        <Text style={styles.buttonText}>Search</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
+                        <Text style={styles.buttonText}>Refresh</Text>
+                    </TouchableOpacity>
+                </View>
+                <ScrollablePinCollection
+                    itemType='playlist'
+                    items={filteredPlaylists}
+                    onPressItem={handlePlaylistPress}
+                />
+            </ScrollView>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#151718',
         flex: 1,
+        backgroundColor: '#fff',
+    },
+    scrollContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        paddingVertical: 20,
     },
-    reactLogo: {
-        height: 300,
-        width: 370,
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-    },
-    connectButton: {
+    dropdownContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'center',
-        padding: 15,
-        backgroundColor: '#ECEDEE',
-        borderRadius: 25,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        width: 300,
+        marginBottom: 20,
     },
-    buttonIcon: {
-        width: 200,
-        height: 100,
-        marginRight: 10,
+    dropdownText: {
+        fontSize: 16,
+        color: '#000',
+        marginHorizontal: 10,
+        padding: 10,
+        borderColor: '#000',
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundColor: '#f9f9f9',
+    },
+    selected: {
+        backgroundColor: '#dcdcdc',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginVertical: 10,
+    },
+    searchButton: {
+        padding: 10,
+        backgroundColor: 'green',
+        borderRadius: 5,
+        marginHorizontal: 5,
+    },
+    refreshButton: {
+        padding: 10,
+        backgroundColor: 'gray',
+        borderRadius: 5,
+        marginHorizontal: 5,
     },
     buttonText: {
+        color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
     },
 });
-
