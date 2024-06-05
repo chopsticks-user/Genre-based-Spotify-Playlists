@@ -1,7 +1,10 @@
 import {
     StyleSheet, SafeAreaView,
     Pressable, Text,
-    TouchableOpacity
+    TouchableOpacity,
+    View,
+    TextInput,
+    ScrollView
 } from 'react-native'
 import React from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
@@ -33,13 +36,33 @@ export default function Playlists() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                onPress={syncWithSpotify}
-                style={styles.connectButton}
-            >
-                <Text style={styles.buttonText}>Search</Text>
-            </TouchableOpacity>
-            <ScrollablePinCollection itemType='playlist' items={playlists} />
+            <ScrollView>
+                <View>
+                    {/* <TextInput value='welcome' /> */}
+                    {/* <TextInput value='welcome' /> */}
+                    <TouchableOpacity
+                        onPress={syncWithSpotify}
+                        style={styles.connectButton}
+                    >
+                        <Text style={styles.buttonText}>Search</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={syncWithSpotify}
+                        style={styles.connectButton}
+                    >
+                        <Text style={styles.buttonText}>Search</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={syncWithSpotify}
+                        style={styles.connectButton}
+                    >
+                        <Text style={styles.buttonText}>Search</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <ScrollablePinCollection itemType='playlist' items={playlists} />
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -60,6 +83,7 @@ const styles = StyleSheet.create({
     connectButton: {
         flexDirection: 'row',
         alignItems: 'center',
+        alignSelf: 'center',
         justifyContent: 'center',
         padding: 15,
         backgroundColor: '#ECEDEE',
@@ -74,6 +98,7 @@ const styles = StyleSheet.create({
         elevation: 5,
         width: 200,
         height: 50,
+        margin: 10,
     },
     buttonText: {
         fontSize: 16,
