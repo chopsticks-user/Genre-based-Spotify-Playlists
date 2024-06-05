@@ -7,11 +7,15 @@ import { TrackDAO } from './types';
 import { addPlaylist } from './playlists';
 import { session } from '@/spotify/sessions';
 
+function genreNameDB(genre: string) {
+    return genre.replaceAll(' ', '_');
+}
+
 export async function addTracks(
     genre: string,
     fetchPlaylistID: () => Promise<string>,
     tracks: TrackDAO[]
-): Promise<void> {
+): Promise<string> {
     try {
         const trackIDs: string[] = tracks.map(track => {
             return track.id;
@@ -21,10 +25,12 @@ export async function addTracks(
             tracks: arrayUnion(...trackIDs),
         });
 
-        const playlistDocRef = await addPlaylist(genre, fetchPlaylistID);
+        const playlistDocRef = await addPlaylist(genreNameDB(genre), fetchPlaylistID);
         await updateDoc(playlistDocRef, {
             tracks: arrayUnion(...tracks),
         });
+        const playlistSnapshot = await getDoc(playlistDocRef);
+        return playlistSnapshot.data()?.id as string;
     } catch (error) {
         throw new Error(`@/database/addTracks: ${error}`);
     }
@@ -47,7 +53,7 @@ export async function getTracks(genre: string)
     : Promise<TrackDAO[]> {
     try {
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genre}`
+            db, `/users/${session.userProfile.id}/playlists/${genreNameDB(genre)}`
         );
 
         const playlistSnapshot = await getDoc(playlistDocRef);
@@ -63,7 +69,7 @@ export async function getTracks(genre: string)
 
 export async function removeTracks(
     genre: string, tracks: TrackDAO[]
-): Promise<void> {
+): Promise<string> {
     try {
         const trackIDs: string[] = tracks.map(track => {
             return track.id;
@@ -74,11 +80,13 @@ export async function removeTracks(
         });
 
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genre}`
+            db, `/users/${session.userProfile.id}/playlists/${genreNameDB(genre)}`
         );
         await updateDoc(playlistDocRef, {
             tracks: arrayRemove(...tracks),
         });
+        const playlistSnapshot = await getDoc(playlistDocRef);
+        return playlistSnapshot.data()?.id as string;
     } catch (error) {
         throw new Error(`@/database/removeTracks: ${error}`);
     }

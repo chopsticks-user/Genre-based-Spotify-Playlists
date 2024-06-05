@@ -64,6 +64,36 @@ export async function addSongsToPlaylist(playlistID: string, songURIs: string[])
     }
 }
 
+export async function removeSongsFromPlaylist(playlistID: string, trackIDs: string[])
+    : Promise<string> {
+    try {
+        const tracks = trackIDs.map(id => {
+            return { uri: `spotify:track:${id}` };
+        });
+
+        const response = await fetch(
+            `https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tracks: tracks,
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw `${error.error.message} (${error.error.status})`;
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw new Error(`@/spotify/removeSongsFromPlaylist: ${error}`);
+    }
+}
+
 // export async function removeUserPlaylist(playlistID?: string): Promise<string> {
 //     try {
 //         const response = await fetch(

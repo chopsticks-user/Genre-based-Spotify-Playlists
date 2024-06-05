@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, createContext, useRef } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SearchBar from '@/components/SearchBar';  // Make sure the path is correct
@@ -38,7 +38,17 @@ export default function Search() {
         setSelectedCriteria('');
     }, [searchCriteria]);
 
+    // useEffect(() => {
+    //     setResultsComponent(
+    //         <ScrollablePinCollection
+    //             itemType='track'
+    //             items={data}
+    //         />
+    //     );
+    // }, [data]);
+
     const handleSearch = useCallback(async () => {
+        setData([]);
         const [next, tracks] = await searchTracks(query);
         const verifiedTracks: Track[] = await Promise.all(tracks.map(async track => {
             track.added = await trackExists(track.id);

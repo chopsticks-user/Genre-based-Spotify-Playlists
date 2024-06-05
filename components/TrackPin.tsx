@@ -2,7 +2,7 @@ import { addTracks, removeTracks } from "@/database";
 import { trackExists } from "@/database/tracks";
 import { usePinDimensions } from "@/hooks/usePinDimensions";
 import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
-import { ExtractedGenres, Track, createUserPlaylist } from "@/spotify";
+import { ExtractedGenres, Track, addSongsToPlaylist, createUserPlaylist, removeSongsFromPlaylist } from "@/spotify";
 import { extractGenresFromTracks } from "@/spotify/genres";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
@@ -40,7 +40,7 @@ export default function TrackPin(props: Props) {
     );
     const [addLocked, setAddLocked] = useState<boolean>(false);
 
-    const addButtonHandler = useCallback(() => {
+    const addButtonHandler = () => {
         if (addLocked) {
             return;
         }
@@ -51,13 +51,14 @@ export default function TrackPin(props: Props) {
             const genresPromise = extractGenresFromTracks([props.data]);
             genresPromise.then(res => {
                 const { trackID, genres }: ExtractedGenres = res[0];
-                genres.forEach(genre => {
-                    addTracks(genre, async () => {
+                genres.forEach(async genre => {
+                    const playlistID = await addTracks(genre, async () => {
                         const playlist = await createUserPlaylist(
                             genre, true, false, 'Created by Playtify'
                         );
                         return playlist.id;
                     }, [{ id: trackID }]);
+                    await addSongsToPlaylist(playlistID, [`spotify:track:${trackID}`]);
                 });
             }).catch(err => {
                 failed = true;
@@ -68,8 +69,13 @@ export default function TrackPin(props: Props) {
             genresPromise.then(res => {
                 const { trackID, genres }: ExtractedGenres = res[0];
                 console.log(genres);
-                genres.forEach(genre => {
-                    removeTracks(genre, [{ id: trackID }]);
+                genres.forEach(async genre => {
+                    try {
+                        const playlistID = await removeTracks(genre, [{ id: trackID }]);
+                        await removeSongsFromPlaylist(playlistID, [trackID]);
+                    } catch (error) {
+                        console.error(error);
+                    }
                 });
             }).catch(err => {
                 failed = true;
@@ -84,7 +90,7 @@ export default function TrackPin(props: Props) {
         setTimeout(() => {
             setAddLocked(false);
         }, 1500);
-    }, [addLocked]);
+    };
 
     return (
         <Pressable
@@ -106,8 +112,8 @@ export default function TrackPin(props: Props) {
                     <TouchableOpacity
                         onPress={addButtonHandler}
                     >
-                        {add && <Ionicons name="checkmark-circle" size={36} color="green" />}
-                        {!add && <Ionicons name="add-circle" size={36} color="green" />}
+                        {add ? <Ionicons name="checkmark-circle" size={36} color="green" />
+                            : <Ionicons name="add-circle" size={36} color="green" />}
                     </TouchableOpacity>
                     <View style={{ flex: 1 }}></View>
                     <TouchableOpacity

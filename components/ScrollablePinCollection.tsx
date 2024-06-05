@@ -1,11 +1,10 @@
 import { WebBrowserOpenAction, useWebBrowser } from "@/hooks/useWebBrowser";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { PropsWithChildren } from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import TrackPin from "./TrackPin";
 import { Playlist, SimpliedPlaylist, Track } from "@/spotify";
 import PlaylistPin from "./PlaylistPin";
-
 
 const styles = StyleSheet.create({
     gridView: {

@@ -21,6 +21,7 @@ export {
     getUserPlaylists,
     createUserPlaylist,
     addSongsToPlaylist,
+    removeSongsFromPlaylist,
 } from './playlists'
 
 export {

@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 
 const WelcomeScreen = () => {
   const handleGetStarted = () => {
-      router.replace('/search');
+    router.replace('/search');
   };
 
 
@@ -12,7 +12,7 @@ const WelcomeScreen = () => {
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome to Playtify!</Text>
       <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-        <Text style={styles.buttonText}>get started</Text>
+        <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
     </View>
   );
