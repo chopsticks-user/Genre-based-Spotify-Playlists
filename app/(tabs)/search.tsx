@@ -62,13 +62,6 @@ export default function Search() {
             <View style={styles.searchByContainer}>
                 <Text style={styles.searchByText}>Search by</Text>
                 <View style={styles.pickerContainer}>
-                    <TouchableOpacity onPress={() => handleAddCriteria('track')} style={styles.criteriaItem}>
-                        <View style={styles.checkbox}>
-                            {searchCriteria.includes('track') && <Icon name="checkmark" size={16} color="black" />}
-                        </View>
-                        <Text style={styles.criteriaText}>Track</Text>
-                    </TouchableOpacity>
-                    <View style={styles.separator} />
                     <TouchableOpacity onPress={() => handleAddCriteria('artist')} style={styles.criteriaItem}>
                         <View style={styles.checkbox}>
                             {searchCriteria.includes('artist') && <Icon name="checkmark" size={16} color="black" />}
@@ -92,14 +85,12 @@ export default function Search() {
                 </View>
             </View>
 
-            {searchCriteria.includes('track') && (
-                <SearchBar
-                    placeholder="Search by track"
-                    value={query.track}
-                    onChangeText={(text: any) => setQuery({ ...query, track: text })}
-                    onClear={() => setQuery({ ...query, track: '' })}
-                />
-            )}
+            <SearchBar
+                placeholder="Search by track"
+                value={query.track}
+                onChangeText={(text: any) => setQuery({ ...query, track: text })}
+                onClear={() => setQuery({ ...query, track: '' })}
+            />
 
             {searchCriteria.includes('artist') && (
                 <SearchBar
@@ -121,22 +112,24 @@ export default function Search() {
 
             {searchCriteria.includes('year') && (
                 <View style={styles.yearFieldContainer}>
-                    <TextInput
-                        style={[styles.input, styles.yearInput]}
-                        placeholder="min year"
-                        placeholderTextColor="gray"
-                        keyboardType="numeric"
-                        onChangeText={(text) => setQuery({ ...query, minYear: text })}
-                        value={query.minYear}
-                    />
-                    <TextInput
-                        style={[styles.input, styles.yearInput]}
-                        placeholder="max year"
-                        placeholderTextColor="gray"
-                        keyboardType="numeric"
-                        onChangeText={(text) => setQuery({ ...query, maxYear: text })}
-                        value={query.maxYear}
-                    />
+                    <View style={styles.yearInputWrapper}>
+                        <SearchBar
+                            placeholder="min year"
+                            value={query.minYear}
+                            onChangeText={(text: any) => setQuery({ ...query, minYear: text })}
+                            onClear={() => setQuery({ ...query, minYear: '' })}
+                            keyboardType="numeric"
+                        />
+                    </View>
+                    <View style={styles.yearInputWrapper}>
+                        <SearchBar
+                            placeholder="max year"
+                            value={query.maxYear}
+                            onChangeText={(text: any) => setQuery({ ...query, maxYear: text })}
+                            onClear={() => setQuery({ ...query, maxYear: '' })}
+                            keyboardType="numeric"
+                        />
+                    </View>
                 </View>
             )}
 
@@ -189,9 +182,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
     },
-    indentedItem: {
-        paddingLeft: 30,
-    },
     criteriaText: {
         color: 'white',
     },
@@ -210,20 +200,31 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     input: {
+        flex: 1,
         color: 'white',
         paddingHorizontal: 10,
         backgroundColor: '#333',
-        borderRadius: 5,
-        borderColor: 'white',
-        borderWidth: 1,
-        marginBottom: 10,
+    },
+    iconContainer: {
+        paddingHorizontal: 5,
+    },
+    icon: {
+        backgroundColor: 'transparent',
     },
     yearFieldContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    yearInputWrapper: {
+        flex: 1,
+        marginHorizontal: 5,
+    },
     yearInput: {
-        width: '48%',
+        flex: 1,
+        color: 'white',
+        paddingHorizontal: 10,
+        backgroundColor: '#333',
+        marginHorizontal: 5,
     },
     searchButton: {
         backgroundColor: 'green',
@@ -236,38 +237,4 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
     },
-    resultItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderColor: 'white',
-        borderWidth: 1,
-        padding: 15,
-        marginVertical: 5,
-    },
-    indexText: {
-        color: 'white',
-        width: 30,
-    },
-    titleText: {
-        color: 'white',
-        flex: 2,
-    },
-    artistText: {
-        color: 'white',
-        flex: 2,
-    },
-    yearText: {
-        color: 'white',
-        flex: 1,
-    },
-    resultsContainer: {
-        paddingBottom: 20,
-    },
-    icon: {
-        paddingLeft: 10,
-    },
-    footerSpace: {
-        height: 200,
-    },
 });
-//updating for commit
