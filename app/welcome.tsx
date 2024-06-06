@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
 const WelcomeScreen = () => {
@@ -7,14 +8,16 @@ const WelcomeScreen = () => {
     router.replace('/search');
   };
 
-
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#42ABD2', '#D2E9F2']}
+      style={styles.container}
+    >
       <Text style={styles.welcomeText}>Welcome to Playtify!</Text>
       <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -23,7 +26,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#87CEEB',
   },
   welcomeText: {
     fontSize: 32,
@@ -45,3 +47,4 @@ const styles = StyleSheet.create({
 });
 
 export default WelcomeScreen;
+

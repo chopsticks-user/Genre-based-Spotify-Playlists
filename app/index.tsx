@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 import {
-    View, Text, SafeAreaView, Button, Image, StyleSheet,
-    TouchableOpacity, Platform, ScrollView, Pressable
-} from 'react-native'
-// import SplashScreen from '@/components/SplashScreen';
+    View, Text, SafeAreaView, Image, StyleSheet,
+    Pressable
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { router } from 'expo-router';
 import { createUser } from '@/database';
@@ -13,7 +13,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Home() {
     const authSession = useSpotifyAuth();
-
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -25,7 +24,6 @@ export default function Home() {
             } finally {
                 setIsLoading(true);
             }
-
         }
         prepare();
     }, []);
@@ -40,18 +38,22 @@ export default function Home() {
         return null;
     }
 
-    // if (isLoading === true) {
-    //     return <SplashScreen onLoadingComplete={() => {
-    //         setIsLoading(false);
-    //     }} />;
-    // }
-
     return (
-        <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-            {/* <Image
-                source={require('@/assets/images/playtifylogosolo.jpg')}
-                style={[styles.buttonIcon, { backgroundColor: '#ffffff' }]}
-            /> */}
+        <LinearGradient
+            colors={['#1DB954', '#191414']}
+            style={styles.container}
+            onLayout={onLayoutRootView}
+        >
+            <View style={styles.logoContainer}>
+                <Image
+                    source={require('@/assets/images/logo-transparent.jpg')}
+                    style={styles.logo}
+                />
+            </View>
+            <Text style={styles.welcomeText}>Welcome!</Text>
+            <Text style={styles.descriptionText}>
+                Create amazing playlists with your favorite songs from Spotify
+            </Text>
             <Pressable
                 onPress={async () => {
                     try {
@@ -68,37 +70,50 @@ export default function Home() {
                     } catch (error) {
                         console.error(error);
                     }
-
                 }}
                 style={styles.connectButton}
             >
                 <Text style={styles.buttonText}>Sign in with Spotify</Text>
             </Pressable>
-        </SafeAreaView>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#151718',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
     },
-    reactLogo: {
-        height: 300,
-        width: 370,
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
+    logoContainer: {
+        marginBottom: 20,
+        alignItems: 'center',
+    },
+    logo: {
+        width: 300,
+        height: 230,
+    },
+    welcomeText: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    descriptionText: {
+        fontSize: 16,
+        color: '#FFFFFF',
+        marginBottom: 30,
+        textAlign: 'center',
+        paddingHorizontal: 20,
     },
     connectButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 15,
-        backgroundColor: '#ECEDEE',
+        backgroundColor: '#1DB954',
         borderRadius: 25,
         shadowColor: '#000',
         shadowOffset: {
@@ -108,16 +123,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        width: 300,
-    },
-    buttonIcon: {
-        width: 200,
-        height: 100,
-        marginRight: 10,
+        width: 250,
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
+        color: '#FFFFFF',
     },
 });
 
