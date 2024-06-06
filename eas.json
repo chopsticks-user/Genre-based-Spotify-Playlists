@@ -7,7 +7,7 @@
       "developmentClient": true,
       "distribution": "internal"
     },
-    "playtify-preview": {
+    "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk",

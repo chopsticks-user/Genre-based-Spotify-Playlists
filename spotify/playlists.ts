@@ -44,9 +44,12 @@ export async function createUserPlaylist(
     }
 }
 
-export async function addSongsToPlaylist(playlistID: string, songURIs: string[])
+export async function addSongsToPlaylist(playlistID: string, trackIDs: string[])
     : Promise<string> {
     try {
+        const uris = trackIDs.map(id => {
+            return `spotify:track:${id}`;
+        });
         const response = await fetch(
             `https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
             method: 'POST',
@@ -55,7 +58,7 @@ export async function addSongsToPlaylist(playlistID: string, songURIs: string[])
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                uris: songURIs,
+                uris: uris,
             })
         });
         return await response.json();

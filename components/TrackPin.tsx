@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { usePinDimensions } from '@/hooks/usePinDimensions';
-import { Track } from '@/spotify';
+import { ExtractedGenres, Track, addSongsToPlaylist, createUserPlaylist, removeSongsFromPlaylist } from '@/spotify';
 import {
     Pressable, View, StyleSheet, Text,
     ImageBackground, TouchableOpacity
 } from 'react-native';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { extractGenresFromTracks } from '@/spotify/genres';
+import { addTracks, removeTracks } from '@/database';
 
 interface Props {
     index: number;
@@ -18,11 +20,14 @@ function getDurationString(duration_ms?: number): string {
         ? 3
         : Math.floor(duration_ms / 60000);
     const duration_secs = duration_ms === undefined
-        ? 3
+        ? 33
         : Math.round((duration_ms % (duration_mins * 60000)) / 1000);
+    const duration_secs_str = duration_secs < 10
+        ? `0${duration_secs}`
+        : `${duration_secs}`;
     return duration_ms === undefined
         ? '?:??'
-        : `${duration_mins}:${duration_secs}`;
+        : `${duration_mins}:${duration_secs_str}`;
 }
 
 export default function TrackPin(props: Props) {
@@ -30,20 +35,45 @@ export default function TrackPin(props: Props) {
     const duration = getDurationString(props.data.duration_ms);
     const imageURI = props.data.album.images[0].url;
 
-    const [add, setAdd] = useState<boolean>(false);
+    const [add, setAdd] = useState<boolean>(
+        props.data.added === undefined ? false : props.data.added
+    );
     const [addLocked, setAddLocked] = useState<boolean>(false);
 
-    const addButtonHandler = () => {
+    const addButtonHandler = async () => {
         if (addLocked) {
             return;
         }
         setAddLocked(true);
 
+        try {
+            const res = await extractGenresFromTracks([props.data]);
+            const { trackID, genres }: ExtractedGenres = res[0];
+
+            if (add) {
+                await Promise.all(genres.map(async genre => {
+                    const playlistID = await removeTracks(genre, [{ id: trackID }]);
+                    await removeSongsFromPlaylist(playlistID, [trackID]);
+                }));
+            } else {
+                await Promise.all(genres.map(async genre => {
+                    const playlistID = await addTracks(genre, async () => {
+                        const playlist = await createUserPlaylist(
+                            genre, true, false, 'Created by Playtify'
+                        );
+                        return playlist.id;
+                    }, [{ id: trackID }]);
+                    await addSongsToPlaylist(playlistID, [trackID]);
+                }));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
         setTimeout(() => {
             setAddLocked(false);
         }, 1500);
-
-        setAdd(!add);
+        setAdd(add => !add);
     };
 
     return (

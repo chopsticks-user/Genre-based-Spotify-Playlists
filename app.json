@@ -4,7 +4,7 @@
     "slug": "playtify",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon.jpg",
     "scheme": "playtify",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -21,6 +21,10 @@
       "eas": {
         "projectId": "1e12708a-4ceb-4995-9d6f-092037d21824"
       }
+    },
+    "splash": {
+      "image": "./assets/images/splash.jpg",
+      "backgroundColor": "#001229"
     },
     "web": {
       "bundler": "metro",
