@@ -11,6 +11,17 @@ export default function Search() {
     const [query, setQuery] = useState<SearchQuery>({ track: '', artist: '', genre: '', minYear: '', maxYear: '' });
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
     const [selectedCriteria, setSelectedCriteria] = useState('');
+    const [isSearchable, setIsSearchable] = useState(false);
+
+    useEffect(() => {
+        setIsSearchable(
+            query.track.trim().length > 0 ||
+            query.artist.trim().length > 0 ||
+            query.genre.trim().length > 0 ||
+            query.minYear.trim().length > 0 ||
+            query.maxYear.trim().length > 0
+        );
+    }, [query]);
 
     const handleAddCriteria = useCallback((criteria: any) => {
         if (criteria === 'artist') {
@@ -38,24 +49,17 @@ export default function Search() {
         setSelectedCriteria('');
     }, [searchCriteria]);
 
-    // useEffect(() => {
-    //     setResultsComponent(
-    //         <ScrollablePinCollection
-    //             itemType='track'
-    //             items={data}
-    //         />
-    //     );
-    // }, [data]);
-
     const handleSearch = useCallback(async () => {
-        setData([]);
-        const [next, tracks] = await searchTracks(query);
-        const verifiedTracks: Track[] = await Promise.all(tracks.map(async track => {
-            track.added = await trackExists(track.id);
-            return track;
-        }));
-        setData(verifiedTracks);
-    }, [query]);
+        if (isSearchable) {
+            setData([]);
+            const [next, tracks] = await searchTracks(query);
+            const verifiedTracks: Track[] = await Promise.all(tracks.map(async track => {
+                track.added = await trackExists(track.id);
+                return track;
+            }));
+            setData(verifiedTracks);
+        }
+    }, [query, isSearchable]);
 
     const renderHeader = useCallback(() => (
         <View style={styles.criteriaContainer}>
@@ -133,11 +137,15 @@ export default function Search() {
                 </View>
             )}
 
-            <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+            <TouchableOpacity
+                onPress={handleSearch}
+                style={[styles.searchButton, !isSearchable && styles.disabledButton]}
+                disabled={!isSearchable}
+            >
                 <Text style={styles.searchButtonText}>Search</Text>
             </TouchableOpacity>
         </View>
-    ), [handleAddCriteria, query, searchCriteria, handleSearch]);
+    ), [handleAddCriteria, query, searchCriteria, handleSearch, isSearchable]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -232,6 +240,9 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         marginTop: 10,
+    },
+    disabledButton: {
+        backgroundColor: '#a5d6a7',
     },
     searchButtonText: {
         color: 'white',

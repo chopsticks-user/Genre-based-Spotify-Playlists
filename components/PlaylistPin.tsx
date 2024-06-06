@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { usePinDimensions } from "@/hooks/usePinDimensions";
 import { SimpliedPlaylist, Track } from "@/spotify";
 import {
@@ -8,13 +7,13 @@ import {
 } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router } from 'expo-router';
-import savedTracks from '@/json/saved-tracks.json'
+import savedTracks from '@/json/saved-tracks.json';
 
 interface Props {
     index: number;
     data: SimpliedPlaylist;
-    onPress: any;
 }
+
 const sampleTracks: Track[] = savedTracks;
 
 export default function PlaylistPin(props: Props) {
@@ -23,7 +22,6 @@ export default function PlaylistPin(props: Props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [newName, setNewName] = useState(props.data.name);
     const [newDescription, setNewDescription] = useState(props.data.description || '');
-    const navigation = useNavigation();
 
     const handleEdit = () => {
         props.data.name = newName;
@@ -37,7 +35,7 @@ export default function PlaylistPin(props: Props) {
             onPress={() => {
                 router.push({
                     pathname: '/playlists/details',
-                    params: { playlist: props.data, tracks: sampleTracks } as any
+                    params: { playlist: JSON.stringify(props.data), tracks: JSON.stringify(sampleTracks) }
                 });
             }}
         >

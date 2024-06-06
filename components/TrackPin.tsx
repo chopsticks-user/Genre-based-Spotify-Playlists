@@ -1,21 +1,16 @@
-import { addTracks, removeTracks } from "@/database";
-import { trackExists } from "@/database/tracks";
-import { usePinDimensions } from "@/hooks/usePinDimensions";
-import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
-import { ExtractedGenres, Track, addSongsToPlaylist, createUserPlaylist, removeSongsFromPlaylist } from "@/spotify";
-import { extractGenresFromTracks } from "@/spotify/genres";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { PropsWithChildren, useCallback, useEffect, useState } from "react";
+import React, { useState } from 'react';
+import { usePinDimensions } from '@/hooks/usePinDimensions';
+import { Track } from '@/spotify';
 import {
-    Pressable, View, StyleSheet, useWindowDimensions, Text,
-    ImageBackground,
-    TouchableOpacity
-} from "react-native";
+    Pressable, View, StyleSheet, Text,
+    ImageBackground, TouchableOpacity
+} from 'react-native';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
-interface Props extends PropsWithChildren {
+interface Props {
     index: number;
-    openBrowserAction: WebBrowserOpenAction;
     data: Track;
+    openBrowserAction?: (url: string) => Promise<void>;
 }
 
 function getDurationString(duration_ms?: number): string {
@@ -35,9 +30,7 @@ export default function TrackPin(props: Props) {
     const duration = getDurationString(props.data.duration_ms);
     const imageURI = props.data.album.images[0].url;
 
-    const [add, setAdd] = useState<boolean>(
-        props.data.added === undefined ? false : props.data.added
-    );
+    const [add, setAdd] = useState<boolean>(false);
     const [addLocked, setAddLocked] = useState<boolean>(false);
 
     const addButtonHandler = () => {
@@ -46,57 +39,17 @@ export default function TrackPin(props: Props) {
         }
         setAddLocked(true);
 
-        let failed = false;
-        if (!add) {
-            const genresPromise = extractGenresFromTracks([props.data]);
-            genresPromise.then(res => {
-                const { trackID, genres }: ExtractedGenres = res[0];
-                genres.forEach(async genre => {
-                    const playlistID = await addTracks(genre, async () => {
-                        const playlist = await createUserPlaylist(
-                            genre, true, false, 'Created by Playtify'
-                        );
-                        return playlist.id;
-                    }, [{ id: trackID }]);
-                    await addSongsToPlaylist(playlistID, [`spotify:track:${trackID}`]);
-                });
-            }).catch(err => {
-                failed = true;
-                console.error(err);
-            });
-        } else {
-            const genresPromise = extractGenresFromTracks([props.data]);
-            genresPromise.then(res => {
-                const { trackID, genres }: ExtractedGenres = res[0];
-                console.log(genres);
-                genres.forEach(async genre => {
-                    try {
-                        const playlistID = await removeTracks(genre, [{ id: trackID }]);
-                        await removeSongsFromPlaylist(playlistID, [trackID]);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                });
-            }).catch(err => {
-                failed = true;
-                console.error(err);
-            });
-        }
-
-        if (!failed) {
-            setAdd(add => !add);
-        }
-
         setTimeout(() => {
             setAddLocked(false);
         }, 1500);
+
+        setAdd(!add);
     };
 
     return (
-        <Pressable
-            key={props.index}
-        >
-            <ImageBackground source={{ uri: props.data.album.images[0].url }}
+        <Pressable key={props.index}>
+            <ImageBackground
+                source={{ uri: imageURI }}
                 style={[
                     styles.itemContainer,
                     {
@@ -109,17 +62,18 @@ export default function TrackPin(props: Props) {
                 imageStyle={{ borderRadius: 10 }}
             >
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity
-                        onPress={addButtonHandler}
-                    >
-                        {add ? <Ionicons name="checkmark-circle" size={36} color="green" />
-                            : <Ionicons name="add-circle" size={36} color="green" />}
+                    <TouchableOpacity onPress={addButtonHandler}>
+                        {add ? (
+                            <Ionicons name="checkmark-circle" size={36} color="green" />
+                        ) : (
+                            <Ionicons name="add-circle" size={36} color="green" />
+                        )}
                     </TouchableOpacity>
                     <View style={{ flex: 1 }}></View>
                     <TouchableOpacity
                         onPress={async () => {
                             const url = props.data.external_urls?.spotify;
-                            if (url !== undefined) {
+                            if (url !== undefined && props.openBrowserAction) {
                                 await props.openBrowserAction(url);
                             }
                         }}
@@ -139,22 +93,12 @@ export default function TrackPin(props: Props) {
                 >
                     <Text style={styles.itemName}>{props.data.name}</Text>
                     <Text style={styles.itemCode}>
-                        {props.data.artists.map(artist => {
-                            return artist.name;
-                        }).reduce((prev, current, index) => {
-                            if (index === 0) {
-                                return current;
-                            }
-                            return prev + ' \u25cf ' + current;
-                        })}
+                        {props.data.artists.map(artist => artist.name).join(' \u25cf ')}
                     </Text>
                     <Text style={styles.itemCode}>
-                        {props.data.album.name + ' \u25cf '
-                            + props.data.album.release_date}
+                        {props.data.album.name + ' \u25cf ' + props.data.album.release_date}
                     </Text>
-                    <Text style={styles.itemCode}>
-                        {'\u25b6 ' + duration}
-                    </Text>
+                    <Text style={styles.itemCode}>{'\u25b6 ' + duration}</Text>
                 </View>
             </ImageBackground>
         </Pressable>

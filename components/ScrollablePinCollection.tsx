@@ -1,10 +1,32 @@
-import { WebBrowserOpenAction, useWebBrowser } from "@/hooks/useWebBrowser";
-import React, { useContext, useState } from "react";
-import { PropsWithChildren } from "react";
-import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
-import { SimpliedPlaylist, Track } from "@/spotify";
-import TrackPin from "./TrackPin";
-import PlaylistPin from "./PlaylistPin";
+import React from 'react';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import TrackPin from './TrackPin';
+import PlaylistPin from './PlaylistPin';
+import { SimpliedPlaylist, Track } from '@/spotify';
+
+interface Props {
+    itemType: 'track' | 'playlist';
+    items: Track[] | SimpliedPlaylist[];
+}
+
+const ScrollablePinCollection: React.FC<Props> = ({ itemType, items }) => {
+    return (
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+        >
+            <SafeAreaView style={styles.gridView}>
+                {items.map((item, index) => {
+                    return itemType === 'track' ? (
+                        <TrackPin key={index} index={index} data={item as Track} />
+                    ) : (
+                        <PlaylistPin key={index} index={index} data={item as SimpliedPlaylist} />
+                    );
+                })}
+            </SafeAreaView>
+        </ScrollView>
+    );
+};
 
 const styles = StyleSheet.create({
     gridView: {
@@ -16,36 +38,4 @@ const styles = StyleSheet.create({
     },
 });
 
-interface Props {
-    itemType: 'track' | 'playlist';
-    items: Track[] | SimpliedPlaylist[];
-    onPressItem?: (item: SimpliedPlaylist | Track) => void;
-}
-
-export default function ScrollablePinCollection({ itemType, items, onPressItem }: Props) {
-    const browserAction = useWebBrowser();
-
-    return (
-        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-            <SafeAreaView style={styles.gridView}>
-                {items.map((item, index) => (
-                    itemType === 'track' ? (
-                        <TrackPin
-                            key={index}
-                            index={index}
-                            data={item as Track}
-                            openBrowserAction={browserAction}
-                        />
-                    ) : (
-                        <PlaylistPin
-                            key={index}
-                            index={index}
-                            data={item as SimpliedPlaylist}
-                            onPress={() => onPressItem && onPressItem(item as SimpliedPlaylist)}
-                        />
-                    )
-                ))}
-            </SafeAreaView>
-        </ScrollView>
-    );
-}
+export default ScrollablePinCollection;
