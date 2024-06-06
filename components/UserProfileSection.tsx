@@ -1,4 +1,4 @@
-import { UserProfile, session } from '@/spotify';
+import { UserProfile } from '@/spotify';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 
 

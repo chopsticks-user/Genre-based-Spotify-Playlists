@@ -6,18 +6,19 @@ import {
 import SplashScreen from '@/components/SplashScreen';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { router } from 'expo-router';
+import { createUser } from '@/database';
 
 export default function Home() {
     const authSession = useSpotifyAuth();
 
     const [isLoading, setIsLoading] = useState(true);
-    
+
     if (isLoading === true) {
         return <SplashScreen onLoadingComplete={() => {
             setIsLoading(false);
         }} />;
     }
-    
+
     return (
         <SafeAreaView style={styles.container}>
             {/* <Image
@@ -27,14 +28,16 @@ export default function Home() {
             <Pressable
                 onPress={async () => {
                     try {
-                        // * For production
                         const success = await authSession();
                         if (success === true) {
-                            router.replace('/welcome');
+                            createUser();
+                            const userExisted = await createUser();
+                            if (userExisted) {
+                                router.replace('/home');
+                            } else {
+                                router.replace('/welcome');
+                            }
                         }
-
-                        // * For development
-                        // router.replace('/home');
                     } catch (error) {
                         console.error(error);
                     }
