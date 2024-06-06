@@ -68,3 +68,52 @@ export async function searchTracks(
         throw new Error(`@/spotify/searchTracks: ${error}`);
     }
 }
+
+function prepareRecommendationExtension(
+    genres: string[],
+    trackIDs: string[]
+): string {
+    const genresNoSpaces = genres.map(genre => genre.replaceAll(' ', '+'));
+    const seed_genres: string = genresNoSpaces.length === 0 ? ''
+        : genresNoSpaces.reduce((acc, val, index) => {
+            return acc += `%2C${val}`;
+        });
+    const seed_tracks: string = trackIDs.length === 0 ? ''
+        : trackIDs.reduce((acc, val, index) => {
+            return acc += `%2C${val}`;
+        });
+
+    let extension = seed_genres === '' ? '' : `&seed_genres=${seed_genres}`;
+    extension += seed_tracks === '' ? '' : `&seed_tracks=${seed_tracks}`;
+    return extension;
+}
+
+export async function getRecommendations(
+    genres: string[],
+    trackIDs: string[]
+): Promise<Track[]> {
+    try {
+        if (genres.length === 0 && trackIDs.length === 0) {
+            return [];
+        }
+
+        const response = await fetch(
+            `https://api.spotify.com/v1/recommendations?limit=50${prepareRecommendationExtension(genres, trackIDs)}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`
+            },
+        });
+        console.log('getRecommendations');
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw `${error.error.message} (${error.error.status})`;
+        }
+
+        const data = await response.json();
+        return data.tracks;
+    } catch (error) {
+        throw new Error(`@/spotify/getRecommendations: ${error}`);
+    }
+}

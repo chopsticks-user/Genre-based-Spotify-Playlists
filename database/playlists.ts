@@ -1,8 +1,8 @@
 import {
-    DocumentData, DocumentReference, collection, deleteDoc, doc,
+    DocumentData, DocumentReference, addDoc, collection, deleteDoc, doc,
     getDoc, getDocs, setDoc,
 } from 'firebase/firestore';
-import { db } from './init'
+import { db, genreNameDB, genreNameUI } from './init'
 import { PlaylistDAO } from './types';
 import { session } from '@/spotify/sessions';
 
@@ -24,16 +24,26 @@ export async function addPlaylist(
     genre: string, fetchPlaylistID: () => Promise<string>
 ): Promise<DocumentReference<DocumentData, DocumentData>> {
     try {
+        const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
             db, `/users/${session.userProfile.id}/playlists/${genre}`
         );
         const playlistSnapshot = await getDoc(playlistDocRef);
 
         if (!playlistSnapshot.exists()) {
+            const id = await fetchPlaylistID();
             await setDoc(playlistDocRef, {
-                id: await fetchPlaylistID(),
+                id: id,
                 genre: genre,
                 tracks: [],
+            });
+
+            const genresDocRef = doc(
+                db, `/users/${session.userProfile.id}/genres/${genreDB}`
+            );
+            await setDoc(genresDocRef, {
+                name: genreNameUI(genre),
+                count: 0,
             });
         }
 
@@ -45,8 +55,9 @@ export async function addPlaylist(
 
 export async function removePlaylist(genre: string): Promise<void> {
     try {
+        const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genre}`
+            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
         );
         await deleteDoc(playlistDocRef);
     } catch (error) {

@@ -1,176 +1,66 @@
-import { SafeAreaView, useWindowDimensions, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { SafeAreaView, StyleSheet, Text, View, Button, ScrollView, Pressable, TouchableOpacity, GestureResponderEvent } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
-import { Track } from '@/spotify';
-
-const tracks: Track[] = [
-    {
-        album: {
-            album_type: "single",
-            total_tracks: 1,
-            available_markets: [],
-            external_urls: {
-                spotify: "https://open.spotify.com/album/0tGPJ0bkWOUmH7MEOR77qc"
-            },
-            href: "https://api.spotify.com/v1/albums/0tGPJ0bkWOUmH7MEOR77qc",
-            id: "0tGPJ0bkWOUmH7MEOR77qc",
-            images: [
-                {
-                    url: "https://i.scdn.co/image/ab67616d0000b2737359994525d219f64872d3b1",
-                    height: 640,
-                    width: 640
-                },
-                {
-                    url: "https://i.scdn.co/image/ab67616d00001e027359994525d219f64872d3b1",
-                    height: 300,
-                    width: 300
-                },
-                {
-                    url: "https://i.scdn.co/image/ab67616d000048517359994525d219f64872d3b1",
-                    height: 64,
-                    width: 64
-                }
-            ],
-            name: "Cut To The Feeling",
-            release_date: "2017-05-26",
-            release_date_precision: "day",
-            type: "album",
-            uri: "spotify:album:0tGPJ0bkWOUmH7MEOR77qc",
-            artists: [
-                {
-                    external_urls: {
-                        spotify: "https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju"
-                    },
-                    href: "https://api.spotify.com/v1/artists/6sFIWsNpZYqfjUpaCgueju",
-                    id: "6sFIWsNpZYqfjUpaCgueju",
-                    name: "Carly Rae Jepsen",
-                    type: "artist",
-                    uri: "spotify:artist:6sFIWsNpZYqfjUpaCgueju"
-                }
-            ]
-        },
-        artists: [
-            {
-                external_urls: {
-                    spotify: "https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju"
-                },
-                href: "https://api.spotify.com/v1/artists/6sFIWsNpZYqfjUpaCgueju",
-                id: "6sFIWsNpZYqfjUpaCgueju",
-                name: "Carly Rae Jepsen",
-                type: "artist",
-                uri: "spotify:artist:6sFIWsNpZYqfjUpaCgueju"
-            },
-            {
-                external_urls: {
-                    spotify: "https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju"
-                },
-                href: "https://api.spotify.com/v1/artists/6sFIWsNpZYqfjUpaCgueju",
-                id: "6sFIWsNpZYqfjUpaCgueju",
-                name: "My Savior",
-                type: "artist",
-                uri: "spotify:artist:6sFIWsNpZYqfjUpaCgueju"
-            }
-        ],
-        available_markets: [],
-        disc_number: 1,
-        duration_ms: 207959,
-        explicit: false,
-        external_urls: {
-            spotify: "https://open.spotify.com/track/11dFghVXANMlKmJXsNCbNl"
-        },
-        href: "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl",
-        id: "11dFghVXANMlKmJXsNCbNl",
-        name: "Cut To The Feeling",
-        popularity: 0,
-        preview_url: null,
-        track_number: 1,
-        type: "track",
-        uri: "spotify:track:11dFghVXANMlKmJXsNCbNl",
-        is_local: false
-    },
-    {
-        album: {
-            album_type: "single",
-            total_tracks: 1,
-            available_markets: [],
-            external_urls: {
-                spotify: "https://open.spotify.com/album/0tGPJ0bkWOUmH7MEOR77qc"
-            },
-            href: "https://api.spotify.com/v1/albums/0tGPJ0bkWOUmH7MEOR77qc",
-            id: "0tGPJ0bkWOUmH7MEOR77qc",
-            images: [
-                {
-                    url: "https://i.scdn.co/image/ab67616d0000b2737359994525d219f64872d3b1",
-                    height: 640,
-                    width: 640
-                },
-                {
-                    url: "https://i.scdn.co/image/ab67616d00001e027359994525d219f64872d3b1",
-                    height: 300,
-                    width: 300
-                },
-                {
-                    url: "https://i.scdn.co/image/ab67616d000048517359994525d219f64872d3b1",
-                    height: 64,
-                    width: 64
-                }
-            ],
-            name: "Cut To The Feeling",
-            release_date: "2017-05-26",
-            release_date_precision: "day",
-            type: "album",
-            uri: "spotify:album:0tGPJ0bkWOUmH7MEOR77qc",
-            artists: [
-                {
-                    external_urls: {
-                        spotify: "https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju"
-                    },
-                    href: "https://api.spotify.com/v1/artists/6sFIWsNpZYqfjUpaCgueju",
-                    id: "6sFIWsNpZYqfjUpaCgueju",
-                    name: "Carly Rae Jepsen",
-                    type: "artist",
-                    uri: "spotify:artist:6sFIWsNpZYqfjUpaCgueju"
-                }
-            ]
-        },
-        artists: [
-            {
-                external_urls: {
-                    spotify: "https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju"
-                },
-                href: "https://api.spotify.com/v1/artists/6sFIWsNpZYqfjUpaCgueju",
-                id: "6sFIWsNpZYqfjUpaCgueju",
-                name: "Carly Rae Jepsen",
-                type: "artist",
-                uri: "spotify:artist:6sFIWsNpZYqfjUpaCgueju"
-            }
-        ],
-        available_markets: [],
-        disc_number: 1,
-        duration_ms: 207959,
-        explicit: false,
-        external_urls: {
-            spotify: "https://open.spotify.com/track/11dFghVXANMlKmJXsNCbNl"
-        },
-        href: "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl",
-        id: "11dFghVXANMlKmJXsNCbNl",
-        name: "Cut To The Feeling",
-        popularity: 0,
-        preview_url: null,
-        track_number: 1,
-        type: "track",
-        uri: "spotify:track:11dFghVXANMlKmJXsNCbNl",
-        is_local: false
-    },
-];
+import { Track, getRecommendations } from '@/spotify';
+import { getRecommendationData } from '@/database';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 export default function Home() {
+    const [tracks, setTracks] = useState<Track[]>([]);
+
+    const scrollViewRef = useRef<ScrollView>(null);
+    const refreshButtonRef = useRef<TouchableOpacity>(null);
+    const [addLocked, setAddLocked] = useState<boolean>(false);
+    const refreshButtonHandler = async () => {
+        if (addLocked) {
+            return;
+        }
+        setAddLocked(true);
+
+        try {
+            const data = await getRecommendationData();
+            const tracks = await getRecommendations(data.genres, data.trackIDs);
+            setTracks(tracks);
+            if (scrollViewRef.current) {
+                scrollViewRef.current.scrollTo({ y: 0, animated: true });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        console.log('Refeshing...');
+
+        setTimeout(() => {
+            setAddLocked(false);
+        }, 3000);
+    };
+    useEffect(() => {
+        refreshButtonHandler().then(res => { });
+    }, []);
+
+
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.subHeaderText}>Your recommended tracks</Text>
+            <View>
+                <ScrollView ref={scrollViewRef}>
+                    <View style={styles.header}>
+                        <Text style={styles.subHeaderText}>
+                            {tracks.length === 0 ?
+                                'Wow, such empty'
+                                : 'Your recommended tracks'}
+                        </Text>
+                    </View>
+                    <ScrollablePinCollection itemType='track' items={tracks} />
+                </ScrollView>
             </View>
-            <ScrollablePinCollection itemType='track' items={tracks} />
+            <View>
+                <TouchableOpacity
+                    ref={refreshButtonRef}
+                    onPress={refreshButtonHandler}
+                    style={styles.refreshButton}
+                >
+                    <SimpleLineIcons name="refresh" size={36} color="white" />
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 }
@@ -189,5 +79,20 @@ const styles = StyleSheet.create({
     subHeaderText: {
         fontSize: 18,
         color: 'white',
-    }
+    },
+    refreshButton: {
+        position: 'absolute',
+        alignSelf: 'auto',
+        left: 120,
+        bottom: 20,
+        backgroundColor: 'green',
+        borderRadius: 10000,
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        resizeMode: 'contain',
+
+        // top: 200,
+    },
 });

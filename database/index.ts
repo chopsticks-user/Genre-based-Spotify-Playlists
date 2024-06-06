@@ -2,6 +2,7 @@ export {
     PlaylistDAO,
     TrackDAO,
     UserDAO,
+    RecommendationData,
 } from './types'
 
 export {
@@ -18,6 +19,7 @@ export {
     addTracks,
     getTracks,
     removeTracks,
+    getRecommendationData,
 } from './tracks';
 
 

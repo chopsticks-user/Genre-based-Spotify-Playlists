@@ -1,7 +1,3 @@
-import {
-    DocumentData, DocumentReference, DocumentSnapshot
-} from "firebase/firestore";
-
 export interface TrackDAO {
     id: string;
 };
@@ -15,4 +11,9 @@ export interface PlaylistDAO {
 export interface UserDAO {
     playlists: PlaylistDAO[];
     tracks: TrackDAO[];
+};
+
+export interface RecommendationData {
+    genres: string[];
+    trackIDs: string[];
 };
