@@ -2,10 +2,13 @@ import {
     StyleSheet, Text, View, Pressable, SafeAreaView, Linking
 } from 'react-native';
 import React from 'react';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
 
 export default function ReportBugs() {
+    const browserOpenAction = useWebBrowser();
+
     const handlePress = () => {
-        Linking.openURL('https://github.com/chopsticks-user/Playtify/issues');
+        browserOpenAction('https://github.com/chopsticks-user/Playtify/issues')
     };
 
     return (

@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, SafeAreaView, Linking, Pressable } from 'react-native';
 import React from 'react';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
 
 const developers = [
     { name: 'Quang Cap', email: 'qaa2qw@virginia.edu' },
-    {name: 'Lauren LaPorta', email: 'asj7gw@virginia.edu' },
-    {name: 'Ariana Sanjideh', email: 'dkj6uz@virginia.edu' }
+    { name: 'Lauren LaPorta', email: 'asj7gw@virginia.edu' },
+    { name: 'Ariana Sanjideh', email: 'dkj6uz@virginia.edu' }
 ];
 
 export default function ContactUs() {
