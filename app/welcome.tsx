@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
 const WelcomeScreen = () => {
-  const handleGetStarted = () => {
+  const handleAddTracks = () => {
     router.replace('/search');
   };
 
@@ -14,8 +14,9 @@ const WelcomeScreen = () => {
       style={styles.container}
     >
       <Text style={styles.welcomeText}>Welcome to Playtify!</Text>
-      <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-        <Text style={styles.buttonText}>Get Started</Text>
+      <Text style={styles.instructionText}>Add at least 5 tracks to get started</Text>
+      <TouchableOpacity style={styles.button} onPress={handleAddTracks}>
+        <Text style={styles.buttonText}>Add Songs</Text>
       </TouchableOpacity>
     </LinearGradient>
   );
@@ -26,18 +27,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
   welcomeText: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  instructionText: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 30,
+    textAlign: 'center',
   },
   button: {
-    backgroundColor: '#1E90FF',
+    backgroundColor: '#00BAFF',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 25,
+    borderRadius: 30,
   },
   buttonText: {
     color: '#fff',
@@ -47,4 +56,3 @@ const styles = StyleSheet.create({
 });
 
 export default WelcomeScreen;
-
