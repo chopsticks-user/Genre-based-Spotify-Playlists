@@ -8,6 +8,7 @@ import {
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { extractGenresFromTracks } from '@/spotify/genres';
 import { addTracks, removeTracks } from '@/database';
+import * as WebBrowser from 'expo-web-browser';
 
 interface Props {
     index: number;
@@ -103,8 +104,8 @@ export default function TrackPin(props: Props) {
                     <TouchableOpacity
                         onPress={async () => {
                             const url = props.data.external_urls?.spotify;
-                            if (url !== undefined && props.openBrowserAction) {
-                                await props.openBrowserAction(url);
+                            if (url !== undefined) {
+                                await WebBrowser.openBrowserAsync(url);
                             }
                         }}
                     >

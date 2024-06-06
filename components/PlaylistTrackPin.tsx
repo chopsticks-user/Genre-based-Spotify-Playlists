@@ -1,5 +1,5 @@
 import { usePinDimensions } from "@/hooks/usePinDimensions";
-import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
+import * as WebBrowser from "expo-web-browser";
 import { Track, ExtractedGenres, removeSongsFromPlaylist } from "@/spotify";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { PropsWithChildren, useState } from "react";
@@ -24,7 +24,6 @@ const extractGenresFromTracks = async (tracks: Track[]): Promise<ExtractedGenres
 
 interface Props extends PropsWithChildren {
     index: number;
-    openBrowserAction: WebBrowserOpenAction;
     data: Track;
 }
 
@@ -101,21 +100,21 @@ export default function PlaylistTrackPin(props: Props) {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity
                         onPress={removeButtonHandler}
-                        style={styles.iconBackground}
+                        style={styles.iconContainer}
                     >
-                        <Ionicons name="remove" size={24} color="white" />
+                        <Ionicons name="remove-circle" size={36} color="green" />
                     </TouchableOpacity>
                     <View style={{ flex: 1 }}></View>
                     <TouchableOpacity
                         onPress={async () => {
                             const url = props.data.external_urls?.spotify;
                             if (url !== undefined) {
-                                await props.openBrowserAction(url);
+                                await WebBrowser.openBrowserAsync(url);
                             }
                         }}
-                        style={styles.iconBackground}
+                        style={styles.iconContainer}
                     >
-                        <FontAwesome name="spotify" size={24} color="white" />
+                        <FontAwesome name="spotify" size={36} color="green" />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1 }}></View>
@@ -176,14 +175,9 @@ const styles = StyleSheet.create({
         color: '#fff',
         flexWrap: 'wrap',
     },
-    iconBackground: {
-        backgroundColor: 'green',
-        borderRadius: 18,
-        padding: 6,
-    },
-    spotifyIcon: {
-        width: 24,
-        height: 24,
-        resizeMode: 'contain',
+    iconContainer: {
+//          backgroundColor: 'rgba(255, 255, 255, 1)',
+         borderRadius: 18,
+         padding: 2,
     },
 });
