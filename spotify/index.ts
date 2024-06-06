@@ -28,6 +28,7 @@ export {
     getUserSavedTracks,
     prepareSearchExtension,
     searchTracks,
+    getRecommendations,
 } from './tracks';
 
 export {
