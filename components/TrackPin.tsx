@@ -5,7 +5,7 @@ import {
     Pressable, View, StyleSheet, Text,
     ImageBackground, TouchableOpacity
 } from 'react-native';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome6, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { extractGenresFromTracks } from '@/spotify/genres';
 import { addTracks, removeTracks } from '@/database';
 
@@ -87,7 +87,7 @@ export default function TrackPin(props: Props) {
                         maxWidth: width,
                         minHeight: height,
                         maxHeight: height,
-                    }
+                    },
                 ]}
                 imageStyle={{ borderRadius: 10 }}
             >

@@ -3,6 +3,7 @@ import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import TrackPin from './TrackPin';
 import PlaylistPin from './PlaylistPin';
 import { SimpliedPlaylist, Track } from '@/spotify';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
 
 interface Props {
     itemType: 'track' | 'playlist';
@@ -10,6 +11,8 @@ interface Props {
 }
 
 const ScrollablePinCollection: React.FC<Props> = ({ itemType, items }) => {
+    const openBrowserAction = useWebBrowser();
+
     return (
         <ScrollView
             showsVerticalScrollIndicator={false}
@@ -18,7 +21,12 @@ const ScrollablePinCollection: React.FC<Props> = ({ itemType, items }) => {
             <SafeAreaView style={styles.gridView}>
                 {items.map((item, index) => {
                     return itemType === 'track' ? (
-                        <TrackPin key={index} index={index} data={item as Track} />
+                        <TrackPin
+                            key={index}
+                            index={index}
+                            data={item as Track}
+                            openBrowserAction={openBrowserAction}
+                        />
                     ) : (
                         <PlaylistPin key={index} index={index} data={item as SimpliedPlaylist} />
                     );
