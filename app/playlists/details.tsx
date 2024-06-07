@@ -3,17 +3,17 @@ import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SimpliedPlaylist, Track } from '@/spotify';
 import PlaylistTrackPin from '@/components/PlaylistTrackPin';
-import * as WebBrowser from 'expo-web-browser';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
 
 export default function Details() {
     const { playlist, tracks = '[]' } = useLocalSearchParams<{ playlist: string, tracks: string }>();
 
-    const parsedPlaylist: SimpliedPlaylist = JSON.parse(playlist);
+    const parsedPlaylist: SimpliedPlaylist = JSON.parse(playlist as string);
     const parsedTracks: Track[] = JSON.parse(tracks);
 
     useEffect(() => {
-        console.log('Playlist:', JSON.stringify(parsedPlaylist, null, 2));
-        console.log('Tracks:', JSON.stringify(parsedTracks, null, 2));
+        // console.log('Playlist:', JSON.stringify(parsedPlaylist, null, 2));
+        // console.log('Tracks:', JSON.stringify(parsedTracks, null, 2));
     }, [parsedPlaylist, parsedTracks]);
 
     const cleanDescription = (description: string) => {
@@ -24,7 +24,7 @@ export default function Details() {
         return cleanedDescription;
     };
 
-    const description = cleanDescription(parsedPlaylist.description);
+    const description = cleanDescription(parsedPlaylist.description as string);
 
     const imageURI = parsedPlaylist.images.length > 0
         ? parsedPlaylist.images[0].url
@@ -34,6 +34,8 @@ export default function Details() {
         return <Text>Loading...</Text>;
     }
 
+    const openBrowserAction = useWebBrowser();
+
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Image source={{ uri: imageURI }} style={styles.playlistImage} />
@@ -41,14 +43,14 @@ export default function Details() {
             {description ? (
                 <Text style={styles.description}>{description}</Text>
             ) : null}
-            <Text style={styles.genre}>Genre: {parsedPlaylist.genre}</Text>
+            <Text style={styles.genre}>Genre: { }</Text>
             <View style={styles.tracksContainer}>
                 {parsedTracks.map((track, index) => (
                     <PlaylistTrackPin
                         key={index}
                         index={index}
                         data={track}
-                        openBrowserAction={url => WebBrowser.openBrowserAsync(url)}
+                        openBrowserAction={openBrowserAction}
                     />
                 ))}
             </View>

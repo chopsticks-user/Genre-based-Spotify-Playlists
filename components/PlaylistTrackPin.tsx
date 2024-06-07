@@ -25,6 +25,7 @@ const extractGenresFromTracks = async (tracks: Track[]): Promise<ExtractedGenres
 interface Props extends PropsWithChildren {
     index: number;
     data: Track;
+    openBrowserAction?: (url: string) => Promise<void>;
 }
 
 function getDurationString(duration_ms?: number): string {
@@ -57,7 +58,7 @@ export default function PlaylistTrackPin(props: Props) {
         const genresPromise = extractGenresFromTracks([props.data]);
         genresPromise.then(res => {
             const { trackID, genres }: ExtractedGenres = res[0];
-            console.log(genres);  // Log genres to check
+            // console.log(genres);  // Log genres to check
 
             genres.forEach(async genre => {
                 try {
@@ -66,12 +67,12 @@ export default function PlaylistTrackPin(props: Props) {
                     await removeSongsFromPlaylist(playlistID, [trackID]);
                 } catch (error) {
                     failed = true;
-                    console.error(error);
+                    console.log(error);
                 }
             });
         }).catch(err => {
             failed = true;
-            console.error(err);
+            console.log(err);
         });
 
         if (!failed) {
@@ -176,8 +177,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     iconContainer: {
-//          backgroundColor: 'rgba(255, 255, 255, 1)',
-         borderRadius: 18,
-         padding: 2,
+        //          backgroundColor: 'rgba(255, 255, 255, 1)',
+        borderRadius: 18,
+        padding: 2,
     },
 });
