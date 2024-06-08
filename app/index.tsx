@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-    View, Text, SafeAreaView, Image, StyleSheet,
+    View, Text, Image, StyleSheet,
     Pressable
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';

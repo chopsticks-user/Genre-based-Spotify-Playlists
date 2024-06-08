@@ -1,5 +1,5 @@
 import {
-    StyleSheet, Text, View, Pressable, SafeAreaView, Linking
+    StyleSheet, Text, Pressable, SafeAreaView,
 } from 'react-native';
 import React from 'react';
 import { useWebBrowser } from '@/hooks/useWebBrowser';

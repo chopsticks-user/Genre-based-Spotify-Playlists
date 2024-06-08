@@ -1,5 +1,5 @@
 import {
-    StyleSheet, Text, View, Image, Button, Pressable, SafeAreaView
+    StyleSheet, Text, SafeAreaView
 } from 'react-native'
 import React from 'react'
 
