@@ -5,20 +5,20 @@ import {
     ImageBackground, TouchableOpacity, Modal, TextInput
 } from "react-native";
 import { router } from 'expo-router';
-import { PlaylistDAO } from '@/database';
+import { PlaylistDAO, editPlaylistImage } from '@/database';
 import * as WebBrowser from 'expo-web-browser';
-import { Feather, FontAwesome } from '@expo/vector-icons';
-import { changePlaylistDetails } from '@/spotify';
+import { Feather, FontAwesome, FontAwesome6, SimpleLineIcons } from '@expo/vector-icons';
+import { changePlaylistDetails, getPlaylistCoverImageURI } from '@/spotify';
 import { editPlaylist } from '@/database';
 
 interface Props {
     index: number;
     data: PlaylistDAO;
+    removeSelf: () => Promise<void>;
 }
 
 export default function PlaylistPin(props: Props) {
     const [width, height] = usePinDimensions(styles.itemContainer.margin);
-    const imageURI = props.data.imageURI;
     const [modalVisible, setModalVisible] = useState(false);
     const [newName, setNewName] = useState(props.data.name);
     const [newDescription, setNewDescription] = useState(props.data.description || '');
@@ -34,6 +34,28 @@ export default function PlaylistPin(props: Props) {
         }
 
         setModalVisible(false);
+    };
+
+    const [imageURI, setImageURI] = useState<string | null>(props.data.imageURI);
+    const [refreshLocked, setRefreshLocked] = useState<boolean>(false);
+
+    const refreshCoverImage = async () => {
+        if (refreshLocked) {
+            return;
+        }
+        setRefreshLocked(true);
+
+        try {
+            const uri = await getPlaylistCoverImageURI(props.data.id);
+            await editPlaylistImage(props.data.genre, uri);
+            setImageURI(uri);
+        } catch (error) {
+            console.log(error);
+        }
+
+        setTimeout(() => {
+            setRefreshLocked(false);
+        }, 1500);
     };
 
     return (
@@ -65,12 +87,24 @@ export default function PlaylistPin(props: Props) {
                 <View style={{ flex: 1, flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row' }}>
                         <TouchableOpacity
+                            style={styles.removeButton}
+                            onPress={props.removeSelf}
+                        >
+                            <FontAwesome6 name="trash-alt" size={20} color="white" />
+                        </TouchableOpacity>
+                        <View style={{ flex: 1 }}></View>
+                        <TouchableOpacity
                             style={styles.editButton}
                             onPress={() => setModalVisible(true)}
                         >
                             <Feather name="edit" size={20} color="white" />
                         </TouchableOpacity>
-                        <View style={{ flex: 1 }}></View>
+                        <TouchableOpacity
+                            style={styles.editButton}
+                            onPress={refreshCoverImage}
+                        >
+                            <SimpleLineIcons name="refresh" size={20} color="white" />
+                        </TouchableOpacity>
                         <TouchableOpacity
                             onPress={async () => {
                                 const url = props.data.url;
@@ -163,6 +197,24 @@ const styles = StyleSheet.create({
         height: 35,
         backgroundColor: 'green',
         borderRadius: 10000,
+        marginRight: 5,
+    },
+    refreshButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 35,
+        height: 35,
+        backgroundColor: 'green',
+        borderRadius: 10000,
+        margin: 10,
+    },
+    removeButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 35,
+        height: 35,
+        backgroundColor: 'red',
+        borderRadius: 10000,
     },
     editIcon: {
         fontSize: 12,
@@ -170,7 +222,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         margin: 20,
-        backgroundColor: 'white',
+        backgroundColor: '#151719',
         borderRadius: 20,
         padding: 35,
         alignItems: 'center',
@@ -188,6 +240,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
+        color: '#ECEDEE'
     },
     input: {
         height: 40,
@@ -197,6 +250,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginVertical: 10,
         width: '80%',
+        color: '#ECEDEE'
     },
     saveButton: {
         padding: 10,

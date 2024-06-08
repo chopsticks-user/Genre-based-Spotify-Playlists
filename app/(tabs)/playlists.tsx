@@ -1,32 +1,62 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import SearchBar from '@/components/SearchBar';
-import { SimpliedPlaylist, Track } from '@/spotify';
-import simplifiedPlaylists from '@/json/simplified-playlists.json';
-import savedTracks from '@/json/saved-tracks.json';
-import { PlaylistDAO, getPlaylists } from '@/database';
+import { PlaylistDAO, getPlaylists, removePlaylist } from '@/database';
+import { unfollowPlaylist } from '@/spotify';
 
 export default function Playlists() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [playlists, setPlaylists] = useState<PlaylistDAO[]>([]);
 
-    const loadAllPlaylists = async () => {
+    const loadAllPlaylists = useCallback(async () => {
         setIsLoading(true);
 
         try {
-            const playlists = await getPlaylists();
-            setPlaylists(playlists);
+            const fetchedlaylists = await getPlaylists();
+            setPlaylists(fetchedlaylists);
+            setFilteredPlaylists(fetchedlaylists);
+        } catch (error) {
+            console.log(error);
+        }
+
+        setIsLoading(false);
+    }, []);
+
+    const removePlaylistFuncParam = async (genre: string) => {
+        setIsLoading(true);
+
+        try {
+            const playlistID: string | null = await removePlaylist(genre);
+            if (playlistID === null) {
+                return;
+            }
+
+            //* Does not work as expected
+            // await unfollowPlaylist(playlistID);
+
+            const newPlaylists = playlists.splice(
+                playlists.findIndex(playlist => playlist.genre === genre)
+            );
+            setPlaylists(newPlaylists);
+
+            const newFilteredPlaylists = filteredPlaylists.splice(
+                filteredPlaylists.findIndex(playlist => playlist.genre === genre)
+            );
+            setFilteredPlaylists(newFilteredPlaylists);
         } catch (error) {
             console.log(error);
         }
 
         setIsLoading(false);
     };
+
     useEffect(() => {
         loadAllPlaylists().then(res => { }).catch(error => console.log(error));
     }, []);
+
+    useEffect(() => {
+    }, [playlists]);
 
     const [filteredPlaylists, setFilteredPlaylists] =
         useState<PlaylistDAO[]>(playlists);
@@ -137,6 +167,7 @@ export default function Playlists() {
                 <ScrollablePinCollection
                     itemType='playlist'
                     items={filteredPlaylists}
+                    removePlaylist={removePlaylistFuncParam}
                 />
             </ScrollView>
         </SafeAreaView>
