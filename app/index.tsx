@@ -8,6 +8,7 @@ import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { router } from 'expo-router';
 import { createUser } from '@/database';
 import * as SplashScreen from 'expo-splash-screen';
+import { makeRedirectUri } from 'expo-auth-session';
 
 SplashScreen.preventAutoHideAsync();
 
