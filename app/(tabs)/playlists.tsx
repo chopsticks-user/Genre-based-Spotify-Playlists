@@ -34,16 +34,11 @@ export default function Playlists() {
     const [nameQuery, setNameQuery] = useState('');
     const [genreQuery, setGenreQuery] = useState('');
     const [isSearchable, setIsSearchable] = useState(false);
-    const [isRefreshable, setIsRefreshable] = useState(false);
 
     useEffect(() => {
         setIsSearchable(
             (searchCriteria.includes('name') && nameQuery.trim().length > 0) ||
             (searchCriteria.includes('genre') && genreQuery.trim().length > 0)
-        );
-
-        setIsRefreshable(
-            nameQuery.trim().length > 0 || genreQuery.trim().length > 0
         );
     }, [nameQuery, genreQuery, searchCriteria]);
 
@@ -51,46 +46,38 @@ export default function Playlists() {
         if (criteria === 'name') {
             setSearchCriteria(searchCriteria.includes('name')
                 ? searchCriteria.filter(item => item !== 'name')
-                : [...searchCriteria, 'name']);
+                : ['name']);
             setNameQuery('');
         } else if (criteria === 'genre') {
             setSearchCriteria(searchCriteria.includes('genre')
                 ? searchCriteria.filter(item => item !== 'genre')
-                : [...searchCriteria, 'genre']);
+                : ['genre']);
             setGenreQuery('');
         }
     }, [searchCriteria]);
 
-    // const handleSearch = () => {
-    //     if (isSearchable) {
-    //         let filtered = playlists;
-    //         if (searchCriteria.includes('name') && nameQuery) {
-    //             filtered = filtered.filter(playlist =>
-    //                 playlist.name.toLowerCase().includes(nameQuery.toLowerCase())
-    //             );
-    //         }
-    //         setFilteredPlaylists(filtered);
-    //     }
-    // };
+    const handleSearch = () => {
+        if (isSearchable) {
+            let filtered = playlists;
+            if (searchCriteria.includes('name') && nameQuery) {
+                filtered = filtered.filter(playlist =>
+                    playlist.name.toLowerCase().includes(nameQuery.toLowerCase())
+                );
+            } else if (searchCriteria.includes('genre') && genreQuery) {
+                filtered = filtered.filter(playlist =>
+                    playlist.genre.toLowerCase().includes(genreQuery.toLowerCase())
+                );
+            }
+            setFilteredPlaylists(filtered);
+        }
+    };
 
-    // const handleRefresh = () => {
-    //     if (isRefreshable) {
-    //         setFilteredPlaylists(playlists);
-    //         setNameQuery('');
-    //         setGenreQuery('');
-    //         setSearchCriteria([]);
-    //     }
-    // };
-
-    // const handlePlaylistPress = (playlist: SimpliedPlaylist) => {
-    //     router.push({
-    //         pathname: 'playlists/details',
-    //         params: {
-    //             playlist: JSON.stringify(playlist),
-    //             tracks: JSON.stringify(savedTracks)
-    //         }
-    //     });
-    // };
+    const handleRefresh = () => {
+        setFilteredPlaylists(playlists);
+        setNameQuery('');
+        setGenreQuery('');
+        setSearchCriteria([]);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -134,24 +121,22 @@ export default function Playlists() {
                 )}
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        // onPress={handleSearch}
+                        onPress={handleSearch}
                         style={[styles.searchButton, !isSearchable && styles.disabledButton]}
                         disabled={!isSearchable}
                     >
                         <Text style={styles.buttonText}>Search</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        // onPress={handleRefresh}
-                        style={[styles.refreshButton, !isRefreshable && styles.disabledRefreshButton]}
-                        disabled={!isRefreshable}
+                        onPress={handleRefresh}
+                        style={[styles.refreshButton]}
                     >
                         <Text style={styles.buttonText}>Refresh</Text>
                     </TouchableOpacity>
                 </View>
                 <ScrollablePinCollection
                     itemType='playlist'
-                    items={playlists}
-                // onPressItem={handlePlaylistPress}
+                    items={filteredPlaylists}
                 />
             </ScrollView>
         </SafeAreaView>

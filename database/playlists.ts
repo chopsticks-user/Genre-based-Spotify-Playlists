@@ -1,6 +1,7 @@
 import {
     DocumentData, DocumentReference, addDoc, collection, deleteDoc, doc,
     getDoc, getDocs, setDoc,
+    updateDoc,
 } from 'firebase/firestore';
 import { db, genreNameDB, genreNameUI } from './init'
 import { PlaylistDAO } from './types';
@@ -58,6 +59,26 @@ export async function addPlaylist(
         return playlistDocRef;
     } catch (error) {
         throw new Error(`@/database/addPlaylist: ${error}`);
+    }
+}
+
+export async function editPlaylist(
+    genre: string,
+    name: string,
+    description: string,
+    imageURI?: string | null,
+): Promise<void> {
+    try {
+        const genreDB = genreNameDB(genre);
+        const playlistDocRef = doc(
+            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+        );
+        await updateDoc(playlistDocRef, {
+            name: name,
+            description: description,
+        });
+    } catch (error) {
+        throw new Error(`@/database/editPlaylist: ${error}`);
     }
 }
 

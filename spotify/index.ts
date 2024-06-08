@@ -22,6 +22,7 @@ export {
     createUserPlaylist,
     addSongsToPlaylist,
     removeSongsFromPlaylist,
+    changePlaylistDetails,
 } from './playlists'
 
 export {

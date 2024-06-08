@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { usePinDimensions } from "@/hooks/usePinDimensions";
-import { SimpliedPlaylist, Track } from "@/spotify";
 import {
     Pressable, View, StyleSheet, Text,
     ImageBackground, TouchableOpacity, Modal, TextInput
 } from "react-native";
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router } from 'expo-router';
-import savedTracks from '@/json/saved-tracks.json';
 import { PlaylistDAO } from '@/database';
 import * as WebBrowser from 'expo-web-browser';
 import { Feather, FontAwesome } from '@expo/vector-icons';
+import { changePlaylistDetails } from '@/spotify';
+import { editPlaylist } from '@/database';
 
 interface Props {
     index: number;
     data: PlaylistDAO;
 }
-
-const sampleTracks: Track[] = savedTracks;
 
 export default function PlaylistPin(props: Props) {
     const [width, height] = usePinDimensions(styles.itemContainer.margin);
@@ -26,9 +23,16 @@ export default function PlaylistPin(props: Props) {
     const [newName, setNewName] = useState(props.data.name);
     const [newDescription, setNewDescription] = useState(props.data.description || '');
 
-    const handleEdit = () => {
-        props.data.name = newName;
-        props.data.description = newDescription;
+    const handleEdit = async () => {
+        try {
+            await editPlaylist(props.data.genre, newName, newDescription);
+            await changePlaylistDetails(props.data.id, newName, newDescription);
+            props.data.name = newName;
+            props.data.description = newDescription;
+        } catch (error) {
+            console.log(error);
+        }
+
         setModalVisible(false);
     };
 
