@@ -6,6 +6,13 @@ export interface UserProfileSectionProps {
     profile: UserProfile
 }
 
+function userProfileImageURL(profile: UserProfile): string {
+    const defaultImageURL = '@/assets/images/icon.png'
+    if (profile.images.length === 0) {
+        return defaultImageURL;
+    }
+    return profile.images[0].url;
+}
 
 export default function UserProfileSection(props: UserProfileSectionProps) {
     return (
@@ -16,7 +23,7 @@ export default function UserProfileSection(props: UserProfileSectionProps) {
                 <View style={styles.profileAvatarWrapper}>
                     <Image
                         style={styles.profileAvatar}
-                        source={require('@/assets/images/react-logo-black.jpg')}
+                        source={{ uri: userProfileImageURL(props.profile) }}
                     />
                 </View>
             </TouchableOpacity>
