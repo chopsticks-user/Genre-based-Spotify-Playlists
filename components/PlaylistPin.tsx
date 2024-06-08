@@ -1,31 +1,38 @@
 import React, { useState } from 'react';
 import { usePinDimensions } from "@/hooks/usePinDimensions";
-import { SimpliedPlaylist, Track } from "@/spotify";
 import {
     Pressable, View, StyleSheet, Text,
     ImageBackground, TouchableOpacity, Modal, TextInput
 } from "react-native";
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router } from 'expo-router';
-import savedTracks from '@/json/saved-tracks.json';
+import { PlaylistDAO } from '@/database';
+import * as WebBrowser from 'expo-web-browser';
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import { changePlaylistDetails } from '@/spotify';
+import { editPlaylist } from '@/database';
 
 interface Props {
     index: number;
-    data: SimpliedPlaylist;
+    data: PlaylistDAO;
 }
-
-const sampleTracks: Track[] = savedTracks;
 
 export default function PlaylistPin(props: Props) {
     const [width, height] = usePinDimensions(styles.itemContainer.margin);
-    const imageURI = props.data.images[0].url;
+    const imageURI = props.data.imageURI;
     const [modalVisible, setModalVisible] = useState(false);
     const [newName, setNewName] = useState(props.data.name);
     const [newDescription, setNewDescription] = useState(props.data.description || '');
 
-    const handleEdit = () => {
-        props.data.name = newName;
-        props.data.description = newDescription;
+    const handleEdit = async () => {
+        try {
+            await editPlaylist(props.data.genre, newName, newDescription);
+            await changePlaylistDetails(props.data.id, newName, newDescription);
+            props.data.name = newName;
+            props.data.description = newDescription;
+        } catch (error) {
+            console.log(error);
+        }
+
         setModalVisible(false);
     };
 
@@ -35,12 +42,15 @@ export default function PlaylistPin(props: Props) {
             onPress={() => {
                 router.push({
                     pathname: '/playlists/details',
-                    params: { playlist: JSON.stringify(props.data), tracks: JSON.stringify(sampleTracks) }
+                    params: { playlist: JSON.stringify(props.data), tracks: JSON.stringify(props.data.tracks) }
                 });
             }}
         >
             <ImageBackground
-                source={{ uri: imageURI }}
+                source={{
+                    uri: imageURI ||
+                        'https://via.placeholder.com/640x640.png?text=Playlist+Image'
+                }}
                 style={[
                     styles.itemContainer,
                     {
@@ -52,21 +62,38 @@ export default function PlaylistPin(props: Props) {
                 ]}
                 imageStyle={{ borderRadius: 10 }}
             >
-                <TouchableOpacity
-                    style={styles.editButton}
-                    onPress={() => setModalVisible(true)}
-                >
-                    <Ionicons name="pencil" size={12} color="white" style={styles.editIcon} />
-                </TouchableOpacity>
-                <View
-                    style={[
-                        styles.textWrapper,
-                        {
-                            backgroundColor: imageURI === undefined ?
-                                styles.itemContainer.backgroundColor : '#000000a0',
-                        }]}
-                >
-                    <Text style={styles.itemName}>{props.data.name}</Text>
+                <View style={{ flex: 1, flexDirection: 'column' }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity
+                            style={styles.editButton}
+                            onPress={() => setModalVisible(true)}
+                        >
+                            <Feather name="edit" size={20} color="white" />
+                        </TouchableOpacity>
+                        <View style={{ flex: 1 }}></View>
+                        <TouchableOpacity
+                            onPress={async () => {
+                                const url = props.data.url;
+                                if (url !== undefined) {
+                                    await WebBrowser.openBrowserAsync(url);
+                                }
+                            }}
+                        >
+                            <FontAwesome name="spotify" size={36} color="green" />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ flex: 1 }}></View>
+                    <View
+                        style={[
+                            styles.textWrapper,
+                            {
+                                backgroundColor: imageURI === undefined ?
+                                    styles.itemContainer.backgroundColor : '#000000a0',
+                            }]}
+                    >
+                        <Text style={styles.itemName}>{props.data.name}</Text>
+                    </View>
+
                 </View>
             </ImageBackground>
             <Modal
@@ -130,14 +157,12 @@ const styles = StyleSheet.create({
         textTransform: 'capitalize',
     },
     editButton: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        padding: 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 35,
+        height: 35,
         backgroundColor: 'green',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'green',
+        borderRadius: 10000,
     },
     editIcon: {
         fontSize: 12,

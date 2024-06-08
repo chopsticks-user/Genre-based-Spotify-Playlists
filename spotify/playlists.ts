@@ -97,6 +97,35 @@ export async function removeSongsFromPlaylist(playlistID: string, trackIDs: stri
     }
 }
 
+export async function changePlaylistDetails(
+    playlistID: string,
+    name: string,
+    description: string
+): Promise<void> {
+    try {
+        const response = await fetch(
+            `https://api.spotify.com/v1/playlists/${playlistID}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                description: description === undefined ?
+                    "Created by Playtify" : description
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw `${error.error.message} (${error.error.status})`;
+        }
+    } catch (error) {
+        throw new Error(`@/spotify/changePlaylistDetails: ${error}`);
+    }
+}
+
 // export async function removeUserPlaylist(playlistID?: string): Promise<string> {
 //     try {
 //         const response = await fetch(

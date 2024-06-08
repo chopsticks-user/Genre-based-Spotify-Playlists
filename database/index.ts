@@ -13,6 +13,7 @@ export {
     addPlaylist,
     getPlaylists,
     removePlaylist,
+    editPlaylist,
 } from './playlists';
 
 export {

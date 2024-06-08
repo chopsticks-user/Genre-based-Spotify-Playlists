@@ -62,7 +62,7 @@ export default function TrackPin(props: Props) {
                         const playlist = await createUserPlaylist(
                             genre, true, false, 'Created by Playtify'
                         );
-                        return playlist.id;
+                        return playlist;
                     }, [{ id: trackID }]);
                     await addSongsToPlaylist(playlistID, [trackID]);
                 }));

@@ -1,20 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { SimpliedPlaylist, Track } from '@/spotify';
+import { SimpliedPlaylist, Track, getSeveralTracks } from '@/spotify';
 import PlaylistTrackPin from '@/components/PlaylistTrackPin';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
+import { PlaylistDAO, getTracks } from '@/database';
 
 export default function Details() {
-    const { playlist, tracks = '[]' } = useLocalSearchParams<{ playlist: string, tracks: string }>();
+    const { playlist: playlistParam, tracks: trackIDsParam = '[]' } =
+        useLocalSearchParams<{ playlist: string, tracks: string }>();
+    const parsedPlaylist: PlaylistDAO = JSON.parse(playlistParam as string);
+    // const parsedTrackIDs: any = JSON.parse(trackIDsParam);
 
-    const parsedPlaylist: SimpliedPlaylist = JSON.parse(playlist as string);
-    const parsedTracks: Track[] = JSON.parse(tracks);
+    const [tracks, setTracks] = useState<Track[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const fetchTracks = async () => {
+        setIsLoading(true);
+
+        setTracks([]);
+        const trackIDs = await getTracks(parsedPlaylist.genre);
+        const fetchedTracks: Track[] = await getSeveralTracks(
+            trackIDs.map((track: any) => track.id)
+        );
+        setTracks(fetchedTracks);
+
+        setIsLoading(false);
+    }
 
     useEffect(() => {
-        // console.log('Playlist:', JSON.stringify(parsedPlaylist, null, 2));
-        // console.log('Tracks:', JSON.stringify(parsedTracks, null, 2));
-    }, [parsedPlaylist, parsedTracks]);
+        // getSeveralTracks(parsedTrackIDs)
+        //     .then(tracks => setTracks(tracks))
+        //     .catch(error => console.log(error));
+        fetchTracks().then(res => { });
+    }, []);
 
     const cleanDescription = (description: string) => {
         if (!description) return '';
@@ -26,9 +45,8 @@ export default function Details() {
 
     const description = cleanDescription(parsedPlaylist.description as string);
 
-    const imageURI = parsedPlaylist.images.length > 0
-        ? parsedPlaylist.images[0].url
-        : 'https://via.placeholder.com/640x640.png?text=Playlist+Image'; // Replace with your generic image URL
+    const imageURI = parsedPlaylist.imageURI ||
+        'https://via.placeholder.com/640x640.png?text=Playlist+Image';
 
     if (!parsedPlaylist) {
         return <Text>Loading...</Text>;
@@ -37,31 +55,38 @@ export default function Details() {
     const openBrowserAction = useWebBrowser();
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Image source={{ uri: imageURI }} style={styles.playlistImage} />
-            <Text style={styles.title}>{parsedPlaylist.name}</Text>
-            {description ? (
-                <Text style={styles.description}>{description}</Text>
-            ) : null}
-            <Text style={styles.genre}>Genre: { }</Text>
-            <View style={styles.tracksContainer}>
-                {parsedTracks.map((track, index) => (
-                    <PlaylistTrackPin
-                        key={index}
-                        index={index}
-                        data={track}
-                        openBrowserAction={openBrowserAction}
-                    />
-                ))}
-            </View>
-        </ScrollView>
+        <View style={styles.container}>
+            <ScrollView>
+                <View style={styles.playlistContainer}>
+                    <Image source={{ uri: imageURI }} style={styles.playlistImage} />
+                    <Text style={styles.title}>{parsedPlaylist.name}</Text>
+                    <Text style={styles.description}>{description || ''}</Text>
+                    <Text style={styles.genre}>Genre: {parsedPlaylist.genre} </Text>
+                    <View style={styles.tracksContainer}>
+                    </View>
+                </View>
+                <View>
+                    {tracks.map((track, index) => (
+                        <PlaylistTrackPin
+                            key={index}
+                            index={index}
+                            track={track}
+                            openBrowserAction={openBrowserAction}
+                        />
+                    ))}
+                </View>
+            </ScrollView >
+        </View >
     );
 }
 
 const styles = StyleSheet.create({
-    scrollContainer: {
-        padding: 20,
+    container: {
+        flex: 1,
         backgroundColor: '#151718',
+    },
+    playlistContainer: {
+        padding: 20,
     },
     playlistImage: {
         width: '100%',

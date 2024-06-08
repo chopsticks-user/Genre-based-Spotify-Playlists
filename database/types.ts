@@ -4,8 +4,12 @@ export interface TrackDAO {
 
 export interface PlaylistDAO {
     id: string;
+    name: string,
     genre: string;
     tracks: TrackDAO[];
+    description: string | null,
+    imageURI: string | null,
+    url: string,
 };
 
 export interface UserDAO {
