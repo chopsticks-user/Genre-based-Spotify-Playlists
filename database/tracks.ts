@@ -6,10 +6,11 @@ import { db, genreNameDB, genreNameUI } from './init'
 import { RecommendationData, TrackDAO } from './types';
 import { addPlaylist } from './playlists';
 import { session } from '@/spotify/sessions';
+import { Playlist } from '@/spotify';
 
 export async function addTracks(
     genre: string,
-    fetchPlaylistID: () => Promise<string>,
+    createSpotifyPlaylist: () => Promise<Playlist>,
     tracks: TrackDAO[]
 ): Promise<string> {
     try {
@@ -22,7 +23,7 @@ export async function addTracks(
         });
 
         const genreDB: string = genreNameDB(genre);
-        const playlistDocRef = await addPlaylist(genreDB, fetchPlaylistID);
+        const playlistDocRef = await addPlaylist(genreDB, createSpotifyPlaylist);
         await updateDoc(playlistDocRef, {
             tracks: arrayUnion(...tracks),
         });

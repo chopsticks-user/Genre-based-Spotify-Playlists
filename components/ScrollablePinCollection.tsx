@@ -4,10 +4,11 @@ import TrackPin from './TrackPin';
 import PlaylistPin from './PlaylistPin';
 import { SimpliedPlaylist, Track } from '@/spotify';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
+import { PlaylistDAO } from '@/database';
 
 interface Props {
     itemType: 'track' | 'playlist';
-    items: Track[] | SimpliedPlaylist[];
+    items: Track[] | PlaylistDAO[];
 }
 
 const ScrollablePinCollection: React.FC<Props> = ({ itemType, items }) => {
@@ -28,7 +29,11 @@ const ScrollablePinCollection: React.FC<Props> = ({ itemType, items }) => {
                             openBrowserAction={openBrowserAction}
                         />
                     ) : (
-                        <PlaylistPin key={index} index={index} data={item as SimpliedPlaylist} />
+                        <PlaylistPin
+                            key={index}
+                            index={index}
+                            data={item as PlaylistDAO}
+                        />
                     );
                 })}
             </SafeAreaView>
