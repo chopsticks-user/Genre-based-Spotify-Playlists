@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { SimpliedPlaylist, Track, getPlaylistCoverImageURI, getSeveralTracks } from '@/spotify';
+import { Track, getSeveralTracks } from '@/spotify';
 import PlaylistTrackPin from '@/components/PlaylistTrackPin';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
-import { PlaylistDAO, editPlaylistImage, getTracks } from '@/database';
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { PlaylistDAO, getTracks } from '@/database';
 
 export default function Details() {
     const { playlist: playlistParam, tracks: trackIDsParam = '[]' } =
