@@ -82,13 +82,35 @@ export async function editPlaylist(
     }
 }
 
-export async function removePlaylist(genre: string): Promise<void> {
+export async function editPlaylistImage(
+    genre: string,
+    imageURI: string | null,
+): Promise<void> {
     try {
         const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
             db, `/users/${session.userProfile.id}/playlists/${genreDB}`
         );
+        await updateDoc(playlistDocRef, {
+            imageURI: imageURI,
+        });
+    } catch (error) {
+        throw new Error(`@/database/editPlaylistImage: ${error}`);
+    }
+}
+
+export async function removePlaylist(genre: string): Promise<string | null> {
+    try {
+        const genreDB = genreNameDB(genre);
+        const playlistDocRef = doc(
+            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+        );
+        const playlistSnapshot = await getDoc(playlistDocRef);
+        const playlistData = playlistSnapshot.data();
+        const playlistID: string | null = playlistData ? playlistData.id : null;
+
         await deleteDoc(playlistDocRef);
+        return playlistID;
     } catch (error) {
         throw new Error(`@/database/removePlaylist: ${error}`);
     }

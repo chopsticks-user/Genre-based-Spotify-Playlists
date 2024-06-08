@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { SimpliedPlaylist, Track, getSeveralTracks } from '@/spotify';
+import { SimpliedPlaylist, Track, getPlaylistCoverImageURI, getSeveralTracks } from '@/spotify';
 import PlaylistTrackPin from '@/components/PlaylistTrackPin';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
-import { PlaylistDAO, getTracks } from '@/database';
+import { PlaylistDAO, editPlaylistImage, getTracks } from '@/database';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 export default function Details() {
     const { playlist: playlistParam, tracks: trackIDsParam = '[]' } =
         useLocalSearchParams<{ playlist: string, tracks: string }>();
     const parsedPlaylist: PlaylistDAO = JSON.parse(playlistParam as string);
-    // const parsedTrackIDs: any = JSON.parse(trackIDsParam);
 
     const [tracks, setTracks] = useState<Track[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,9 +29,6 @@ export default function Details() {
     }
 
     useEffect(() => {
-        // getSeveralTracks(parsedTrackIDs)
-        //     .then(tracks => setTracks(tracks))
-        //     .catch(error => console.log(error));
         fetchTracks().then(res => { });
     }, []);
 
@@ -45,9 +42,6 @@ export default function Details() {
 
     const description = cleanDescription(parsedPlaylist.description as string);
 
-    const imageURI = parsedPlaylist.imageURI ||
-        'https://via.placeholder.com/640x640.png?text=Playlist+Image';
-
     if (!parsedPlaylist) {
         return <Text>Loading...</Text>;
     }
@@ -58,7 +52,13 @@ export default function Details() {
         <View style={styles.container}>
             <ScrollView>
                 <View style={styles.playlistContainer}>
-                    <Image source={{ uri: imageURI }} style={styles.playlistImage} />
+                    <Image
+                        source={{
+                            uri: parsedPlaylist.imageURI ||
+                                'https://via.placeholder.com/640x640.png?text=Playlist+Image'
+                        }}
+                        style={styles.playlistImage}
+                    />
                     <Text style={styles.title}>{parsedPlaylist.name}</Text>
                     <Text style={styles.description}>{description || ''}</Text>
                     <Text style={styles.genre}>Genre: {parsedPlaylist.genre} </Text>

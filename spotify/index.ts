@@ -23,6 +23,8 @@ export {
     addSongsToPlaylist,
     removeSongsFromPlaylist,
     changePlaylistDetails,
+    unfollowPlaylist,
+    getPlaylistCoverImageURI,
 } from './playlists'
 
 export {

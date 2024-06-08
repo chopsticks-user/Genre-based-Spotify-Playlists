@@ -14,6 +14,7 @@ export {
     getPlaylists,
     removePlaylist,
     editPlaylist,
+    editPlaylistImage,
 } from './playlists';
 
 export {
