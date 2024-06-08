@@ -2,25 +2,48 @@ import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import TrackPin from './TrackPin';
 import PlaylistPin from './PlaylistPin';
-import { SimpliedPlaylist, Track } from '@/spotify';
+import { Track } from '@/spotify';
+import { useWebBrowser } from '@/hooks/useWebBrowser';
+import { PlaylistDAO } from '@/database';
 
 interface Props {
     itemType: 'track' | 'playlist';
-    items: Track[] | SimpliedPlaylist[];
+    items: Track[] | PlaylistDAO[];
+    removePlaylist?: (genre: string) => Promise<void>;
 }
 
-const ScrollablePinCollection: React.FC<Props> = ({ itemType, items }) => {
+export default function ScrollablePinCollection(props: Props) {
+    const openBrowserAction = useWebBrowser();
+
     return (
         <ScrollView
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
         >
             <SafeAreaView style={styles.gridView}>
-                {items.map((item, index) => {
-                    return itemType === 'track' ? (
-                        <TrackPin key={index} index={index} data={item as Track} />
+                {props.items.map((item, index) => {
+                    return props.itemType === 'track' ? (
+                        <TrackPin
+                            key={index}
+                            index={index}
+                            data={item as Track}
+                            openBrowserAction={openBrowserAction}
+                        />
                     ) : (
-                        <PlaylistPin key={index} index={index} data={item as SimpliedPlaylist} />
+                        <PlaylistPin
+                            key={index}
+                            index={index}
+                            data={item as PlaylistDAO}
+                            removeSelf={
+                                async () => {
+                                    const removeSelf = props?.removePlaylist as
+                                        (genre: string) => Promise<void>;
+                                    await removeSelf(
+                                        (item as PlaylistDAO).genre
+                                    );
+                                }
+                            }
+                        />
                     );
                 })}
             </SafeAreaView>
@@ -37,5 +60,3 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 });
-
-export default ScrollablePinCollection;

@@ -22,12 +22,16 @@ export {
     createUserPlaylist,
     addSongsToPlaylist,
     removeSongsFromPlaylist,
+    changePlaylistDetails,
+    unfollowPlaylist,
+    getPlaylistCoverImageURI,
 } from './playlists'
 
 export {
     getUserSavedTracks,
     prepareSearchExtension,
     searchTracks,
+    getSeveralTracks,
     getRecommendations,
 } from './tracks';
 
@@ -38,4 +42,5 @@ export {
 
 export {
     // extractGenresFromArtists,
+    extractGenresFromTracks,
 } from './genres';

@@ -1,5 +1,5 @@
 import { usePinDimensions } from "@/hooks/usePinDimensions";
-import { WebBrowserOpenAction } from "@/hooks/useWebBrowser";
+import * as WebBrowser from "expo-web-browser";
 import { Track, ExtractedGenres, removeSongsFromPlaylist } from "@/spotify";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { PropsWithChildren, useState } from "react";
@@ -8,24 +8,13 @@ import {
     ImageBackground,
     TouchableOpacity
 } from "react-native";
-
-// Placeholder function if removeTracks does not exist
-const removeTracks = async (genre: string, tracks: { id: string }[]): Promise<string> => {
-    console.log(`Removing tracks from genre: ${genre}`);
-    return "playlistID";
-};
-
-const extractGenresFromTracks = async (tracks: Track[]): Promise<ExtractedGenres[]> => {
-    return tracks.map(track => ({
-        trackID: track.id,
-        genres: ['defaultGenre']
-    }));
-};
+import { removeTracks } from "@/database";
+import { extractGenresFromTracks } from "@/spotify";
 
 interface Props extends PropsWithChildren {
     index: number;
-    openBrowserAction: WebBrowserOpenAction;
-    data: Track;
+    track: Track;
+    openBrowserAction?: (url: string) => Promise<void>;
 }
 
 function getDurationString(duration_ms?: number): string {
@@ -42,10 +31,11 @@ function getDurationString(duration_ms?: number): string {
 
 export default function PlaylistTrackPin(props: Props) {
     const [width, height] = usePinDimensions(styles.itemContainer.margin);
-    const duration = getDurationString(props.data.duration_ms);
-    const imageURI = props.data.album.images[0].url;
+    const duration = getDurationString(props.track.duration_ms);
+    const imageURI = props.track.album.images[0].url;
 
     const [removeLocked, setRemoveLocked] = useState<boolean>(false);
+    const [removed, setRemoved] = useState<boolean>(false);
 
     const removeButtonHandler = async () => {
         if (removeLocked) {
@@ -53,32 +43,21 @@ export default function PlaylistTrackPin(props: Props) {
         }
         setRemoveLocked(true);
 
-        let failed = false;
-
-        const genresPromise = extractGenresFromTracks([props.data]);
-        genresPromise.then(res => {
-            const { trackID, genres }: ExtractedGenres = res[0];
-            console.log(genres);  // Log genres to check
-
+        try {
+            const extractedGenres: ExtractedGenres[] =
+                await extractGenresFromTracks([props.track]);
+            const { trackID, genres } = extractedGenres[0];
             genres.forEach(async genre => {
-                try {
-                    const playlistID = await removeTracks(genre, [{ id: trackID }]);
-                    console.log(`Removing track: ${trackID} from playlist: ${playlistID}`);  // Log IDs to check
-                    await removeSongsFromPlaylist(playlistID, [trackID]);
-                } catch (error) {
-                    failed = true;
-                    console.error(error);
-                }
+                const playlistID = await removeTracks(genre, [{ id: trackID }]);
+                await removeSongsFromPlaylist(playlistID, [trackID]);
+                // console.log(`Removing track: ${trackID} from playlist: ${playlistID}`);  // Log IDs to check
             });
-        }).catch(err => {
-            failed = true;
-            console.error(err);
-        });
-
-        if (!failed) {
-            // Handle track removal from UI if needed
+        }
+        catch (error) {
+            console.log(error);
         }
 
+        setRemoved(true);
         setTimeout(() => {
             setRemoveLocked(false);
         }, 1500);
@@ -86,7 +65,7 @@ export default function PlaylistTrackPin(props: Props) {
 
     return (
         <Pressable key={props.index}>
-            <ImageBackground source={{ uri: props.data.album.images[0].url }}
+            <ImageBackground source={{ uri: props.track.album.images[0].url }}
                 style={[
                     styles.itemContainer,
                     {
@@ -99,23 +78,26 @@ export default function PlaylistTrackPin(props: Props) {
                 imageStyle={{ borderRadius: 10 }}
             >
                 <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity
-                        onPress={removeButtonHandler}
-                        style={styles.iconBackground}
-                    >
-                        <Ionicons name="remove" size={24} color="white" />
-                    </TouchableOpacity>
+                    {
+                        !removed &&
+                        <TouchableOpacity
+                            onPress={removeButtonHandler}
+                            style={styles.iconContainer}
+                        >
+                            <Ionicons name="remove-circle" size={36} color="green" />
+                        </TouchableOpacity>
+                    }
                     <View style={{ flex: 1 }}></View>
                     <TouchableOpacity
                         onPress={async () => {
-                            const url = props.data.external_urls?.spotify;
+                            const url = props.track.external_urls?.spotify;
                             if (url !== undefined) {
-                                await props.openBrowserAction(url);
+                                await WebBrowser.openBrowserAsync(url);
                             }
                         }}
-                        style={styles.iconBackground}
+                        style={styles.iconContainer}
                     >
-                        <FontAwesome name="spotify" size={24} color="white" />
+                        <FontAwesome name="spotify" size={36} color="green" />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1 }}></View>
@@ -128,9 +110,9 @@ export default function PlaylistTrackPin(props: Props) {
                         }
                     ]}
                 >
-                    <Text style={styles.itemName}>{props.data.name}</Text>
+                    <Text style={styles.itemName}>{props.track.name}</Text>
                     <Text style={styles.itemCode}>
-                        {props.data.artists.map(artist => {
+                        {props.track.artists.map(artist => {
                             return artist.name;
                         }).reduce((prev, current, index) => {
                             if (index === 0) {
@@ -140,8 +122,8 @@ export default function PlaylistTrackPin(props: Props) {
                         })}
                     </Text>
                     <Text style={styles.itemCode}>
-                        {props.data.album.name + ' \u25cf '
-                            + props.data.album.release_date}
+                        {props.track.album.name + ' \u25cf '
+                            + props.track.album.release_date}
                     </Text>
                     <Text style={styles.itemCode}>
                         {'\u25b6 ' + duration}
@@ -176,14 +158,9 @@ const styles = StyleSheet.create({
         color: '#fff',
         flexWrap: 'wrap',
     },
-    iconBackground: {
-        backgroundColor: 'green',
+    iconContainer: {
+        //          backgroundColor: 'rgba(255, 255, 255, 1)',
         borderRadius: 18,
-        padding: 6,
-    },
-    spotifyIcon: {
-        width: 24,
-        height: 24,
-        resizeMode: 'contain',
+        padding: 2,
     },
 });

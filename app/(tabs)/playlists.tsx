@@ -1,56 +1,112 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import SearchBar from '@/components/SearchBar';
-import { SimpliedPlaylist, Track } from '@/spotify';
-import simplifiedPlaylists from '@/json/simplified-playlists.json';
-import savedTracks from '@/json/saved-tracks.json'
+import { PlaylistDAO, getPlaylists, removePlaylist } from '@/database';
+import { unfollowPlaylist } from '@/spotify';
 
-const initialPlaylists: SimpliedPlaylist[] = simplifiedPlaylists;
+export default function Playlists() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [playlists, setPlaylists] = useState<PlaylistDAO[]>([]);
 
-export default function Home() {
-    const [filteredPlaylists, setFilteredPlaylists] = useState(initialPlaylists);
+    const loadAllPlaylists = useCallback(async () => {
+        setIsLoading(true);
+
+        try {
+            const fetchedlaylists = await getPlaylists();
+            setPlaylists(fetchedlaylists);
+            setFilteredPlaylists(fetchedlaylists);
+        } catch (error) {
+            console.log(error);
+        }
+
+        setIsLoading(false);
+    }, []);
+
+    const removePlaylistFuncParam = async (genre: string) => {
+        setIsLoading(true);
+
+        try {
+            const playlistID: string | null = await removePlaylist(genre);
+            if (playlistID === null) {
+                return;
+            }
+
+            //* Does not work as expected
+            // await unfollowPlaylist(playlistID);
+
+            const newPlaylists = playlists.splice(
+                playlists.findIndex(playlist => playlist.genre === genre)
+            );
+            setPlaylists(newPlaylists);
+
+            const newFilteredPlaylists = filteredPlaylists.splice(
+                filteredPlaylists.findIndex(playlist => playlist.genre === genre)
+            );
+            setFilteredPlaylists(newFilteredPlaylists);
+        } catch (error) {
+            console.log(error);
+        }
+
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        loadAllPlaylists().then(res => { }).catch(error => console.log(error));
+    }, []);
+
+    useEffect(() => {
+    }, [playlists]);
+
+    const [filteredPlaylists, setFilteredPlaylists] =
+        useState<PlaylistDAO[]>(playlists);
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
     const [nameQuery, setNameQuery] = useState('');
     const [genreQuery, setGenreQuery] = useState('');
-    const router = useRouter();
+    const [isSearchable, setIsSearchable] = useState(false);
+
+    useEffect(() => {
+        setIsSearchable(
+            (searchCriteria.includes('name') && nameQuery.trim().length > 0) ||
+            (searchCriteria.includes('genre') && genreQuery.trim().length > 0)
+        );
+    }, [nameQuery, genreQuery, searchCriteria]);
 
     const handleAddCriteria = useCallback((criteria: string) => {
         if (criteria === 'name') {
-            setSearchCriteria(searchCriteria.includes('name') ? searchCriteria.filter(item => item !== 'name') : [...searchCriteria, 'name']);
+            setSearchCriteria(searchCriteria.includes('name')
+                ? searchCriteria.filter(item => item !== 'name')
+                : ['name']);
             setNameQuery('');
         } else if (criteria === 'genre') {
-            setSearchCriteria(searchCriteria.includes('genre') ? searchCriteria.filter(item => item !== 'genre') : [...searchCriteria, 'genre']);
+            setSearchCriteria(searchCriteria.includes('genre')
+                ? searchCriteria.filter(item => item !== 'genre')
+                : ['genre']);
             setGenreQuery('');
         }
     }, [searchCriteria]);
 
     const handleSearch = () => {
-        let filtered = initialPlaylists;
-        if (searchCriteria.includes('name') && nameQuery) {
-            filtered = filtered.filter(playlist =>
-                playlist.name.toLowerCase().includes(nameQuery.toLowerCase())
-            );
+        if (isSearchable) {
+            let filtered = playlists;
+            if (searchCriteria.includes('name') && nameQuery) {
+                filtered = filtered.filter(playlist =>
+                    playlist.name.toLowerCase().includes(nameQuery.toLowerCase())
+                );
+            } else if (searchCriteria.includes('genre') && genreQuery) {
+                filtered = filtered.filter(playlist =>
+                    playlist.genre.toLowerCase().includes(genreQuery.toLowerCase())
+                );
+            }
+            setFilteredPlaylists(filtered);
         }
-        // if (searchCriteria.includes('genre') && genreQuery) {
-        //     filtered = filtered.filter(playlist =>
-        //         playlist.genre && playlist.genre.toLowerCase() === genreQuery.toLowerCase()
-        //     );
-        // }
-        setFilteredPlaylists(filtered);
     };
 
     const handleRefresh = () => {
-        setFilteredPlaylists(initialPlaylists);
+        setFilteredPlaylists(playlists);
         setNameQuery('');
         setGenreQuery('');
         setSearchCriteria([]);
-    };
-
-    const handlePlaylistPress = (playlist: SimpliedPlaylist) => {
-        const tracks: Track[] = [];  // Fetch tracks for the selected playlist
-        router.push({ pathname: 'PlaylistDetails', params: { playlist, tracks } as any });
     };
 
     return (
@@ -58,10 +114,23 @@ export default function Home() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.dropdownContainer}>
                     <TouchableOpacity onPress={() => handleAddCriteria('name')}>
-                        <Text style={[styles.dropdownText, searchCriteria.includes('name') && styles.selected]}>Search by Playlist Name</Text>
+                        <Text style={[
+                            styles.dropdownText, searchCriteria.includes('name')
+                            && styles.selected
+                        ]}
+                        >
+                            Search by Playlist Name
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => handleAddCriteria('genre')}>
-                        <Text style={[styles.dropdownText, searchCriteria.includes('genre') && styles.selected]}>Search by Genre</Text>
+                        <Text
+                            style={[
+                                styles.dropdownText, searchCriteria.includes('genre')
+                                && styles.selected
+                            ]}
+                        >
+                            Search by Genre
+                        </Text>
                     </TouchableOpacity>
                 </View>
                 {searchCriteria.includes('name') && (
@@ -81,17 +150,24 @@ export default function Home() {
                     />
                 )}
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+                    <TouchableOpacity
+                        onPress={handleSearch}
+                        style={[styles.searchButton, !isSearchable && styles.disabledButton]}
+                        disabled={!isSearchable}
+                    >
                         <Text style={styles.buttonText}>Search</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
+                    <TouchableOpacity
+                        onPress={handleRefresh}
+                        style={[styles.refreshButton]}
+                    >
                         <Text style={styles.buttonText}>Refresh</Text>
                     </TouchableOpacity>
                 </View>
                 <ScrollablePinCollection
                     itemType='playlist'
                     items={filteredPlaylists}
-                    onPressItem={() => handlePlaylistPress}
+                    removePlaylist={removePlaylistFuncParam}
                 />
             </ScrollView>
         </SafeAreaView>
@@ -147,5 +223,11 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    disabledButton: {
+        backgroundColor: '#a5d6a7',
+    },
+    disabledRefreshButton: {
+        backgroundColor: '#bdbdbd',
     },
 });

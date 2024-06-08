@@ -117,3 +117,36 @@ export async function getRecommendations(
         throw new Error(`@/spotify/getRecommendations: ${error}`);
     }
 }
+
+function prepareSeveralTrackRequest(trackIDs: string[]): string {
+    // !100 ids each
+    return trackIDs.reduce((acc, item, index) => {
+        if (index === 0) {
+            return acc += item;
+        }
+        return acc += `%2C${item}`;
+    });
+}
+
+export async function getSeveralTracks(trackIDs: string[]): Promise<Track[]> {
+    try {
+        if (trackIDs.length === 0) {
+            return [];
+        }
+
+        const response = await fetch(
+            `https://api.spotify.com/v1/tracks?ids=${prepareSeveralTrackRequest(trackIDs)}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`
+            },
+        });
+
+        console.log('getSeveralTracks');
+
+        const data = await response.json();
+        return data.tracks as Track[];
+    } catch (error) {
+        throw new Error(`@/spotify/getSeveralTracks: ${error}`);
+    }
+}

@@ -10,9 +10,6 @@ const screenOptions: any = {
     headerTitleAlign: 'center',
     headerTintColor: '#fff',
     headerBackButtonMenuEnabled: true,
-    // tabBarStyle: {
-    //     backgroundColor: '#000',
-    // },
 };
 
 export default function PlaylistsLayout() {

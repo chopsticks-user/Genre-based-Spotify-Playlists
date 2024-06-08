@@ -1,66 +1,117 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import TrackPin from '@/components/TrackPin';
-import { SimpliedPlaylist, Track } from '@/spotify';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { Track, getSeveralTracks } from '@/spotify';
+import PlaylistTrackPin from '@/components/PlaylistTrackPin';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
+import { PlaylistDAO, getTracks } from '@/database';
 
-export default function PlaylistDetails() {
-    const browserAction = useWebBrowser();
+export default function Details() {
+    const { playlist: playlistParam, tracks: trackIDsParam = '[]' } =
+        useLocalSearchParams<{ playlist: string, tracks: string }>();
+    const parsedPlaylist: PlaylistDAO = JSON.parse(playlistParam as string);
+
+    const [tracks, setTracks] = useState<Track[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const fetchTracks = async () => {
+        setIsLoading(true);
+
+        setTracks([]);
+        const trackIDs = await getTracks(parsedPlaylist.genre);
+        const fetchedTracks: Track[] = await getSeveralTracks(
+            trackIDs.map((track: any) => track.id)
+        );
+        setTracks(fetchedTracks);
+
+        setIsLoading(false);
+    }
+
+    useEffect(() => {
+        fetchTracks().then(res => { });
+    }, []);
+
+    const cleanDescription = (description: string) => {
+        if (!description) return '';
+        let cleanedDescription = description.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags
+        cleanedDescription = cleanedDescription.replace(/Curated by.*?(?=\.)\./, ""); // Remove "Curated by" section
+        cleanedDescription = cleanedDescription.replace(/Photography by.*?(?=\.)\./, ""); // Remove "Photography by" section
+        return cleanedDescription;
+    };
+
+    const description = cleanDescription(parsedPlaylist.description as string);
+
+    if (!parsedPlaylist) {
+        return <Text>Loading...</Text>;
+    }
+
+    const openBrowserAction = useWebBrowser();
 
     return (
         <View style={styles.container}>
             <ScrollView>
-                {/* <Image
-                    source={{ uri: playlist.images[0].url }}
-                    style={styles.playlistImage}
-                />
-                <Text style={styles.title}>{playlist?.name || 'name'}</Text>
-                <Text style={styles.description}>{playlist.description}</Text>
-                <Text style={styles.genre}>{playlist.genre}</Text>
-                <ScrollView contentContainerStyle={styles.tracksContainer}>
+                <View style={styles.playlistContainer}>
+                    <Image
+                        source={{
+                            uri: parsedPlaylist.imageURI ||
+                                'https://via.placeholder.com/640x640.png?text=Playlist+Image'
+                        }}
+                        style={styles.playlistImage}
+                    />
+                    <Text style={styles.title}>{parsedPlaylist.name}</Text>
+                    <Text style={styles.description}>{description || ''}</Text>
+                    <Text style={styles.genre}>Genre: {parsedPlaylist.genre} </Text>
+                    <View style={styles.tracksContainer}>
+                    </View>
+                </View>
+                <View>
                     {tracks.map((track, index) => (
-                        <TrackPin
+                        <PlaylistTrackPin
                             key={index}
                             index={index}
-                            data={track}
-                            openBrowserAction={browserAction} />
+                            track={track}
+                            openBrowserAction={openBrowserAction}
+                        />
                     ))}
-                </ScrollView> */}
-            </ScrollView>
-        </View>
+                </View>
+            </ScrollView >
+        </View >
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#151718',
+    },
+    playlistContainer: {
         padding: 20,
-        backgroundColor: '#fff',
     },
     playlistImage: {
         width: '100%',
         height: 200,
         borderRadius: 10,
+        marginBottom: 20,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginTop: 10,
+        color: 'white',
+        marginBottom: 10,
     },
     description: {
         fontSize: 16,
-        marginTop: 10,
+        color: 'lightgrey',
+        marginBottom: 10,
     },
     genre: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginTop: 10,
-        color: 'gray',
+        color: 'white',
+        marginBottom: 20,
     },
     tracksContainer: {
         marginTop: 20,
+        alignItems: 'center',
     },
 });

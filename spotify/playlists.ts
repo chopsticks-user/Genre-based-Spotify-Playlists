@@ -32,7 +32,7 @@ export async function createUserPlaylist(
             },
             body: JSON.stringify({
                 name: name,
-                public: public_ === undefined ? true : false,
+                public: public_ === undefined ? false : true,
                 collaborative: collaborative === undefined ? false : true,
                 description: description === undefined ?
                     "Created by Playtify" : description
@@ -97,25 +97,66 @@ export async function removeSongsFromPlaylist(playlistID: string, trackIDs: stri
     }
 }
 
-// export async function removeUserPlaylist(playlistID?: string): Promise<string> {
-//     try {
-//         const response = await fetch(
-//             `https://api.spotify.com/v1/users/${session.userProfile.id}/playlists`, {
-//             method: 'DELETE',
-//             headers: {
-//                 'Authorization': `Bearer ${session.accessToken}`,
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({
-//                 name: name,
-//                 public: public_ === undefined ? true : false,
-//                 collaborative: collaborative === undefined ? false : true,
-//                 description: description === undefined ?
-//                     "Created by Playtify" : description
-//             })
-//         });
-//         return await response.json();
-//     } catch (error) {
-//         throw Configs.createError(modulePath, arguments.callee.name, error);
-//     }
-// }
+export async function changePlaylistDetails(
+    playlistID: string,
+    name: string,
+    description: string
+): Promise<void> {
+    try {
+        const response = await fetch(
+            `https://api.spotify.com/v1/playlists/${playlistID}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                description: description === undefined ?
+                    "Created by Playtify" : description
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw `${error.error.message} (${error.error.status})`;
+        }
+    } catch (error) {
+        throw new Error(`@/spotify/changePlaylistDetails: ${error}`);
+    }
+}
+
+export async function unfollowPlaylist(playlistID: string): Promise<void> {
+    try {
+        await fetch(
+            `https://api.spotify.com/v1/playlists/${playlistID}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log('unfollowPlaylist');
+    } catch (error) {
+        throw new Error(`@/spotify/unfollowPlaylist: ${error}`);
+    }
+}
+
+export async function getPlaylistCoverImageURI(playlistID: string)
+    : Promise<string | null> {
+    try {
+        const response = await fetch(
+            `https://api.spotify.com/v1/playlists/${playlistID}/images`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${session.accessToken}`
+            }
+        });
+        console.log('getPlaylistCoverImageURI');
+
+        const data = await response.json();
+        return data.length > 0 ? data[0].url : null;
+    } catch (error) {
+        throw Configs.createError(modulePath, arguments.callee.name, error);
+    }
+}

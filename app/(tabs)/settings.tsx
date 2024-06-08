@@ -1,21 +1,12 @@
-import {
-    StyleSheet, Text, View, Image, Button,
-    Pressable, SafeAreaView, TouchableOpacity, Switch
-} from 'react-native'
-import React, { MutableRefObject, useRef, useState } from 'react'
-import { Link, router } from 'expo-router';
+import { StyleSheet, SafeAreaView } from 'react-native'
+import { router } from 'expo-router';
 import { ScrollView } from 'react-native';
-import { session } from '@/spotify/sessions';
 import { settingsMenuIcons } from '@/constants/Icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as AuthSession from 'expo-auth-session';
 import UserProfileSection from '@/components/UserProfileSection';
 import SettingsSection from '@/components/SettingsSection';
 import SettingsItemLink from '@/components/SettingsItemLink';
 import SettingsItemToggle from '@/components/SettingsItemToggle';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
-import * as WebBrowser from 'expo-web-browser';
-import * as Linking from 'expo-linking';
 import useUserProfile from '@/hooks/useUserProfile';
 
 export default function Settings() {
@@ -34,10 +25,10 @@ export default function Settings() {
                             router.push('/settings/languages');
                         }}
                     />
-                    <SettingsItemToggle
+                    {/* <SettingsItemToggle
                         label='Themes'
                         icon={{ element: settingsMenuIcons.themes, color: '#0096ff' }}
-                    />
+                    /> */}
                     {/* <SettingsItemLink
                         label='Playlists'
                         icon={{ element: settingsMenuIcons.playlists, color: '#0096ff' }}
