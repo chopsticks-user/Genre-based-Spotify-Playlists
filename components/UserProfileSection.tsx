@@ -7,9 +7,8 @@ export interface UserProfileSectionProps {
 }
 
 function userProfileImageSource(profile: UserProfile) {
-    const defaultImageSource = require('@/assets/images/react-logo-black.png');
     if (profile.images.length === 0) {
-        return defaultImageSource;
+        return undefined;
     }
     return { uri: profile.images[0].url };
 }
@@ -23,7 +22,10 @@ export default function UserProfileSection(props: UserProfileSectionProps) {
                 <View style={styles.profileAvatarWrapper}>
                     <Image
                         style={styles.profileAvatar}
-                        source={userProfileImageSource(props.profile)}
+                        source={
+                            userProfileImageSource(props.profile)
+                            // || require('@/assets/images/icon.png')
+                        }
                     />
                 </View>
             </TouchableOpacity>
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
         borderRadius: 10000,
         borderWidth: 2,
         borderColor: '#ECEDEE',
-        backgroundColor: 'yellow',
+        backgroundColor: 'black',
     },
     profileAvatarWrapper: {
         position: 'relative',
