@@ -49,6 +49,7 @@ export default function PlaylistPin(props: Props) {
             const uri = await getPlaylistCoverImageURI(props.data.id);
             await editPlaylistImage(props.data.genre, uri);
             setImageURI(uri);
+            props.data.imageURI = uri;
         } catch (error) {
             console.log(error);
         }
@@ -86,12 +87,12 @@ export default function PlaylistPin(props: Props) {
             >
                 <View style={{ flex: 1, flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={styles.removeButton}
                             onPress={props.removeSelf}
                         >
                             <FontAwesome6 name="trash-alt" size={20} color="white" />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <View style={{ flex: 1 }}></View>
                         <TouchableOpacity
                             style={styles.editButton}
