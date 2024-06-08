@@ -4,15 +4,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
 const WelcomeScreen = () => {
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   const handleAddTracks = () => {
     router.replace('/search');
   };
 
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-  };
+  // const toggleTheme = () => {
+  //   setIsDarkTheme(!isDarkTheme);
+  // };
 
   return (
     <LinearGradient
@@ -25,8 +25,8 @@ const WelcomeScreen = () => {
         <Text style={styles.buttonText}>Add Songs</Text>
       </TouchableOpacity>
       <View style={styles.switchContainer}>
-        <Text style={[styles.switchText, isDarkTheme && styles.darkText]}>Dark Theme</Text>
-        <Switch value={isDarkTheme} onValueChange={toggleTheme} />
+        {/* <Text style={[styles.switchText, isDarkTheme && styles.darkText]}>Dark Theme</Text> */}
+        {/* <Switch value={isDarkTheme} onValueChange={toggleTheme} /> */}
       </View>
     </LinearGradient>
   );

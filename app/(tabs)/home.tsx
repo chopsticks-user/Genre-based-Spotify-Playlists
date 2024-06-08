@@ -34,7 +34,7 @@ export default function Home() {
         }, 3000);
     };
     useEffect(() => {
-        refreshButtonHandler().then(res => { });
+        refreshButtonHandler().then(res => { }).catch(error => console.log(error));
     }, []);
 
 

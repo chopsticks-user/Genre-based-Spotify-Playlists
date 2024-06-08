@@ -93,13 +93,13 @@ export default function PlaylistPin(props: Props) {
                         >
                             <FontAwesome6 name="trash-alt" size={20} color="white" />
                         </TouchableOpacity> */}
-                        <View style={{ flex: 1 }}></View>
                         <TouchableOpacity
                             style={styles.editButton}
                             onPress={() => setModalVisible(true)}
                         >
                             <Feather name="edit" size={20} color="white" />
                         </TouchableOpacity>
+                        <View style={{ flex: 1 }}></View>
                         <TouchableOpacity
                             style={styles.editButton}
                             onPress={refreshCoverImage}

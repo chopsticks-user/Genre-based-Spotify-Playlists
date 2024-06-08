@@ -1,27 +1,38 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import SearchBar from '@/components/SearchBar';
 import { PlaylistDAO, getPlaylists, removePlaylist } from '@/database';
 import { unfollowPlaylist } from '@/spotify';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 export default function Playlists() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [playlists, setPlaylists] = useState<PlaylistDAO[]>([]);
+    const scrollViewRef = useRef<ScrollView>(null);
+    const refreshPageButtonRef = useRef<TouchableOpacity>(null);
 
-    const loadAllPlaylists = useCallback(async () => {
+    const refreshPageButtonHandler = async () => {
+        if (isLoading) {
+            return;
+        }
         setIsLoading(true);
 
         try {
             const fetchedlaylists = await getPlaylists();
             setPlaylists(fetchedlaylists);
             setFilteredPlaylists(fetchedlaylists);
+            if (scrollViewRef.current) {
+                scrollViewRef.current.scrollTo({ y: 0, animated: true });
+            }
         } catch (error) {
             console.log(error);
         }
 
-        setIsLoading(false);
-    }, []);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 3000);
+    };
 
     const removePlaylistFuncParam = async (genre: string) => {
         setIsLoading(true);
@@ -52,7 +63,9 @@ export default function Playlists() {
     };
 
     useEffect(() => {
-        loadAllPlaylists().then(res => { }).catch(error => console.log(error));
+        refreshPageButtonHandler()
+            .then(res => { })
+            .catch(error => console.log(error));
     }, []);
 
     useEffect(() => {
@@ -111,7 +124,10 @@ export default function Playlists() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView
+                ref={scrollViewRef}
+                contentContainerStyle={styles.scrollContainer}
+            >
                 <View style={styles.dropdownContainer}>
                     <TouchableOpacity onPress={() => handleAddCriteria('name')}>
                         <Text style={[
@@ -170,6 +186,13 @@ export default function Playlists() {
                     removePlaylist={removePlaylistFuncParam}
                 />
             </ScrollView>
+            <TouchableOpacity
+                ref={refreshPageButtonRef}
+                onPress={refreshPageButtonHandler}
+                style={styles.refreshPageButton}
+            >
+                <SimpleLineIcons name="refresh" size={36} color="white" />
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
@@ -229,5 +252,18 @@ const styles = StyleSheet.create({
     },
     disabledRefreshButton: {
         backgroundColor: '#bdbdbd',
+    },
+    refreshPageButton: {
+        position: 'absolute',
+        alignSelf: 'auto',
+        left: 300,
+        bottom: 20,
+        backgroundColor: 'green',
+        borderRadius: 10000,
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        resizeMode: 'contain',
     },
 });
