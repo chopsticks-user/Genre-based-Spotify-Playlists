@@ -9,14 +9,14 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.playtify"
+      "bundleIdentifier": "com.frost.playtify"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/playtifylogosolo.jpg",
         "backgroundColor": "#000000"
       },
-      "package": "com.anonymous.playtify"
+      "package": "com.frost.playtify"
     },
     "extra": {
       "eas": {
