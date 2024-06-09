@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePinDimensions } from "@/hooks/usePinDimensions";
 import {
     Pressable, View, StyleSheet, Text,
@@ -59,6 +59,12 @@ export default function PlaylistPin(props: Props) {
         }, 1500);
     };
 
+    useEffect(() => {
+        refreshCoverImage()
+            .then(res => { })
+            .catch(error => console.log(error));
+    }, []);
+
     return (
         <Pressable
             key={props.index}
@@ -100,12 +106,12 @@ export default function PlaylistPin(props: Props) {
                             <Feather name="edit" size={20} color="white" />
                         </TouchableOpacity>
                         <View style={{ flex: 1 }}></View>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={styles.editButton}
                             onPress={refreshCoverImage}
                         >
                             <SimpleLineIcons name="refresh" size={20} color="white" />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity
                             onPress={async () => {
                                 const url = props.data.url;

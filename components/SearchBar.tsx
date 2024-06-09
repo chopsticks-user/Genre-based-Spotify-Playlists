@@ -15,7 +15,7 @@ const SearchBar = React.memo(({ placeholder, value, onChangeText, onClear, keybo
             />
             {value ? (
                 <TouchableOpacity onPress={onClear} style={styles.iconContainer}>
-                    <Icon name="close-circle" size={16} color="white" style={styles.icon} />
+                    <Icon name="close-circle" size={20} color="white" style={styles.icon} />
                 </TouchableOpacity>
             ) : null}
         </View>
@@ -31,12 +31,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginVertical: 5,
         backgroundColor: '#333',
+        height: 35,
     },
     input: {
         flex: 1,
         color: 'white',
         paddingHorizontal: 10,
         backgroundColor: '#333',
+        fontSize: 16,
     },
     iconContainer: {
         paddingHorizontal: 5,

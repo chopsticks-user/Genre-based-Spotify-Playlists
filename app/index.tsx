@@ -47,7 +47,7 @@ export default function Home() {
         >
             <View style={styles.logoContainer}>
                 <Image
-                    source={require('@/assets/images/logo-transparent.jpg')}
+                    source={require('@/assets/images/logo-transparent.png')}
                     style={styles.logo}
                 />
             </View>

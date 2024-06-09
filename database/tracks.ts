@@ -127,22 +127,9 @@ export async function getRecommendationData()
             return { genres: genres, trackIDs: allTrackIDs };
         }
 
-        const indices = <Set<number>>{};
-        while (indices.size < 2) {
-            const index = Math.max(
-                Math.round(Math.random() * allTrackIDs.length),
-                allTrackIDs.length
-            );
-            if (!indices.has(index)) {
-                indices.add(index);
-            }
-        }
-
         return {
             genres: genres,
-            trackIDs: Array.from(indices).map(index => {
-                return allTrackIDs[index];
-            }),
+            trackIDs: [allTrackIDs.at(-1) as string, allTrackIDs.at(-2) as string],
         };
     } catch (error) {
         throw new Error(`@/database/getRecommendationData: ${error}`);

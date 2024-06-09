@@ -1,30 +1,32 @@
+import { useWebBrowser } from '@/hooks/useWebBrowser';
 import { UserProfile } from '@/spotify';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType } from 'react-native'
 
 
 export interface UserProfileSectionProps {
     profile: UserProfile
 }
 
-function userProfileImageSource(profile: UserProfile) {
+function userProfileImageSource(profile: UserProfile): ImageSourcePropType | undefined {
     if (profile.images.length === 0) {
-        return undefined;
+        return require('@/assets/images/avatar-default.png');
     }
     return { uri: profile.images[0].url };
 }
 
 export default function UserProfileSection(props: UserProfileSectionProps) {
+    const webBrowserOpen = useWebBrowser();
+
     return (
         <View style={styles.profile}>
             <TouchableOpacity onPress={() => {
-                console.log('pressed');
+                webBrowserOpen(props.profile.external_urls.spotify);
             }}>
                 <View style={styles.profileAvatarWrapper}>
                     <Image
                         style={styles.profileAvatar}
                         source={
                             userProfileImageSource(props.profile)
-                            // || require('@/assets/images/icon.png')
                         }
                     />
                 </View>

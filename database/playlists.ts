@@ -1,25 +1,46 @@
 import {
     DocumentData, DocumentReference, addDoc, collection, deleteDoc, doc,
-    getDoc, getDocs, setDoc,
+    getDoc, getDocs, query, setDoc,
     updateDoc,
+    where,
 } from 'firebase/firestore';
 import { db, genreNameDB, genreNameUI } from './init'
 import { PlaylistDAO } from './types';
 import { session } from '@/spotify/sessions';
 import { Playlist } from '@/spotify';
 
-export async function getPlaylists(): Promise<PlaylistDAO[]> {
+export async function getPlaylists(genres?: string[]): Promise<PlaylistDAO[]> {
     try {
-        const playlistsSnapshot = await getDocs(
-            collection(db, `/users/${session.userProfile.id}/playlists`)
-        );
-
         console.log('getPlaylists');
-        return Promise.all(playlistsSnapshot.docs.map(async doc => {
-            const playlist = doc.data() as PlaylistDAO;
-            playlist.genre = genreNameUI(playlist.genre);
-            return playlist;
-        }));
+
+        if (genres) {
+            if (genres.length === 0) {
+                return [];
+            }
+
+            const dbGenres: string[] = genres.map(genre => genreNameDB(genre));
+            const playlistsSnapshot = await getDocs(
+                query(
+                    collection(db, `/users/${session.userProfile.id}/playlists`),
+                    where('name', 'in', dbGenres)
+                )
+            );
+            return Promise.all(playlistsSnapshot.docs.map(async doc => {
+                const playlist = doc.data() as PlaylistDAO;
+                playlist.genre = genreNameUI(playlist.genre);
+                return playlist;
+            }));
+        } else {
+            const playlistsSnapshot = await getDocs(
+                collection(db, `/users/${session.userProfile.id}/playlists`)
+            );
+
+            return Promise.all(playlistsSnapshot.docs.map(async doc => {
+                const playlist = doc.data() as PlaylistDAO;
+                playlist.genre = genreNameUI(playlist.genre);
+                return playlist;
+            }));
+        }
     } catch (error) {
         throw new Error(`@/database/getPlaylists: ${error}`);
     }

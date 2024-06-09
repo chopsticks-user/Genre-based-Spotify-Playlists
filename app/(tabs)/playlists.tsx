@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import SearchBar from '@/components/SearchBar';
 import { PlaylistDAO, getPlaylists, removePlaylist } from '@/database';
-import { unfollowPlaylist } from '@/spotify';
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { NewGenresContext } from '@/contexts/NewGenres';
 
 export default function Playlists() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -12,19 +11,24 @@ export default function Playlists() {
     const scrollViewRef = useRef<ScrollView>(null);
     const refreshPageButtonRef = useRef<TouchableOpacity>(null);
 
-    const refreshPageButtonHandler = async () => {
+    const loadPlaylists = async () => {
         if (isLoading) {
             return;
         }
         setIsLoading(true);
 
         try {
-            const fetchedlaylists = await getPlaylists();
-            setPlaylists(fetchedlaylists);
-            setFilteredPlaylists(fetchedlaylists);
+            setPlaylists([]);
+            setFilteredPlaylists([]);
+
+            const fetchedPlaylists = await getPlaylists();
+            setPlaylists(fetchedPlaylists);
+            setFilteredPlaylists(fetchedPlaylists);
+
             if (scrollViewRef.current) {
                 scrollViewRef.current.scrollTo({ y: 0, animated: true });
             }
+            console.log('Fetching playlists...');
         } catch (error) {
             console.log(error);
         }
@@ -33,6 +37,51 @@ export default function Playlists() {
             setIsLoading(false);
         }, 3000);
     };
+
+    const { newGenres, setNewGenres } = useContext(NewGenresContext);
+
+    useEffect(() => {
+        loadPlaylists()
+            .then(res => { })
+            .catch(error => console.log(error));
+    }, []);
+
+    useEffect(() => {
+        if (newGenres.length > 0) {
+            loadPlaylists()
+                .then(res => { })
+                .catch(error => console.log(error));
+            setNewGenres([]);
+        }
+    }, [newGenres]);
+
+
+    // const appendPlaylists = async (genres: string[]) => {
+    //     if (isLoading) {
+    //         return;
+    //     }
+    //     setIsLoading(true);
+
+    //     try {
+    //         console.log(genres);
+    //         const newPlaylists = await getPlaylists(genres);
+    //         setPlaylists(prev => [...prev, ...newPlaylists]);
+    //         setFilteredPlaylists(prev => [...prev, ...newPlaylists]);
+    //         console.log('Refreshing playlists...');
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+
+    //     setIsLoading(false);
+    // };
+
+    // useEffect(() => {
+    //     if (globalValue.length > 0) {
+    //         appendPlaylists(globalValue)
+    //             .then(res => { })
+    //             .catch(error => console.log(error));
+    //     }
+    // }, [globalValue]);
 
     const removePlaylistFuncParam = async (genre: string) => {
         setIsLoading(true);
@@ -61,15 +110,6 @@ export default function Playlists() {
 
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        refreshPageButtonHandler()
-            .then(res => { })
-            .catch(error => console.log(error));
-    }, []);
-
-    useEffect(() => {
-    }, [playlists]);
 
     const [filteredPlaylists, setFilteredPlaylists] =
         useState<PlaylistDAO[]>(playlists);
@@ -186,13 +226,13 @@ export default function Playlists() {
                     removePlaylist={removePlaylistFuncParam}
                 />
             </ScrollView>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 ref={refreshPageButtonRef}
-                onPress={refreshPageButtonHandler}
+                onPress={refreshPlaylists}
                 style={styles.refreshPageButton}
             >
                 <SimpleLineIcons name="refresh" size={36} color="white" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </SafeAreaView>
     );
 }

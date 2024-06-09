@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, Text, View, Button, ScrollView, Pressable, TouchableOpacity, GestureResponderEvent } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import { Track, getRecommendations } from '@/spotify';
 import { getRecommendationData } from '@/database';
@@ -18,9 +18,12 @@ export default function Home() {
         setAddLocked(true);
 
         try {
+            console.log('Refeshing recommended tracks...');
             setTracks([]);
             const data = await getRecommendationData();
-            const recommendedTracks = await getRecommendations(data.genres, data.trackIDs);
+            const recommendedTracks = await getRecommendations(
+                data.genres, data.trackIDs
+            );
             setTracks(recommendedTracks);
             if (scrollViewRef.current) {
                 scrollViewRef.current.scrollTo({ y: 0, animated: true });
@@ -28,7 +31,6 @@ export default function Home() {
         } catch (error) {
             console.log(error);
         }
-        console.log('Refeshing...');
 
         setTimeout(() => {
             setAddLocked(false);
@@ -93,7 +95,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         resizeMode: 'contain',
-
-        // top: 200,
     },
 });

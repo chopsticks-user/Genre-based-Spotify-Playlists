@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { usePinDimensions } from '@/hooks/usePinDimensions';
 import { ExtractedGenres, Track, addSongsToPlaylist, createUserPlaylist, removeSongsFromPlaylist } from '@/spotify';
 import {
@@ -9,6 +9,7 @@ import { FontAwesome, FontAwesome6, Ionicons, SimpleLineIcons } from '@expo/vect
 import { extractGenresFromTracks } from '@/spotify/genres';
 import { addTracks, removeTracks } from '@/database';
 import * as WebBrowser from 'expo-web-browser';
+import { NewGenresContext } from '@/contexts/NewGenres';
 
 interface Props {
     index: number;
@@ -40,6 +41,7 @@ export default function TrackPin(props: Props) {
         props.data.added === undefined ? false : props.data.added
     );
     const [addLocked, setAddLocked] = useState<boolean>(false);
+    const { newGenres, setNewGenres } = useContext(NewGenresContext);
 
     const addButtonHandler = async () => {
         if (addLocked) {
@@ -57,15 +59,18 @@ export default function TrackPin(props: Props) {
                     await removeSongsFromPlaylist(playlistID, [trackID]);
                 }));
             } else {
+                let newlyAddedGenres: string[] = [];
                 await Promise.all(genres.map(async genre => {
                     const playlistID = await addTracks(genre, async () => {
                         const playlist = await createUserPlaylist(
                             genre, true, false, 'Created by Playtify'
                         );
+                        newlyAddedGenres.push(genre);
                         return playlist;
                     }, [{ id: trackID }]);
                     await addSongsToPlaylist(playlistID, [trackID]);
                 }));
+                setNewGenres((prev: string[]) => [...prev, ...newlyAddedGenres]);
             }
         } catch (error) {
             console.log(error);

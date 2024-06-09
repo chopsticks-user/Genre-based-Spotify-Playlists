@@ -116,16 +116,17 @@ export default function Search() {
 
             {searchCriteria.includes('year') && (
                 <View style={styles.yearFieldContainer}>
-                    <View style={styles.yearInputWrapper}>
+                    <View style={{ ...styles.yearInputWrapper, marginRight: 5 }}>
                         <SearchBar
                             placeholder="min year"
                             value={query.minYear}
                             onChangeText={(text: any) => setQuery({ ...query, minYear: text })}
                             onClear={() => setQuery({ ...query, minYear: '' })}
                             keyboardType="numeric"
+
                         />
                     </View>
-                    <View style={styles.yearInputWrapper}>
+                    <View style={{ ...styles.yearInputWrapper, marginLeft: 5 }}>
                         <SearchBar
                             placeholder="max year"
                             value={query.maxYear}
@@ -212,6 +213,7 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 10,
         backgroundColor: '#333',
+        fontSize: 18,
     },
     iconContainer: {
         paddingHorizontal: 5,
@@ -225,7 +227,6 @@ const styles = StyleSheet.create({
     },
     yearInputWrapper: {
         flex: 1,
-        marginHorizontal: 5,
     },
     yearInput: {
         flex: 1,
