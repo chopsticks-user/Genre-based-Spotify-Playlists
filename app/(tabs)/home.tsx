@@ -1,5 +1,7 @@
-import { SafeAreaView, StyleSheet, Text, View, Button, ScrollView, Pressable, TouchableOpacity, GestureResponderEvent } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import {
+    SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity
+} from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import { Track, getRecommendations } from '@/spotify';
 import { getRecommendationData } from '@/database';
