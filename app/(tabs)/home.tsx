@@ -18,9 +18,10 @@ export default function Home() {
         setAddLocked(true);
 
         try {
+            setTracks([]);
             const data = await getRecommendationData();
-            const tracks = await getRecommendations(data.genres, data.trackIDs);
-            setTracks(tracks);
+            const recommendedTracks = await getRecommendations(data.genres, data.trackIDs);
+            setTracks(recommendedTracks);
             if (scrollViewRef.current) {
                 scrollViewRef.current.scrollTo({ y: 0, animated: true });
             }
