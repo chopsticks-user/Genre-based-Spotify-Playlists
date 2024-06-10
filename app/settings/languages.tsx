@@ -2,15 +2,44 @@ import {
     StyleSheet, Text, View, Pressable, SafeAreaView
 } from 'react-native';
 import React from 'react';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function Languages() {
+    const theme = useTheme();
+
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Languages</Text>
-            <View style={styles.languageContainer}>
-                <Text style={styles.languageText}>English</Text>
+        <SafeAreaView
+            style={[
+                styles.container,
+                { backgroundColor: theme.screen }
+            ]}
+        >
+            <Text style={[styles.title, { color: theme.text }]}>
+                Languages
+            </Text>
+            <View
+                style={[
+                    styles.languageContainer,
+                    { backgroundColor: theme.section }
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.languageText,
+                        { color: theme.text }
+                    ]}
+                >
+                    English
+                </Text>
                 <Pressable style={styles.button}>
-                    <Text style={styles.buttonText}>Selected</Text>
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            { color: theme.text }
+                        ]}
+                    >
+                        Selected
+                    </Text>
                 </Pressable>
             </View>
         </SafeAreaView>
@@ -22,11 +51,9 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#151718',
         padding: 20,
     },
     title: {
-        color: '#ECEDEE',
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
@@ -35,13 +62,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#1E1E1E',
         padding: 15,
         borderRadius: 10,
         width: '80%',
     },
     languageText: {
-        color: '#ECEDEE',
         fontSize: 18,
         fontWeight: '500',
     },
@@ -52,7 +77,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     buttonText: {
-        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
     },
