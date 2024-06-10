@@ -3,8 +3,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function ReportBugs() {
+    const theme = useTheme();
     const browserOpenAction = useWebBrowser();
 
     const handlePress = () => {
@@ -12,10 +14,23 @@ export default function ReportBugs() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Issues with the app?</Text>
+        <SafeAreaView style={[
+            styles.container,
+            { backgroundColor: theme.screen }
+        ]}
+        >
+            <Text style={[styles.title, { color: theme.text }]}>
+                Issues with the app?
+            </Text>
             <Pressable style={styles.button} onPress={handlePress}>
-                <Text style={styles.buttonText}>Report bug</Text>
+                <Text
+                    style={[
+                        styles.buttonText,
+                        { color: theme.text }
+                    ]}
+                >
+                    Report bug
+                </Text>
             </Pressable>
         </SafeAreaView>
     );
@@ -26,11 +41,9 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#151718',
         padding: 20,
     },
     title: {
-        color: '#ECEDEE',
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
@@ -43,7 +56,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     buttonText: {
-        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
     },

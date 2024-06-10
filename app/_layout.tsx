@@ -1,9 +1,12 @@
+import { ThemeContextProvider } from '@/contexts/Theme';
 import { Stack } from 'expo-router';
 
 export default function AppLayout() {
     return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-        </Stack>
+        <ThemeContextProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" />
+            </Stack>
+        </ThemeContextProvider>
     );
 }

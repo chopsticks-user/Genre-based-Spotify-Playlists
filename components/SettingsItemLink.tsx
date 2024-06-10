@@ -1,3 +1,4 @@
+import { useTheme } from "@/hooks/useTheme";
 import {
     GestureResponderEvent, TouchableOpacity, View,
     StyleSheet, Text
@@ -10,20 +11,39 @@ export interface SettingsItemLinkProps {
         element: any,
         color: string,
     }
-    onPress?: ((event: GestureResponderEvent) => void),
+    onPress: ((event: GestureResponderEvent) => void),
 };
 
 export default function SettingsItemLink(props: SettingsItemLinkProps) {
+    const theme = useTheme();
+
     return (
         <TouchableOpacity
             key={props.label}
             onPress={props.onPress}
         >
-            <View style={styles.sectionItem}>
-                <View style={[styles.sectionItemIcon, { backgroundColor: props.icon.color }]}>
+            <View
+                style={[
+                    styles.sectionItem,
+                    { backgroundColor: theme.section }
+                ]}
+            >
+                <View
+                    style={[
+                        styles.sectionItemIcon,
+                        { backgroundColor: props.icon.color }
+                    ]}
+                >
                     {props.icon.element}
                 </View>
-                <Text style={styles.sectionItemLabel}>{props.label}</Text>
+                <Text
+                    style={[
+                        styles.sectionItemLabel,
+                        { color: theme.text }
+                    ]}
+                >
+                    {props.label}
+                </Text>
             </View>
         </TouchableOpacity>
     );
@@ -34,13 +54,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        backgroundColor: '#262626',
         marginVertical: 5,
         height: 40,
         borderRadius: 10,
     },
     sectionItemLabel: {
-        color: '#ECEDEE',
         fontSize: 15,
         fontWeight: '400',
         marginHorizontal: 10,

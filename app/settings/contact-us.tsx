@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, SafeAreaView, Linking, Pressable } from 'react-native';
 import React from 'react';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
+import { useTheme } from '@/hooks/useTheme';
 
 const developers = [
     { name: 'Quang Cap', email: 'qaa2qw@virginia.edu' },
@@ -9,15 +10,39 @@ const developers = [
 ];
 
 export default function ContactUs() {
+    const theme = useTheme();
+
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Contact Us</Text>
-            <Text style={styles.subtitle}>Developers</Text>
+        <SafeAreaView
+            style={[
+                styles.container,
+                { backgroundColor: theme.screen }
+            ]}
+        >
+            <Text style={[styles.title, { color: theme.text }]}>
+                Contact Us
+            </Text>
+            <Text style={[styles.subtitle]}>
+                Developers
+            </Text>
             {developers.map((developer, index) => (
-                <View key={index} style={styles.developerContainer}>
-                    <Text style={styles.name}>{developer.name}</Text>
-                    <Pressable onPress={() => Linking.openURL(`mailto:${developer.email}`)}>
-                        <Text style={styles.email}>{developer.email}</Text>
+                <View
+                    key={index}
+                    style={[
+                        styles.developerContainer,
+                        { backgroundColor: theme.section }
+                    ]}
+                >
+                    <Text style={[styles.name, { color: theme.text }]}>
+                        {developer.name}
+                    </Text>
+                    <Pressable onPress={
+                        () => Linking.openURL(`mailto:${developer.email}`)
+                    }
+                    >
+                        <Text style={[styles.email, { color: theme.text }]}>
+                            {developer.email}
+                        </Text>
                     </Pressable>
                 </View>
             ))}
@@ -30,13 +55,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#151718',
         padding: 20,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#ECEDEE',
         marginBottom: 20,
     },
     subtitle: {
@@ -48,20 +71,17 @@ const styles = StyleSheet.create({
     developerContainer: {
         marginBottom: 15,
         alignItems: 'center',
-        padding: 10,
-        backgroundColor: '#1E1E1E',
+        padding: 20,
         borderRadius: 10,
         width: '80%',
     },
     name: {
         fontSize: 18,
         fontWeight: '500',
-        color: '#ECEDEE',
         marginBottom: 5,
     },
     email: {
         fontSize: 16,
-        color: '#1E90FF',
         textDecorationLine: 'underline',
     },
 });

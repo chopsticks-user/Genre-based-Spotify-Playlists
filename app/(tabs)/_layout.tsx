@@ -1,26 +1,29 @@
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from 'expo-router'
 import { NewGenresProvider } from '@/contexts/NewGenres';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function TabsLayout() {
+    const theme = useTheme();
+
     return (
         <NewGenresProvider>
             <Tabs
                 screenOptions={{
                     headerShown: true,
                     headerStyle: {
-                        backgroundColor: '#000',
+                        backgroundColor: theme.header,
                     },
                     headerTitleAlign: 'center',
-                    headerTintColor: '#fff',
+                    headerTintColor: theme.text,
                     tabBarStyle: {
-                        backgroundColor: '#000',
+                        backgroundColor: theme.tab,
                     },
                 }}
                 sceneContainerStyle={{
-                    backgroundColor: '#151718',
+                    backgroundColor: theme.screen,
                 }}
             >
                 <Tabs.Screen
@@ -28,7 +31,7 @@ export default function TabsLayout() {
                     options={{
                         title: 'Search',
                         tabBarIcon: ({ color }) =>
-                            <AntDesign name="search1" size={24} color="white" />
+                            <AntDesign name="search1" size={24} color={theme.icon} />
                     }}
                 />
                 <Tabs.Screen
@@ -36,7 +39,7 @@ export default function TabsLayout() {
                     options={{
                         title: 'Playtify',
                         tabBarIcon: ({ color }) =>
-                            <FontAwesome size={24} name="home" color={color} />,
+                            <FontAwesome size={24} name="home" color={theme.icon} />,
                     }} />
                 <Tabs.Screen
                     name="playlists"
@@ -44,7 +47,7 @@ export default function TabsLayout() {
                         title: 'Playlists',
                         tabBarIcon: ({ color }) =>
                             <MaterialCommunityIcons
-                                name="playlist-music" size={24} color="white" />,
+                                name="playlist-music" size={24} color={theme.icon} />,
                     }}
                 />
                 <Tabs.Screen
@@ -52,7 +55,7 @@ export default function TabsLayout() {
                     options={{
                         title: 'Settings',
                         tabBarIcon: ({ color }) =>
-                            <FontAwesome size={24} name="cog" color={color} />,
+                            <FontAwesome size={24} name="cog" color={theme.icon} />,
                     }}
                 />
             </Tabs>

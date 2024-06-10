@@ -1,35 +1,22 @@
 import { Stack, router } from "expo-router";
 import { Platform } from "react-native";
 import { HeaderBackButton } from '@react-navigation/elements';
-
-const screenOptions: any = {
-    headerShown: true,
-    headerStyle: {
-        backgroundColor: '#000',
-    },
-    headerTitleAlign: 'center',
-    headerTintColor: '#fff',
-    headerBackButtonMenuEnabled: true,
-    // tabBarStyle: {
-    //     backgroundColor: '#000',
-    // },
-};
+import { useTheme } from "@/hooks/useTheme";
 
 export default function SettingsLayout() {
-    if (Platform.OS === 'ios') {
-        screenOptions.headerLeft = (props: any) => (
-            <HeaderBackButton
-                onPress={() => {
-                    router.back();
-                }}
-            />
-        );
-        return (
-            <Stack screenOptions={screenOptions} />
-        );
-    }
+    const theme = useTheme();
 
     return (
-        <Stack screenOptions={screenOptions} />
+        <Stack screenOptions={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerBackButtonMenuEnabled: true,
+            headerLeft: Platform.OS === 'ios'
+                ? (props: any) => <HeaderBackButton onPress={() => router.back()} />
+                : undefined,
+            headerStyle: { backgroundColor: theme.header },
+            headerTintColor: theme.text,
+        }}
+        />
     );
 }
