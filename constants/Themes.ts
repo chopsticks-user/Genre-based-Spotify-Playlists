@@ -1,7 +1,10 @@
 
 
+export type ThemeName = 'dark' | 'light' | 'native';
+export const defaultThemeName: ThemeName = 'dark';
+
 export interface ThemeColors {
-    type: 'dark' | 'light';
+    name: ThemeName;
     tab: string;
     screen: string;
     section: string;
@@ -10,17 +13,19 @@ export interface ThemeColors {
 };
 
 export const darkThemeColors: ThemeColors = {
-    type: 'dark',
+    name: 'dark',
     tab: '#000000',
     screen: '#151718',
     section: '#262626',
     text: '#ecedee',
+    icon: '#ffffff',
 };
 
 export const lightThemeColors: ThemeColors = {
-    type: 'light',
+    name: 'light',
     tab: '#ffffff',
     screen: '#yellow',
     section: '#gray',
     text: '#000000',
+    icon: '#000000',
 };

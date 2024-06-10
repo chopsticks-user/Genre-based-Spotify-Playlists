@@ -1,32 +1,34 @@
-import { ThemeColors, darkThemeColors, lightThemeColors } from "@/constants/Themes";
-import { PropsWithChildren, createContext, useReducer } from "react";
-import { useColorScheme } from "react-native";
+import { ThemeColors, ThemeName, darkThemeColors, defaultThemeName, lightThemeColors } from "@/constants/Themes";
+import { PropsWithChildren, createContext, useReducer, useState } from "react";
+import { ColorSchemeName, useColorScheme } from "react-native";
 
-export const ThemeContext = createContext<ThemeColors | null>(null);
-export const ThemeDispatchContext = createContext<any | null>(null);
+export const ThemeContext = createContext<ThemeColors>(darkThemeColors);
+export const SetThemeContext = createContext((themeName: ThemeName) => { });
 
-type ThemeAction = { type: 'dark' } | { type: 'light' } | { type: 'none' };
-
-function themeReducer(theme: ThemeColors, themeAction: ThemeAction) {
-    switch (themeAction.type) {
-        case 'dark': return darkThemeColors;
-        case 'light': return lightThemeColors;
-        case 'none': {
-            return themeReducer(theme, { type: useColorScheme() || 'dark' });
-        }
+function fromNativeTheme(nativeTheme: ColorSchemeName): ThemeName {
+    if (nativeTheme === null || nativeTheme === undefined) {
+        return defaultThemeName;
     }
+    return nativeTheme;
 }
 
 export function ThemeContextProvider({ children }: PropsWithChildren) {
-    const [theme, themeDispatch] = useReducer(
-        themeReducer, darkThemeColors
-    );
+    const [theme, setTheme] = useState<ThemeColors>(darkThemeColors);
+    const nativeTheme = useColorScheme();
+
+    function setThemeByName(themeName: ThemeName): void {
+        switch (themeName) {
+            case 'dark': return setTheme(darkThemeColors);
+            case 'light': return setTheme(lightThemeColors);
+            case 'native': return setThemeByName(fromNativeTheme(nativeTheme));
+        }
+    }
 
     return (
         <ThemeContext.Provider value={theme}>
-            <ThemeDispatchContext.Provider value={themeDispatch}>
+            <SetThemeContext.Provider value={setThemeByName}>
                 {children}
-            </ThemeDispatchContext.Provider>
+            </SetThemeContext.Provider>
         </ThemeContext.Provider>
     );
 }
