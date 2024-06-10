@@ -87,9 +87,4 @@ const styles = StyleSheet.create({
         paddingVertical: 25,
         paddingHorizontal: 15,
     },
-    text: {
-        color: '#ECEDEE',
-        fontSize: 15,
-        fontWeight: '500',
-    },
 });

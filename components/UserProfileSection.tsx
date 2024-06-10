@@ -1,3 +1,4 @@
+import { useTheme } from '@/hooks/useTheme';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
 import { UserProfile } from '@/spotify';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageSourcePropType } from 'react-native'
@@ -15,6 +16,7 @@ function userProfileImageSource(profile: UserProfile): ImageSourcePropType | und
 }
 
 export default function UserProfileSection(props: UserProfileSectionProps) {
+    const theme = useTheme();
     const webBrowserOpen = useWebBrowser();
 
     return (
@@ -24,15 +26,23 @@ export default function UserProfileSection(props: UserProfileSectionProps) {
             }}>
                 <View style={styles.profileAvatarWrapper}>
                     <Image
-                        style={styles.profileAvatar}
-                        source={
-                            userProfileImageSource(props.profile)
-                        }
+                        style={[
+                            styles.profileAvatar,
+                            {
+                                backgroundColor: theme.header,
+                                borderColor: theme.text
+                            }
+                        ]}
+                        source={userProfileImageSource(props.profile)}
                     />
                 </View>
             </TouchableOpacity>
-            <Text style={styles.profileName}>{props.profile?.display_name}</Text>
-            <Text style={styles.profileEmail}>{props.profile?.email}</Text>
+            <Text style={[styles.profileName, { color: theme.text }]}>
+                {props.profile?.display_name}
+            </Text>
+            <Text style={[styles.profileEmail, { color: theme.text }]}>
+                {props.profile?.email}
+            </Text>
         </View>
     );
 }
@@ -49,31 +59,19 @@ const styles = StyleSheet.create({
         height: 72,
         borderRadius: 10000,
         borderWidth: 2,
-        borderColor: '#ECEDEE',
-        backgroundColor: 'black',
     },
     profileAvatarWrapper: {
         position: 'relative',
-    },
-    profileEditButton: {
-        width: 20,
-        height: 20,
-        borderRadius: 10000,
-        backgroundColor: 'pink',
-        top: -15,
-        left: 45,
     },
     profileName: {
         textAlign: 'center',
         marginTop: 20,
         fontSize: 19,
         fontWeight: '600',
-        color: '#ECEDEE',
     },
     profileEmail: {
         textAlign: 'center',
         marginTop: 5,
         fontSize: 16,
-        color: '#ECEDEE',
     },
 });
