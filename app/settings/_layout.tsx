@@ -1,6 +1,7 @@
 import { Stack, router } from "expo-router";
 import { Platform } from "react-native";
 import { HeaderBackButton } from '@react-navigation/elements';
+import { ThemeContextProvider } from "@/contexts/Theme";
 
 const screenOptions: any = {
     headerShown: true,

@@ -5,7 +5,6 @@ import { settingsMenuIcons } from '@/constants/Icons';
 import UserProfileSection from '@/components/UserProfileSection';
 import SettingsSection from '@/components/SettingsSection';
 import SettingsItemLink from '@/components/SettingsItemLink';
-import SettingsItemToggle from '@/components/SettingsItemToggle';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
 import useUserProfile from '@/hooks/useUserProfile';
 
@@ -25,10 +24,13 @@ export default function Settings() {
                             router.push('/settings/languages');
                         }}
                     />
-                    {/* <SettingsItemToggle
+                    <SettingsItemLink
                         label='Themes'
                         icon={{ element: settingsMenuIcons.themes, color: '#0096ff' }}
-                    /> */}
+                        onPress={() => {
+                            router.push('/settings/themes');
+                        }}
+                    />
                     {/* <SettingsItemLink
                         label='Playlists'
                         icon={{ element: settingsMenuIcons.playlists, color: '#0096ff' }}

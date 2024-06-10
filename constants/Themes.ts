@@ -24,8 +24,8 @@ export const darkThemeColors: ThemeColors = {
 export const lightThemeColors: ThemeColors = {
     name: 'light',
     tab: '#ffffff',
-    screen: '#yellow',
-    section: '#gray',
+    screen: '#e5e7e9',
+    section: '#f7f9f9',
     text: '#000000',
     icon: '#000000',
 };

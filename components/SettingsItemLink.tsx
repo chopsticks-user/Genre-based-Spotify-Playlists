@@ -10,7 +10,7 @@ export interface SettingsItemLinkProps {
         element: any,
         color: string,
     }
-    onPress?: ((event: GestureResponderEvent) => void),
+    onPress: ((event: GestureResponderEvent) => void),
 };
 
 export default function SettingsItemLink(props: SettingsItemLinkProps) {
