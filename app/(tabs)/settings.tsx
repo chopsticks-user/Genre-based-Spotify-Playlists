@@ -7,6 +7,7 @@ import SettingsSection from '@/components/SettingsSection';
 import SettingsItemLink from '@/components/SettingsItemLink';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
 import useUserProfile from '@/hooks/useUserProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Settings() {
     const userProfile = useUserProfile();

@@ -6,6 +6,7 @@ import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import { Track, getRecommendations } from '@/spotify';
 import { getRecommendationData } from '@/database';
 import { SimpleLineIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home() {
     const [tracks, setTracks] = useState<Track[]>([]);
