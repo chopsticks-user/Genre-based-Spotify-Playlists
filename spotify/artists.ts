@@ -1,4 +1,3 @@
-import { session } from "./sessions";
 import * as Configs from '@/configs'
 import { modulePath } from "./constants";
 import { Artist, Track } from "./types";
@@ -27,14 +26,17 @@ function prepareArtistIDForRequest(artistIDs: string[]): string {
     });
 }
 
-export async function getArtistsFromIDs(artistIDs: string[]): Promise<Artist[]> {
+export async function getArtistsFromIDs(
+    accessToken: string,
+    artistIDs: string[]
+): Promise<Artist[]> {
     try {
         const idsString = prepareArtistIDForRequest(artistIDs);
         const response = await fetch(
             `https://api.spotify.com/v1/artists?ids=${idsString}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             },
         });
 
@@ -45,11 +47,11 @@ export async function getArtistsFromIDs(artistIDs: string[]): Promise<Artist[]> 
     }
 }
 
-export async function getArtistsFromTracks(tracks: Track[])
+export async function getArtistsFromTracks(accessToken: string, tracks: Track[])
     : Promise<Artist[]> {
     try {
         const artistIDs: string[] = await extractArtistsFromTracks(tracks);
-        return await getArtistsFromIDs(artistIDs);
+        return await getArtistsFromIDs(accessToken, artistIDs);
     } catch (error) {
         throw Configs.createError(modulePath, arguments.callee.name, error);
     }

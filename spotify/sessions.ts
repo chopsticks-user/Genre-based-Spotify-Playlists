@@ -1,43 +1,8 @@
-import * as AuthSession from 'expo-auth-session';
-import { authDiscoveryDocument, authRequestConfigs, modulePath } from './constants';
+import { modulePath } from './constants';
 import * as Configs from '@/configs'
-import { PromptAsync, Session, UserProfile } from './types';
-import { useState } from 'react';
+import { UserProfile } from './types';
 
-export const session = <Session>{};
-
-async function initializeSession(promptAsync: PromptAsync): Promise<boolean> {
-    try {
-        const result = await promptAsync();
-
-        if (result && result.type === 'success') {
-            const authCode: string = result.params.code;
-            const accessToken: string = await getAccessToken(authCode);
-            session.accessToken = accessToken;
-
-
-            const userProfile: UserProfile = await getUserProfile();
-            session.userProfile = userProfile;
-            return true;
-        }
-
-        return false;
-    } catch (error) {
-        throw Configs.createError(modulePath, arguments.callee.name, error);
-    }
-}
-
-function getAuthCode(authSessionResult: AuthSession.AuthSessionResult): string {
-    if (authSessionResult && authSessionResult.type === 'success') {
-        return authSessionResult.params.code;
-    }
-
-    throw Configs.createError(modulePath, arguments.callee.name,
-        "Failed to get authorization code. {authSessionResult} might not be valid`"
-    )
-}
-
-async function getAccessToken(authCode: string): Promise<string> {
+export async function getAccessToken(authCode: string): Promise<string> {
     try {
         const url = 'https://accounts.spotify.com/api/token';
         const headers = new Headers();
@@ -61,19 +26,12 @@ async function getAccessToken(authCode: string): Promise<string> {
     }
 }
 
-export function createUserAuthSession() {
-    const [req, res, prompt] = AuthSession.useAuthRequest(
-        authRequestConfigs, authDiscoveryDocument);
-
-    return async () => await initializeSession(prompt);
-}
-
-export async function getUserProfile(): Promise<UserProfile> {
+export async function getUserProfile(accessToken: string): Promise<UserProfile> {
     try {
         const response = await fetch("https://api.spotify.com/v1/me", {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
             }
         });
 
@@ -83,13 +41,11 @@ export async function getUserProfile(): Promise<UserProfile> {
             const retryAfter = response.headers.get('Retry-After');
             const delay = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
 
-            console.warn(`Spotify API Rate limited. Retrying after ${delay / 1000} seconds...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-            return getUserProfile();
+            throw new Error(`Spotify API Rate limited. Retrying after ${delay / 1000} seconds...`);
         }
 
         return await response.json();
     } catch (error) {
-        throw Configs.createError(modulePath, arguments.callee.name, error);
+        throw error;
     }
 }

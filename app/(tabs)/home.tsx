@@ -7,8 +7,10 @@ import { Track, getRecommendations } from '@/spotify';
 import { getRecommendationData } from '@/database';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useSession from '@/hooks/useSession';
 
 export default function Home() {
+    const session = useSession();
     const [tracks, setTracks] = useState<Track[]>([]);
 
     const scrollViewRef = useRef<ScrollView>(null);
@@ -25,7 +27,7 @@ export default function Home() {
             setTracks([]);
             const data = await getRecommendationData();
             const recommendedTracks = await getRecommendations(
-                data.genres, data.trackIDs
+                session.accessToken, data.genres, data.trackIDs
             );
             setTracks(recommendedTracks);
             if (scrollViewRef.current) {

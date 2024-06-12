@@ -4,16 +4,15 @@ import {
     Pressable
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { router } from 'expo-router';
 import { createUser } from '@/database';
 import * as SplashScreen from 'expo-splash-screen';
-import { makeRedirectUri } from 'expo-auth-session';
+import useInitializeSession from '@/hooks/useInitializeSession';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Home() {
-    const authSession = useSpotifyAuth();
+    const session = useInitializeSession();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -58,10 +57,11 @@ export default function Home() {
             <Pressable
                 onPress={async () => {
                     try {
-                        const success = await authSession();
+                        const success = await session();
                         if (success === true) {
-                            createUser();
+                            // TODO: move this line to SessionProvider
                             const userExisted = await createUser();
+
                             if (userExisted) {
                                 router.replace('/home');
                             } else {

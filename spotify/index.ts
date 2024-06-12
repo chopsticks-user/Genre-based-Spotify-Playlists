@@ -13,8 +13,8 @@ export {
 } from './types';
 
 export {
-    createUserAuthSession,
     getUserProfile,
+    getAccessToken,
 } from './sessions';
 
 export {

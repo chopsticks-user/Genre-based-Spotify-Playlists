@@ -1,15 +1,17 @@
 import { modulePath } from "./constants";
-import { session } from "./sessions";
 import * as Configs from '@/configs'
 import { Playlist } from "./types";
 
-export async function getUserPlaylists(): Promise<string> {
+export async function getUserPlaylists(
+    accessToken: string,
+    userSpotifyID: string
+): Promise<string> {
     try {
         const response = await fetch(
-            `https://api.spotify.com/v1/users/${session.userProfile.id}/playlists`, {
+            `https://api.spotify.com/v1/users/${userSpotifyID}/playlists`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             }
         });
 
@@ -20,14 +22,19 @@ export async function getUserPlaylists(): Promise<string> {
 }
 
 export async function createUserPlaylist(
-    name: string, public_?: boolean, collaborative?: boolean, description?: string)
-    : Promise<Playlist> {
+    accessToken: string,
+    userSpotifyID: string,
+    name: string,
+    public_?: boolean,
+    collaborative?: boolean,
+    description?: string
+): Promise<Playlist> {
     try {
         const response = await fetch(
-            `https://api.spotify.com/v1/users/${session.userProfile.id}/playlists`, {
+            `https://api.spotify.com/v1/users/${userSpotifyID}/playlists`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -44,8 +51,11 @@ export async function createUserPlaylist(
     }
 }
 
-export async function addSongsToPlaylist(playlistID: string, trackIDs: string[])
-    : Promise<string> {
+export async function addSongsToPlaylist(
+    accessToken: string,
+    playlistID: string,
+    trackIDs: string[]
+): Promise<string> {
     try {
         const uris = trackIDs.map(id => {
             return `spotify:track:${id}`;
@@ -54,7 +64,7 @@ export async function addSongsToPlaylist(playlistID: string, trackIDs: string[])
             `https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -67,8 +77,11 @@ export async function addSongsToPlaylist(playlistID: string, trackIDs: string[])
     }
 }
 
-export async function removeSongsFromPlaylist(playlistID: string, trackIDs: string[])
-    : Promise<string> {
+export async function removeSongsFromPlaylist(
+    accessToken: string,
+    playlistID: string,
+    trackIDs: string[]
+): Promise<string> {
     try {
         const tracks = trackIDs.map(id => {
             return { uri: `spotify:track:${id}` };
@@ -78,7 +91,7 @@ export async function removeSongsFromPlaylist(playlistID: string, trackIDs: stri
             `https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -98,6 +111,7 @@ export async function removeSongsFromPlaylist(playlistID: string, trackIDs: stri
 }
 
 export async function changePlaylistDetails(
+    accessToken: string,
     playlistID: string,
     name: string,
     description: string
@@ -107,7 +121,7 @@ export async function changePlaylistDetails(
             `https://api.spotify.com/v1/playlists/${playlistID}`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -126,13 +140,16 @@ export async function changePlaylistDetails(
     }
 }
 
-export async function unfollowPlaylist(playlistID: string): Promise<void> {
+export async function unfollowPlaylist(
+    accessToken: string,
+    playlistID: string
+): Promise<void> {
     try {
         await fetch(
             `https://api.spotify.com/v1/playlists/${playlistID}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -142,14 +159,16 @@ export async function unfollowPlaylist(playlistID: string): Promise<void> {
     }
 }
 
-export async function getPlaylistCoverImageURI(playlistID: string)
-    : Promise<string | null> {
+export async function getPlaylistCoverImageURI(
+    accessToken: string,
+    playlistID: string
+): Promise<string | null> {
     try {
         const response = await fetch(
             `https://api.spotify.com/v1/playlists/${playlistID}/images`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             }
         });
         console.log('getPlaylistCoverImageURI');

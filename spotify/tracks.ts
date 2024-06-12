@@ -1,15 +1,14 @@
-import { session } from "./sessions";
 import * as Configs from '@/configs'
 import { modulePath } from "./constants";
 import { Artist, SearchQuery, Track, TrackItem } from "./types";
 
-export async function getUserSavedTracks(): Promise<Track[]> {
+export async function getUserSavedTracks(accessToken: string): Promise<Track[]> {
     try {
         const response = await fetch(
             'https://api.spotify.com/v1/me/tracks', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             },
         });
 
@@ -43,6 +42,7 @@ export function prepareSearchExtension(searchQuery: SearchQuery): string {
 }
 
 export async function searchTracks(
+    accessToken: string,
     searchQuery: SearchQuery,
     offset?: number
 ): Promise<[next: number, Track[]]> {
@@ -52,7 +52,7 @@ export async function searchTracks(
             `https://api.spotify.com/v1/search?q=${prepareSearchExtension(searchQuery)}&type=track&limit=50&offset=${offset}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             },
         });
         console.log('searchTracks');
@@ -89,6 +89,7 @@ function prepareRecommendationExtension(
 }
 
 export async function getRecommendations(
+    accessToken: string,
     genres: string[],
     trackIDs: string[]
 ): Promise<Track[]> {
@@ -101,7 +102,7 @@ export async function getRecommendations(
             `https://api.spotify.com/v1/recommendations?limit=50${prepareRecommendationExtension(genres, trackIDs)}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             },
         });
         console.log('getRecommendations');
@@ -128,7 +129,10 @@ function prepareSeveralTrackRequest(trackIDs: string[]): string {
     });
 }
 
-export async function getSeveralTracks(trackIDs: string[]): Promise<Track[]> {
+export async function getSeveralTracks(
+    accessToken: string,
+    trackIDs: string[]
+): Promise<Track[]> {
     try {
         if (trackIDs.length === 0) {
             return [];
@@ -138,7 +142,7 @@ export async function getSeveralTracks(trackIDs: string[]): Promise<Track[]> {
             `https://api.spotify.com/v1/tracks?ids=${prepareSeveralTrackRequest(trackIDs)}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             },
         });
 
