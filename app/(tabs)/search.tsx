@@ -5,8 +5,11 @@ import SearchBar from '@/components/SearchBar';  // Make sure the path is correc
 import { SearchQuery, Track, searchTracks } from '@/spotify';
 import ScrollablePinCollection from '@/components/ScrollablePinCollection';
 import { trackExists } from '@/database/tracks';
+import useSession from '@/hooks/useSession';
 
 export default function Search() {
+    const session = useSession();
+
     const [data, setData] = useState<Track[]>([]);
     const [query, setQuery] = useState<SearchQuery>({ track: '', artist: '', genre: '', minYear: '', maxYear: '' });
     const [searchCriteria, setSearchCriteria] = useState<string[]>([]);
@@ -52,7 +55,7 @@ export default function Search() {
     const handleSearch = useCallback(async () => {
         if (isSearchable) {
             setData([]);
-            const [next, tracks] = await searchTracks(query);
+            const [next, tracks] = await searchTracks(session.accessToken, query);
             const verifiedTracks: Track[] = await Promise.all(tracks.map(async track => {
                 track.added = await trackExists(track.id);
                 return track;

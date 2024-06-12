@@ -1,8 +1,3 @@
-import * as AuthSession from 'expo-auth-session';
-
-export type PromptAsync = (options?: AuthSession.AuthRequestPromptOptions | undefined)
-    => Promise<AuthSession.AuthSessionResult>;
-
 export interface Image {
     url: string;
     height: number | null;

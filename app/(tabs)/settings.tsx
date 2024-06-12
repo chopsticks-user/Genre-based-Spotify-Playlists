@@ -6,17 +6,17 @@ import UserProfileSection from '@/components/UserProfileSection';
 import SettingsSection from '@/components/SettingsSection';
 import SettingsItemLink from '@/components/SettingsItemLink';
 import { useWebBrowser } from '@/hooks/useWebBrowser';
-import useUserProfile from '@/hooks/useUserProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useSession from '@/hooks/useSession';
 
 export default function Settings() {
-    const userProfile = useUserProfile();
+    const session = useSession();
     const browserOpenAction = useWebBrowser();
 
     return (
         <ScrollView>
             <SafeAreaView style={styles.container}>
-                <UserProfileSection profile={userProfile} />
+                <UserProfileSection profile={session.userProfile} />
                 <SettingsSection header='preferences'>
                     <SettingsItemLink
                         label='Languages'
