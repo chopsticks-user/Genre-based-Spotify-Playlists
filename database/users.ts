@@ -2,11 +2,11 @@ import {
     doc, getDoc, setDoc,
 } from 'firebase/firestore';
 import { db } from './init'
-import { session } from '@/spotify/sessions';
+import { UserProfile } from '@/spotify';
 
-export async function createUser(): Promise<boolean> {
+export async function createUser(userProfile: UserProfile): Promise<boolean> {
     try {
-        const userDocRef = doc(db, 'users', session.userProfile.id);
+        const userDocRef = doc(db, 'users', userProfile.id);
         const userSnapshot = await getDoc(userDocRef);
 
         if (!userSnapshot.exists()) {

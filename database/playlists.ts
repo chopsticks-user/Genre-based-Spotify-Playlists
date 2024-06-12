@@ -6,10 +6,9 @@ import {
 } from 'firebase/firestore';
 import { db, genreNameDB, genreNameUI } from './init'
 import { PlaylistDAO } from './types';
-import { session } from '@/spotify/sessions';
-import { Playlist } from '@/spotify';
+import { Playlist, UserProfile } from '@/spotify';
 
-export async function getPlaylists(genres?: string[]): Promise<PlaylistDAO[]> {
+export async function getPlaylists(userProfile: UserProfile, genres?: string[]): Promise<PlaylistDAO[]> {
     try {
         console.log('getPlaylists');
 
@@ -21,7 +20,7 @@ export async function getPlaylists(genres?: string[]): Promise<PlaylistDAO[]> {
             const dbGenres: string[] = genres.map(genre => genreNameDB(genre));
             const playlistsSnapshot = await getDocs(
                 query(
-                    collection(db, `/users/${session.userProfile.id}/playlists`),
+                    collection(db, `/users/${userProfile.id}/playlists`),
                     where('name', 'in', dbGenres)
                 )
             );
@@ -32,7 +31,7 @@ export async function getPlaylists(genres?: string[]): Promise<PlaylistDAO[]> {
             }));
         } else {
             const playlistsSnapshot = await getDocs(
-                collection(db, `/users/${session.userProfile.id}/playlists`)
+                collection(db, `/users/${userProfile.id}/playlists`)
             );
 
             return Promise.all(playlistsSnapshot.docs.map(async doc => {
@@ -47,12 +46,12 @@ export async function getPlaylists(genres?: string[]): Promise<PlaylistDAO[]> {
 }
 
 export async function addPlaylist(
-    genre: string, createSpotifyPlaylist: () => Promise<Playlist>
+    userProfile:UserProfile, genre: string, createSpotifyPlaylist: () => Promise<Playlist>
 ): Promise<DocumentReference<DocumentData, DocumentData>> {
     try {
         const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genre}`
+            db, `/users/${userProfile.id}/playlists/${genre}`
         );
         const playlistSnapshot = await getDoc(playlistDocRef);
 
@@ -69,7 +68,7 @@ export async function addPlaylist(
             });
 
             const genresDocRef = doc(
-                db, `/users/${session.userProfile.id}/genres/${genreDB}`
+                db, `/users/${userProfile.id}/genres/${genreDB}`
             );
             await setDoc(genresDocRef, {
                 name: genreNameUI(genre),
@@ -84,6 +83,7 @@ export async function addPlaylist(
 }
 
 export async function editPlaylist(
+    userProfile:UserProfile,
     genre: string,
     name: string,
     description: string,
@@ -92,7 +92,7 @@ export async function editPlaylist(
     try {
         const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+            db, `/users/${userProfile.id}/playlists/${genreDB}`
         );
         await updateDoc(playlistDocRef, {
             name: name,
@@ -104,13 +104,14 @@ export async function editPlaylist(
 }
 
 export async function editPlaylistImage(
+    userProfile:UserProfile,
     genre: string,
     imageURI: string | null,
 ): Promise<void> {
     try {
         const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+            db, `/users/${userProfile.id}/playlists/${genreDB}`
         );
         await updateDoc(playlistDocRef, {
             imageURI: imageURI,
@@ -120,11 +121,11 @@ export async function editPlaylistImage(
     }
 }
 
-export async function removePlaylist(genre: string): Promise<string | null> {
+export async function removePlaylist(userProfile:UserProfile, genre: string): Promise<string | null> {
     try {
         const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+            db, `/users/${userProfile.id}/playlists/${genreDB}`
         );
         const playlistSnapshot = await getDoc(playlistDocRef);
         const playlistData = playlistSnapshot.data();

@@ -5,10 +5,10 @@ import {
 import { db, genreNameDB, genreNameUI } from './init'
 import { RecommendationData, TrackDAO } from './types';
 import { addPlaylist } from './playlists';
-import { session } from '@/spotify/sessions';
-import { Playlist } from '@/spotify';
+import { Playlist, UserProfile } from '@/spotify';
 
 export async function addTracks(
+    userProfile: UserProfile,
     genre: string,
     createSpotifyPlaylist: () => Promise<Playlist>,
     tracks: TrackDAO[]
@@ -17,20 +17,20 @@ export async function addTracks(
         const trackIDs: string[] = tracks.map(track => {
             return track.id;
         });
-        const userDocRef = doc(db, 'users', session.userProfile.id);
+        const userDocRef = doc(db, 'users', userProfile.id);
         await updateDoc(userDocRef, {
             tracks: arrayUnion(...trackIDs),
         });
 
         const genreDB: string = genreNameDB(genre);
-        const playlistDocRef = await addPlaylist(genreDB, createSpotifyPlaylist);
+        const playlistDocRef = await addPlaylist(userProfile, genreDB, createSpotifyPlaylist);
         await updateDoc(playlistDocRef, {
             tracks: arrayUnion(...tracks),
         });
         const playlistSnapshot = await getDoc(playlistDocRef);
 
         const genresDocRef = doc(
-            db, `/users/${session.userProfile.id}/genres/${genreDB}`
+            db, `/users/${userProfile.id}/genres/${genreDB}`
         );
         await updateDoc(genresDocRef, {
             count: increment(1),
@@ -42,11 +42,11 @@ export async function addTracks(
     }
 }
 
-export async function trackExists(trackID: string): Promise<boolean> {
+export async function trackExists(userProfile:UserProfile, trackID: string): Promise<boolean> {
     try {
         // TODO: consider using queries
         const userSnapshot = await getDoc(
-            doc(db, 'users', session.userProfile.id)
+            doc(db, 'users', userProfile.id)
         );
         const tracks: string[] = userSnapshot.data()?.tracks;
         return tracks.includes(trackID);
@@ -55,12 +55,12 @@ export async function trackExists(trackID: string): Promise<boolean> {
     }
 }
 
-export async function getTracks(genre: string)
+export async function getTracks(userProfile:UserProfile,genre: string)
     : Promise<TrackDAO[]> {
     try {
         const genreDB = genreNameDB(genre);
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+            db, `/users/${userProfile.id}/playlists/${genreDB}`
         );
 
         const playlistSnapshot = await getDoc(playlistDocRef);
@@ -75,20 +75,20 @@ export async function getTracks(genre: string)
 }
 
 export async function removeTracks(
-    genre: string, tracks: TrackDAO[]
+    userProfile:UserProfile, genre: string, tracks: TrackDAO[]
 ): Promise<string> {
     try {
         const genreDB = genreNameDB(genre);
         const trackIDs: string[] = tracks.map(track => {
             return track.id;
         });
-        const userDocRef = doc(db, 'users', session.userProfile.id);
+        const userDocRef = doc(db, 'users', userProfile.id);
         await updateDoc(userDocRef, {
             tracks: arrayRemove(...trackIDs),
         });
 
         const playlistDocRef = doc(
-            db, `/users/${session.userProfile.id}/playlists/${genreDB}`
+            db, `/users/${userProfile.id}/playlists/${genreDB}`
         );
         await updateDoc(playlistDocRef, {
             tracks: arrayRemove(...tracks),
@@ -96,7 +96,7 @@ export async function removeTracks(
         const playlistSnapshot = await getDoc(playlistDocRef);
 
         const genresDocRef = doc(
-            db, `/users/${session.userProfile.id}/genres/${genreDB}`
+            db, `/users/${userProfile.id}/genres/${genreDB}`
         );
         await updateDoc(genresDocRef, {
             count: increment(-1),
@@ -108,11 +108,11 @@ export async function removeTracks(
     }
 }
 
-export async function getRecommendationData()
+export async function getRecommendationData(userProfile:UserProfile)
     : Promise<RecommendationData> {
     try {
         const genresCollRef = collection(
-            db, `/users/${session.userProfile.id}/genres`
+            db, `/users/${userProfile.id}/genres`
         );
         const genresSnapshots = await getDocs(
             query(genresCollRef, orderBy('count', 'desc'), limit(3))
@@ -120,7 +120,7 @@ export async function getRecommendationData()
         const genres: string[] = genresSnapshots.docs.map(doc => doc.data().name);
 
         const userDocSnapshot = await getDoc(
-            doc(db, `/users/${session.userProfile.id}`)
+            doc(db, `/users/${userProfile.id}`)
         );
         const allTrackIDs: string[] = userDocSnapshot.data()?.tracks;
         if (allTrackIDs.length < 3) {
