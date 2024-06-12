@@ -1,15 +1,21 @@
-# Welcome to Playtify app
+Playtify is a cross-platform mobile application for creating and managing genre-based playlists by utilizing the Spotify API.
 
-## App Features
+## Features
 
-- Custom Playlists: Allows users to create custom playlists based on genres and artists
-- Music Recommendations: Uses Spotify's recommendation API to suggest new songs
+&#9989; Search for songs based on genres, artists, and/or release dates </br>
+&#9989; Show recommendations based on your previously added songs and favorite genres </br>
+&#9989; Automatically add a new song to its respective genre-playlists </br>
+&#9989; Filter genre-based playlists by name or by genre </br>
+&#9989; Edit genre-based playlists and reflect the changes in your Spotify account </br>
+&#9989; Genre-based playlists are automatically added to your Spotify account </br>
 
 ## Usage
 
-1. Login: Users can log in using their Spotify account
-2. Select Preferences: After logging in, users will be directed to select some of their favorite artists and genres
-3. Generate Playlists: The app will suggest and generate playlists in Spotify based on selected preferences. Users can also individually add songs to their playlists from the app.
+1. Log in using your Spotify account
+2. After successfully logging in, you will be asked to find and add some songs so we can suggest even more songs for you
+3. Go to the playlists tab, and your genre-based playlists should be visible
+4. Tap on the Spotify icon of the playlist you want to listen to
+5. Enjoy!
 
 ## Demo
 
