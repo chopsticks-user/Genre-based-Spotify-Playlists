@@ -1,4 +1,14 @@
-Playtify is a cross-platform mobile application for creating and managing genre-based playlists by utilizing the Spotify API.
+<h1 align="center">Playtify - Genre-based music manager</h1>
+
+<p align="center">
+  <img src="https://github.com/chopsticks-user/Playtify/assets/105111860/c362eaae-58ca-4339-bdab-a54962bb1530" alt="playtify-logo" width="120px" height="120px"/>
+  <br>
+  <em>Playtify is a cross-platform mobile application for creating and managing genre-based playlists by utilizing the Spotify API.
+    <br> by utilizing the Spotify API.</em>
+  <br>
+</p>
+
+<hr>
 
 ## Features
 
