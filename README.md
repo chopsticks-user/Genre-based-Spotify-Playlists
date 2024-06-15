@@ -29,6 +29,8 @@
 
 ## Demo
 
+https://github.com/chopsticks-user/Playtify/assets/105111860/f61546e4-a956-4aa9-81fa-2bf61f9f2383
+
 For android,
 
 https://github.com/chopsticks-user/Playtify/assets/105111860/8541532f-669e-4eb9-a05b-d6381f509bb6
